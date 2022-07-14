@@ -1,0 +1,87 @@
+<div class="section-head bold margin-top-30">
+    <i class="fa fa-envira icon-muted"></i> Phần 1: Đánh giá về độ tuân thủ các tiêu chuẩn tối thiểu
+</div>
+<div class="info-box-alt">
+    <p>Dịch vụ TVXN HIV nói chung và TBXNBT/BC nói riêng phải đáp ứng nguyên tắc 5C. Ngoài ra dịch vụ TBXNBT/BC còn tuân thủ các tiêu chuẩn khác như thực hiện đánh giá nguy cơ bạo lực từ từng bạn tình, bạn chích chung, nhân viên được đào tạo và được giám sát hỗ trợ, theo dõi và xử trí tình các huống không mong muốn. Dưới đây là đánh giá liệu cơ sở đáp ứng 33 tiêu chuẩn tối thiểu áp dụng cho TBXNBT/BC hay không.</p>
+</div>
+<!-- Question #1.1 -->
+<div class="pns-question-header margin-top-20">{{vm.questions.q1_1.name}}</div>
+<div class="pns-question-description">{{vm.questions.q1_1.description}}</div>
+<div class="grid-3-col">
+    <div class="grid-header">
+        <div></div>
+        <div>Có/Tất cả/Luôn luôn</div>
+        <div>Một số/Đôi khi</div>
+        <div>Không/Không hề/Không bao giờ</div>
+    </div>
+    <div class="grid-body">
+        <div ng-repeat="opt in vm.questions.q1_1.questions">
+            <div><span ng-bind-html="opt.name"></span></div>
+            <div>
+                <div class="md-radio-inline">
+                    <div class="md-radio margin-top-20">
+                        <input ng-disabled="vm.entry.locked" type="radio" id="checkbox_q1_{{opt.id}}_ans1" ng-change="vm.updateCriteria('q1_1')" name="radio_q1_{{opt.id}}_ans1" ng-model="vm.entry.q1_1[$index]" value="1" class="md-radiobtn">
+                        <label for="checkbox_q1_{{opt.id}}_ans1">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="md-radio-inline">
+                    <div class="md-radio margin-top-20">
+                        <input ng-disabled="vm.entry.locked" type="radio" id="checkbox_q1_{{opt.id}}_ans2" ng-change="vm.updateCriteria('q1_1')" name="radio_q1_{{opt.id}}_ans2" ng-model="vm.entry.q1_1[$index]" value="2" class="md-radiobtn">
+                        <label for="checkbox_q1_{{opt.id}}_ans2">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="md-radio-inline">
+                    <div class="md-radio margin-top-20">
+                        <input ng-disabled="vm.entry.locked" type="radio" id="checkbox_q1_{{opt.id}}_ans3" ng-change="vm.updateCriteria('q1_1')" name="radio_q1_{{opt.id}}_ans3" ng-model="vm.entry.q1_1[$index]" value="3" class="md-radiobtn">
+                        <label for="checkbox_q1_{{opt.id}}_ans3">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-2-col margin-top-20">
+    <div class="grid-body">
+        <div ng-if="vm.entry.q1_1a && vm.entry.q1_1a != 1">
+            <div>Nếu ở câu hỏi 1.1.a câu trả lời không phải là "Có/Tất cả/Luôn luôn" vui lòng giải thích ngắn gọn</div>
+            <div>
+                <textarea ng-disabled="vm.entry.locked" class="form-control" rows="4" data-ng-model="vm.entry.q1_1a_text" placeholder="Nhập nội dung..."></textarea>
+            </div>
+        </div>
+        <div ng-if="vm.entry.q1_1b && vm.entry.q1_1b != 1">
+            <div>Nếu ở câu hỏi 1.1.b câu trả lời không phải là "Có/Tất cả/Luôn luôn" vui lòng giải thích ngắn gọn</div>
+            <div>
+                <textarea ng-disabled="vm.entry.locked" class="form-control" rows="4" data-ng-model="vm.entry.q1_1b_text" placeholder="Nhập nội dung..."></textarea>
+            </div>
+        </div>
+        <div ng-if="vm.entry.q1_1c && vm.entry.q1_1c != 1">
+            <div>Nếu ở câu hỏi 1.1.c câu trả lời không phải là "Có/Tất cả/Luôn luôn" vui lòng giải thích ngắn gọn</div>
+            <div>
+                <textarea ng-disabled="vm.entry.locked" class="form-control" rows="4" data-ng-model="vm.entry.q1_1c_text" placeholder="Nhập nội dung..."></textarea>
+            </div>
+        </div>
+        <div ng-if="vm.entry.q1_1d && vm.entry.q1_1d != 1">
+            <div>Nếu ở câu hỏi 1.1.d câu trả lời không phải là "Có/Tất cả/Luôn luôn" vui lòng giải thích ngắn gọn</div>
+            <div>
+                <textarea ng-disabled="vm.entry.locked" class="form-control" rows="4" data-ng-model="vm.entry.q1_1d_text" placeholder="Nhập nội dung..."></textarea>
+            </div>
+        </div>
+    </div>
+</div>

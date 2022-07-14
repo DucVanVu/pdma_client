@@ -1,0 +1,293 @@
+/**
+ * Created by bizic on 30/8/2016.
+ */
+(function () {
+    'use strict';
+
+    angular.module('PDMA.Treatment').service('PregnancyService', PregnancyService);
+
+    PregnancyService.$inject = [
+        '$http',
+        '$q',
+        'settings',
+        'Utilities'
+    ];
+
+    function PregnancyService($http, $q, settings, utils) {
+        let self = this;
+        let baseUrl = settings.api.baseUrl + settings.api.apiV1Url;
+
+        self.getEntry = getEntry;
+        self.getEntries = getEntries;
+        self.saveEntry = saveEntry;
+        self.deleteEntries = deleteEntries;
+        self.getTableDefinition = getTableDefinition;
+
+        function getEntry(id) {
+            if (!id) {
+                return $q.when(null);
+            }
+
+            let url = baseUrl + 'pregnancy/' + id;
+            return utils.resolve(url, 'GET', angular.noop, angular.noop);
+        }
+
+        function getEntries(filter) {
+            let url = baseUrl + 'pregnancy/list';
+
+            return utils.resolveAlt(url, 'POST', null, filter, {
+                'Content-Type': 'application/json; charset=utf-8'
+            }, angular.noop, angular.noop);
+        }
+
+        function saveEntry(entry, successCallback, errorCallback) {
+            let url = baseUrl + 'pregnancy';
+            entry.active = entry.active == null ? 0 : entry.active;
+
+            return utils.resolveAlt(url, 'POST', null, entry, {
+                'Content-Type': 'application/json; charset=utf-8'
+            }, successCallback, errorCallback);
+        }
+
+        function deleteEntries(dtos, successCallback, errorCallback) {
+            if (!dtos || dtos.length <= 0) {
+                return $q.when(null);
+            }
+
+            let url = baseUrl + 'pregnancy';
+            return utils.resolveAlt(url, 'DELETE', null, dtos, {
+                'Content-Type': 'application/json; charset=utf-8'
+            }, successCallback, errorCallback);
+        }
+
+        function getTableDefinition(orgsWritable, isSiteManager) {
+
+            let _tableOperation = function (value, row, index) {
+                let org = row.organization;
+                if (!org || !org.id || !orgsWritable || orgsWritable.length <= 0) {
+                    return '&mdash;';
+                }
+
+                let ret = '';
+
+                if (!isSiteManager) {
+                    ret = '<button disabled="disabled" class="btn btn-sm btn-default no-border margin-right-20"><i class="icon-pencil margin-right-5"></i>Sửa</button>';
+                    ret += '<button disabled="disabled" class="btn btn-sm btn-default no-border"><i class="icon-trash margin-right-5"></i>Xoá</button>';
+                } else {
+                    if (utils.indexOf(org, orgsWritable) >= 0) {
+                        ret = '<a class="btn btn-sm btn-primary no-border margin-right-20" href="#" ng-click="$parent.editEntry(' + "'" + row.id + "'" + ')"><i class="icon-pencil margin-right-5"></i>Sửa</a>';
+                        ret += '<a class="btn btn-sm btn-danger no-border margin-right-20" href="#" ng-click="$parent.deleteEntry(' + "'" + row.id + "'" + ')"><i class="icon-trash margin-right-5"></i>Xoá</a>';
+                    } else {
+                        ret = '<button disabled="disabled" class="btn btn-sm btn-default no-border margin-right-20"><i class="icon-pencil margin-right-5"></i>Sửa</button>';
+                        ret += '<button disabled="disabled" class="btn btn-sm btn-default no-border"><i class="icon-trash margin-right-5"></i>Xoá</button>';
+                    }
+                }
+
+                return ret;
+            };
+
+            let _tableOperationCellStyle = function (value, row, index, field) {
+                return {
+                    classes: '',
+                    css: {'white-space': 'nowrap', 'width': '70px'}
+                };
+            };
+
+            let _cellNowrap = function (value, row, index, field) {
+                return {
+                    classes: '',
+                    css: {'white-space': 'nowrap'}
+                };
+            };
+
+            return [
+                {
+                    field: '',
+                    title: 'Thao tác',
+                    switchable: false,
+                    visible: true,
+                    formatter: _tableOperation,
+                    cellStyle: _tableOperationCellStyle
+                }, {
+                    field: 'organization',
+                    title: 'Cơ sở ghi nhận thông tin',
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (value && value.name) {
+                            return '<span class="font-weight-600">' + value.name + '</span>';
+                        } else {
+                            return '&mdash;';
+                        }
+                    }
+                }, {
+                    field: 'pregnant',
+                    title: 'Tình trạng thai nghén',
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (!value) {
+                            return 'Không mang thai';
+                        } else {
+                            return 'Có mang thai';
+                        }
+                    }
+                }, {
+                    field: 'lastMenstrualPeriod',
+                    title: 'Ngày của kì kinh cuối',
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (!value) {
+                            return '&mdash;';
+                        } else {
+                            return moment(value).format('DD/MM/YYYY');
+                        }
+                    }
+                }, {
+                    field: 'dueDate',
+                    title: 'Ngày dự sinh',
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (!value) {
+                            return '&mdash;';
+                        } else {
+                            return moment(value).format('DD/MM/YYYY');
+                        }
+                    }
+                }, {
+                    field: 'pregResult',
+                    title: 'Tình trạng sinh nở',
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        switch (value) {
+                            case null:
+                                return '&mdash;';
+                            case 'STILLBIRTH':
+                                return 'Chưa sinh';
+                            case 'GAVEBIRTH':
+                                return '<span class="bold text-green">Đã sinh</span>';
+                            case 'MISCARRIAGE':
+                                return '<span class="bold text-danger">Bị sẩy thai</span>';
+                            case 'ABORTION':
+                                return '<span class="bold text-danger">Đã phá thai</span>';
+                            case 'UNKNOWN':
+                                return 'Không rõ';
+                        }
+                    }
+                }, {
+                    field: 'childDob',
+                    title: 'Ngày sinh',
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (!value) {
+                            return '&mdash;';
+                        } else {
+                            return moment(value).format('DD/MM/YYYY');
+                        }
+                    }
+                }, {
+                    field: 'childHIVStatus',
+                    title: 'XN HIV+ của con',
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (row.pregResult == 'GAVEBIRTH') {
+                            switch (value) {
+                                case null, 0:
+                                    return 'Không có thông tin';
+                                case 1:
+                                    return 'Nhiễm HIV';
+                                case 2:
+                                    return 'Không nhiễm HIV';
+                                case 3:
+                                    return 'Không rõ';
+                            }
+                        } else {
+                            return '&mdash;';
+                        }
+                    }
+                }, {
+                    field: 'childProphylaxis',
+                    title: 'Điều trị dự phòng cho con',
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (row.pregResult == 'GAVEBIRTH') {
+                            switch (value) {
+                                case null, 0:
+                                    return 'Không có thông tin';
+                                case 1:
+                                    return 'Có điều trị';
+                                case 2:
+                                    return 'Không điều trị';
+                                case 3:
+                                    return 'Không rõ';
+                            }
+                        } else {
+                            return '&mdash;';
+                        }
+                    }
+                }, {
+                    field: 'childInitiatedOnART',
+                    title: 'Điều trị ARV cho con',
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (row.childHIVStatus == 1) {
+                            switch (value) {
+                                case null:
+                                    return '&mdash';
+                                case true:
+                                    return 'Đã đưa vào điều trị';
+                                case false:
+                                    return 'Chưa điều trị';
+                            }
+                        } else {
+                            return '&mdash;';
+                        }
+                    }
+                }, {
+                    field: 'childOpc',
+                    title: 'Cơ sở điều trị ARV cho con',
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (value) {
+                            return value;
+                        } else {
+                            return '&mdash;';
+                        }
+                    }
+                }, {
+                    field: 'note',
+                    title: 'Ghi chú',
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (value) {
+                            return value;
+                        } else {
+                            return '&mdash;';
+                        }
+                    }
+                }
+            ]
+        }
+    }
+
+})();

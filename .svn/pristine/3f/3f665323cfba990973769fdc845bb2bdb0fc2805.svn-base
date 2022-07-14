@@ -1,0 +1,48 @@
+<script type="text/ng-template" id="daily_appointments.html">
+    <div modal-movable auto-height="no" sticky-toolbar="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Xem nhanh lịch khám &mdash; Ngày {{vm.selectedDate | date: 'dd/MM/yyyy'}}</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-12 opc-toolbar">
+                    <button class="btn btn-primary no-border" ng-click="vm.redirect2AppointmentEdit()" uib-tooltip="Cập&nbsp;nhật&nbsp;lịch khám khám - cấp thuốc" tooltip-placement="auto"><i class="icon-pencil margin-right-10"></i>Cập nhật lịch khám</button>
+                    <div class="vertical-seperator float-right"></div>
+                    <button class="btn btn-danger no-border"><i class="fa fa-external-link margin-right-10"></i>Xem bệnh nhân muộn khám</button>
+                    <div class="vertical-seperator float-right"></div>
+                    <div class="btn-group">
+                        <a type="button" class="btn btn-default no-border dropdown-toggle" data-toggle="dropdown" tabindex="-1">
+                            <i class="fa fa-print"></i> In lịch <i class="fa fa-angle-down"></i>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li>
+                                <button class="btn btn-default no-border"  print-page="bsTableControl"><i class="fa fa-download"></i> In trên máy in</button>
+                            </li>
+                            <li class="divider"> </li>
+                            <li>
+                                <button ng-click="vm.exportAppointments();" class="btn btn-default no-border"><i class="fa fa-download"></i> Xuất ra tệp tin Excel</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="vertical-seperator float-right"></div>
+                    <button type="button" ng-click="$dismiss()" class="btn btn-default no-border" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Đóng lại</button>
+                    <!--<div class="vertical-seperator float-right hidden-xs"></div>-->
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 margin-top-20">
+                    <table id="bsTableControl" bs-table-control="vm.bsTableControl"></table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 margin-bottom-15 padding-left-30" ng-if="vm.bsTableControl.options.totalRows > 0">
+                <span ng-if="vm.bsTableControl.options.todayCount > 0 && vm.bsTableControl.options.lateCount > 0">Có {{vm.bsTableControl.options.todayCount}} bệnh nhân được hẹn, {{vm.bsTableControl.options.lateCount}} bệnh nhân <span class="bold text-danger">muộn khám</span> có thể tới khám.</span>
+                <span ng-if="vm.bsTableControl.options.todayCount <= 0 && vm.bsTableControl.options.lateCount > 0">Không có bệnh nhân được hẹn, {{vm.bsTableControl.options.lateCount}} bệnh nhân <span class="bold text-danger">muộn khám</span> có thể tới khám.</span>
+                <span ng-if="vm.bsTableControl.options.todayCount > 0 && vm.bsTableControl.options.lateCount <= 0">Có {{vm.bsTableControl.options.todayCount}} bệnh nhân được hẹn, không có bệnh nhân muộn khám.</span>
+            </div>
+            <div class="col-xs-12  padding-left-30 margin-bottom-10" ng-if="vm.bsTableControl.options.totalRows <= 0">Chưa có bệnh nhân nào được hẹn khám vào ngày {{vm.selectedDate | date : 'dd/MM/yyyy'}}</div>
+        </div>
+    </div>
+</script>

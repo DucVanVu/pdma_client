@@ -1,0 +1,500 @@
+/**
+ * Created by bizic on 30/8/2016.
+ */
+(function () {
+    'use strict';
+
+    angular.module('PDMA.SELF_TEST').service('SelfTestService', SelfTestService);
+
+    SelfTestService.$inject = [
+        '$http',
+        '$q',
+        'settings',
+        'Utilities'
+    ];
+
+    function SelfTestService($http, $q, settings, utils) {
+        let self = this;
+        let baseUrl = settings.api.baseUrl + settings.api.apiV1Url;
+
+        self.getTableDefinition = getTableDefinition;
+        self.getSpecimensTableDef = getSpecimensTableDef;
+        self.getEntries = getEntries;
+        self.getEntry = getEntry;
+        self.getSpecimen = getSpecimen;
+        self.export2Excel = export2Excel;
+        self.saveEntry = saveEntry;
+        self.saveSpecimen = saveSpecimen;
+        self.deleteEntries = deleteEntries;
+        self.deleteSpecimens = deleteSpecimens;
+
+        function getEntry(id) {
+            if (!id) {
+                return $q.when(null);
+            }
+
+            let url = baseUrl + 'self_test/' + id;
+            return utils.resolve(url, 'GET', angular.noop, angular.noop);
+        }
+
+        function getSpecimen(id) {
+            if (!id) {
+                return $q.when(null);
+            }
+
+            let url = baseUrl + 'self_test/specimen/' + id;
+            return utils.resolve(url, 'GET', angular.noop, angular.noop);
+        }
+
+        function getEntries(filter, successCallback, errorCallback) {
+            let url = baseUrl + 'self_test/list';
+
+            return utils.resolveAlt(url, 'POST', null, filter, {
+                'Content-Type': 'application/json; charset=utf-8'
+            }, successCallback, errorCallback);
+        }
+
+        /**
+         * Export self test data 2 excel
+         * @returns {*}
+         */
+        function export2Excel(filter) {
+            let url = baseUrl + 'self_test/export';
+
+            return $http({
+                method: 'POST',
+                url: url,
+                params: null,
+                data: filter,
+                headers: {'Content-Type': 'application/json; charset=utf-8'},
+                cache: false,
+                responseType: 'arraybuffer'
+            });
+        }
+
+        function saveEntry(entry, successCallback, errorCallback) {
+            let url = baseUrl + 'self_test';
+
+            return utils.resolveAlt(url, 'POST', null, entry, {
+                'Content-Type': 'application/json; charset=utf-8'
+            }, successCallback, errorCallback);
+        }
+
+        function saveSpecimen(entry, successCallback, errorCallback) {
+            let url = baseUrl + 'self_test/specimen';
+
+            return utils.resolveAlt(url, 'POST', null, entry, {
+                'Content-Type': 'application/json; charset=utf-8'
+            }, successCallback, errorCallback);
+        }
+
+        function deleteEntries(dtos, successCallback, errorCallback) {
+            if (!dtos || dtos.length <= 0) {
+                return $q.when(null);
+            }
+
+            let url = baseUrl + 'self_test';
+            return utils.resolveAlt(url, 'DELETE', null, dtos, {
+                'Content-Type': 'application/json; charset=utf-8'
+            }, successCallback, errorCallback);
+        }
+
+        function deleteSpecimens(dtos, successCallback, errorCallback) {
+            if (!dtos || dtos.length <= 0) {
+                return $q.when(null);
+            }
+
+            let url = baseUrl + 'self_test/specimen';
+            return utils.resolveAlt(url, 'DELETE', null, dtos, {
+                'Content-Type': 'application/json; charset=utf-8'
+            }, successCallback, errorCallback);
+        }
+
+        function getTableDefinition(isSiteManager) {
+
+            let _tableOperation = function (value, row, index) {
+                let s = '';
+
+                if (!isSiteManager) {
+                    s += '<a class="btn btn-sm btn-primary no-border margin-right-20" href="#/prevention/st_edit/' + row.id + '"><i class="icon-frame margin-right-5"></i>Xem chi tiết</a>';
+                } else {
+                    s += '<a class="btn btn-sm btn-primary no-border margin-right-20" href="#/prevention/st_edit/' + row.id + '"><i class="icon-pencil margin-right-5"></i>Chỉnh sửa</a>';
+                    s += '<button class="btn btn-sm btn-danger no-border margin-right-20" data-ng-click="$parent.deleteEntry(' + "'" + row.id + "'" + ')"><i class="icon-trash margin-right-5"></i>Xoá</button>';
+                }
+
+                return s;
+            };
+
+            let _cellNowrap = function (value, row, index, field) {
+                return {
+                    classes: '',
+                    css: {'white-space': 'nowrap'}
+                };
+            };
+
+            let _activeFormatter = function (value, row, index) {
+                return (value == 0) ? '<span class="text-muted">Không sử dụng</span>' : (value == 1) ? '<span class="text-green">Đang sử dụng</span>' : '';
+            };
+
+            return [
+                {
+                    field: '',
+                    title: 'Thao tác',
+                    switchable: true,
+                    visible: true,
+                    formatter: _tableOperation,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'organization.name',
+                    title: 'Tên đơn vị',
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        return value;
+                    }
+                }, {
+                    field: 'dispensingStaff',
+                    title: 'Nhân viên cấp sinh phẩm',
+                    sortable: false,
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (!value || !value.fullName) {
+                            return '&mdash;';
+                        }
+
+                        return value.fullName;
+                    }
+                }, {
+                    field: 'dispensingDate',
+                    title: 'Ngày cấp sinh phẩm',
+                    sortable: false,
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'specimens',
+                    title: 'Số sinh phẩm cấp',
+                    sortable: false,
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        let arr = [];
+                        angular.forEach(value, function (obj) {
+                            if (arr.length > 0) {
+                                let indx = _.findIndex(arr, {'code': obj.code});
+                                if (indx >= 0) {
+                                    arr[indx].count++;
+                                } else {
+                                    arr.push({code: obj.code, name: obj.name, count: 1});
+                                }
+                            } else {
+                                arr.push({code: obj.code, name: obj.name, count: 1});
+                            }
+                        });
+
+                        let s = '';
+                        angular.forEach(arr, function (obj) {
+                            s += obj.name + ' ( x' + obj.count + ' )';
+                            s += '; ';
+                        });
+
+                        if (s.endsWith('; ')) {
+                            s = s.substring(0, s.length - 2);
+                        }
+
+                        return s;
+                    }
+                }
+                , {
+                    field: 'person.fullname',
+                    title: 'Tên khách hàng',
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        return '<span class="font-weight-600">' + value + '</span>';
+                    }
+                }, {
+                    field: 'person.mobilePhone',
+                    title: 'Điện thoại khách hàng',
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (!value) {
+                            return '&mdash;';
+                        }
+
+                        return value;
+                    }
+                }, {
+                    field: 'person.locations',
+                    title: 'Địa chỉ khách hàng',
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+
+                        let curAddress = {};
+
+                        angular.forEach(value, function (loc) {
+                            if (loc.addressType === 'CURRENT_ADDRESS') {
+                                angular.copy(loc, curAddress);
+                            }
+                        });
+
+                        let address = '';
+                        if (curAddress && curAddress.id) {
+                            if (curAddress.province) {
+                                address += curAddress.province.name;
+                                address += ', ';
+                            }
+
+                            if (curAddress.district) {
+                                address += curAddress.district.name;
+                                address += ', ';
+                            }
+
+                            if (curAddress.commune) {
+                                address += curAddress.commune.name;
+                                address += ', ';
+                            }
+
+                            if (curAddress.streetAddress) {
+                                address += curAddress.streetAddress;
+                            }
+
+                            address = address.trim();
+                            address = address.endsWith(',') ? address.substr(0, address.length - 1) : address;
+                        }
+
+                        let addressString = '<span class="font-weight-500">';
+                        addressString += (address.length > 0 ? address : '&mdash;');
+                        addressString += '</span>';
+
+                        return addressString;
+                    }
+                }
+            ]
+        }
+
+        function getSpecimensTableDef(isSiteManager) {
+            let _tableOperation = function (value, row, index) {
+                let s = '';
+
+                if (!isSiteManager) {
+                    s = '<button disabled="disabled" class="btn btn-sm btn-default no-border margin-right-20"><i class="icon-pencil margin-right-5"></i>Chỉnh sửa</button>';
+                    s += '<button disabled="disabled" class="btn btn-sm btn-default no-border"><i class="icon-trash margin-right-5"></i>Xoá</button>';
+                } else {
+                    s += '<a class="btn btn-sm btn-primary no-border margin-right-20" href="#" data-ng-click="$parent.editSpecimenEntry(' + "'" + row.id + "'" + ')"><i class="icon-pencil margin-right-5"></i>Chỉnh sửa</a>';
+                    s += '<a class="btn btn-sm btn-danger no-border margin-right-20" href="#" data-ng-click="$parent.deleteSpecimenEntry(' + "'" + row.id + "'" + ')"><i class="icon-trash margin-right-5"></i>Xoá</a>';
+                }
+
+                return s;
+            };
+
+            let _cellNowrap = function (value, row, index, field) {
+                return {
+                    classes: '',
+                    css: {'white-space': 'nowrap'}
+                };
+            };
+
+            return [
+                {
+                    field: '',
+                    title: 'Thao tác',
+                    switchable: true,
+                    visible: true,
+                    formatter: _tableOperation,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'name',
+                    title: 'Sinh phẩm xét nghiệm',
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        return value;
+                    }
+                }, {
+                    field: 'support',
+                    title: 'Hình thức xét nghiệm',
+                    sortable: false,
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (!value) {
+                            return '&mdash;';
+                        }
+
+                        let supportTypes = [
+                            {code: 'W_SUPPORT', name: 'Có hỗ trợ trực tiếp'},
+                            {code: 'WO_SUPPORT', name: 'Không có hỗ trợ'}
+                        ];
+
+                        let indx = _.findIndex(supportTypes, {'code': value});
+
+                        if (indx >= 0) {
+                            return supportTypes[indx].name;
+                        }
+
+                        return '&mdash;';
+                    }
+                }, {
+                    field: 'clientYob',
+                    title: 'Năm sinh',
+                    sortable: false,
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (!value) {
+                            return '&mdash;';
+                        }
+
+                        return value;
+                    }
+                }, {
+                    field: 'clientGender',
+                    title: 'Giới tính',
+                    sortable: false,
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (!value) {
+                            return '&mdash;';
+                        }
+
+                        let genderList = [
+                            {code: 'MALE', name: 'Nam'},
+                            {code: 'FEMALE', name: 'Nữ'}
+                        ];
+
+                        let indx = _.findIndex(genderList, {'code': value});
+
+                        if (indx >= 0) {
+                            return genderList[indx].name;
+                        }
+
+                        return '&mdash;';
+                    }
+                }, {
+                    field: 'client',
+                    title: 'Người sử dụng sinh phẩm',
+                    sortable: false,
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (!value) {
+                            return '&mdash;';
+                        }
+
+                        let clients = [
+                            {code: 'SELF', name: 'Bản thân'},
+                            {code: 'SEXUAL_PARTNER', name: 'Bạn tình'},
+                            {code: 'IDU_PARTNER', name: 'Bạn chích chung'},
+                            {code: 'OTHER', name: 'Bạn khác'}
+                        ];
+
+                        let indx = _.findIndex(clients, {'code': value});
+
+                        if (indx >= 0) {
+                            return clients[indx].name;
+                        }
+
+                        return '&mdash;';
+                    }
+                }, {
+                    field: 'clientRiskGroup',
+                    title: 'Nhóm nguy cơ',
+                    sortable: false,
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (!value) {
+                            return '&mdash;';
+                        }
+
+                        let risks = [
+                            {code: 'PWID', name: 'Tiêm chích ma tuý'},
+                            {code: 'MSM', name: 'Nam quan hệ đồng giới (MSM)'},
+                            {code: 'TG', name: 'Chuyển giới'},
+                            {code: 'FSW', name: 'Nữ bán dâm'},
+                            {code: 'PLHIV_PARTNER', name: 'BT/BC của người có HIV'},
+                            {code: 'OTHER', name: 'Khác'}
+                        ];
+
+                        let indx = _.findIndex(risks, {'code': value});
+
+                        if (indx >= 0) {
+                            return risks[indx].name;
+                        }
+
+                        return '&mdash;';
+                    }
+                }, {
+                    field: 'screenResult',
+                    title: 'Kết quả tự xét nghiệm',
+                    sortable: false,
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (!value) {
+                            return '&mdash;';
+                        }
+
+                        let screenResults = [
+                            {code: 'NONE_REACTIVE', name: 'Không phản ứng'},
+                            {code: 'REACTIVE', name: 'Có phản ứng'},
+                            {code: 'OTHER', name: 'Từ chối trả lời/không biết'}
+                        ];
+
+                        let indx = _.findIndex(screenResults, {'code': value});
+
+                        if (indx >= 0) {
+                            return screenResults[indx].name;
+                        }
+
+                        return '&mdash;';
+                    }
+                }, {
+                    field: 'confirmResult',
+                    title: 'Kết quả khẳng định HIV',
+                    sortable: false,
+                    switchable: false,
+                    visible: true,
+                    cellStyle: _cellNowrap,
+                    formatter: function (value, row, index) {
+                        if (!value) {
+                            return '&mdash;';
+                        }
+
+                        let confirmResults = [
+                            {code: 'POSITIVE', name: 'Dương tính'},
+                            {code: 'NEGATIVE', name: 'Âm tính'},
+                            {code: 'OTHER', name: 'Từ chối trả lời/không biết'}
+                        ];
+
+                        let indx = _.findIndex(confirmResults, {'code': value});
+
+                        if (indx >= 0) {
+                            return confirmResults[indx].name;
+                        }
+
+                        return '&mdash;';
+                    }
+                }
+            ]
+        }
+    }
+})();

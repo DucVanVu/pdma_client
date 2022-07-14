@@ -1,0 +1,44 @@
+<script type="text/ng-template" id="tb_prophylaxis2_dispense_stop_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title" ><i class="icon-plus"></i>Ngưng điều trị dự phòng lao</h4>            
+        </div>
+        <div class="modal-body">
+            <div class="row">
+				<div class="col-xs-6 form-controller-alt-2">
+                    <label class="bold">Thời điểm ngừng điều trị dự phòng lao</label>
+                    <input id="vm.tbProphylaxisDispense2Entry.recordDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.tbProphylaxisDispense2DatepickerRecordDate.dateOpts"
+                           fp-on-setup="vm.tbProphylaxisDispense2DatepickerRecordDate.datePostSetup(fpItem)"
+                           ng-model="vm.tbProphylaxisDispense2Entry.recordDate"
+                           data-enabletime="false" />
+                    <a ng-if="vm.tbProphylaxisDispense2Entry.recordDate" class="clear-picker input-has-label" ng-click="vm.tbProphylaxisDispense2DatepickerRecordDate.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                </div>			
+                <div class="col-xs-6">
+                    <label class="bold">Lý do ngừng điều trị dự phòng lao</label>
+                    <ui-select id="vm.tbProphylaxisDispense2Entry.stopReason" ng-model="vm.tbProphylaxisDispense2Entry.stopReason" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="r.id as r in vm.stopReasons | filter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="r.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                
+				
+                <div class="col-xs-12" ng-if="vm.tbProphylaxisDispense2Entry.stopReason=='OTHER'">
+                    <label class="bold">Ghi rõ lý do khác</label>
+                    <textarea ng-model="vm.tbProphylaxisDispense2Entry.note" class="form-control" rows="2"></textarea>
+                </div>
+            
+            </div>
+            
+           
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default no-border" data-dismiss="modal">Hủy</button>
+            <button type="button" ng-click="vm.saveTBProphylaxisDispense2StopEntry();"  class="btn btn-primary jumping" data-dismiss="modal">Xác nhận</button>
+        </div>
+    </div>
+</script>

@@ -1,0 +1,149 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="fa fa-wheelchair-alt margin-right-5"></i> Điều trị bằng thuốc thay thế</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#/opc/patients"><i class="fa fa-th-large"></i> Danh sách</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#/opc/view-patient/{{vm.patient.id}}">{{vm.patient.theCase.person.fullname}}</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#">Điều trị Methadone</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs sticky-panel" hl-sticky="" sticky-class="is-sticky custom-alt">
+                                <li class="uppercase">
+                                    <a href="#/opc-dashboard" uib-tooltip="Tổng quan"><i class="fa fa-area-chart"></i><span class="hidden-xs" ng-class="{'hidden-sm' : isSiteManager(currentUser) || (vm.selectedEntry && vm.selectedEntry.theCase.person)}"> Tổng quan</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/patients" uib-tooltip="Quản&nbsp;lý bệnh&nbsp;nhân"><i class="fa fa-wheelchair-alt"></i><span class="hidden-xs hidden-sm hidden-md"> Bệnh nhân</span></a>
+                                </li>
+                                <li class="uppercase" ng-if="isSiteManager(currentUser)">
+                                    <a href="#/opc/appointment-cal/edit" uib-tooltip="Khám&nbsp;bệnh&nbsp;-&nbsp;Cấp&nbsp;thuốc"><i class="icon-calendar"></i><span class="hidden-xs"> Lịch khám </span></a>
+                                    <!--<span class="tab-new-function"><i class="fa fa-flash"></i> mới</span>-->
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/report" uib-tooltip="Báo&nbsp;cáo"><i class="fa fa-bar-chart"></i><span class="hidden-xs"> Báo cáo</span></a>
+                                </li>
+                                <li class="active uppercase">
+                                    <a href="#"><i class="icon-pencil"></i> <span class="bold">Điều trị MMT:</span> {{vm.patient.theCase.person.fullname}}</a>
+                                </li>
+                                <li class="uppercase" ng-if="vm.editingEntry">
+                                    <a uib-tooltip="Cập&nbsp;nhật&nbsp;hồ&nbsp;sơ" href="#/opc/edit-patient/{{vm.editingEntry.id ? vm.editingEntry.id : 0}}"><i class="icon-pencil"></i> {{vm.editingEntry.theCase.person && vm.editingEntry.theCase.person.fullname ? vm.editingEntry.theCase.person.fullname : 'Bệnh nhân mới'}}</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content summary-panel">
+                                <div class="tab-pane active margin-bottom-30">
+                                    <div class="info-box-alt"><span class="bold"><i class="im im-icon-Idea-2"></i> Chỉ dẫn:</span> Mục này giúp ghi nhận thông tin điều trị bằng thuốc thay thế (Methadone) của bệnh nhân {{vm.patient.theCase.person.fullname}}.</div>
+                                    <div class="opc-toolbar margin-top-10 margin-bottom-10">
+                                        <button data-ng-disabled="vm.orgsWritable.length <= 0 || !vm.patient.editable" ng-click="vm.openEditMMT();" class="btn btn-default no-border" uib-tooltip="Cập&nbsp;nhật"><i class="icon-pencil margin-right-10"></i><span class="hidden-xs">Cập nhật thông tin</span></button>
+                                        <div class="vertical-seperator float-right"></div>
+                                        <button ng-click="vm.deleteEntry();" data-ng-disabled="vm.orgsWritable.length <= 0 || vm.entries.length <= 0 || !vm.patient.editable" class="btn btn-danger no-border" uib-tooltip="Xoá&nbsp;thông&nbsp;tin"><i class="icon-trash margin-right-10"></i><span class="hidden-xs">Xoá thông tin</span></button>
+                                        <div class="vertical-seperator float-right"></div>
+                                        <a href="#/opc/view-patient/{{vm.patient.id}}" uib-tooltip="Quay&nbsp;trở&nbsp;lại" class="btn btn-default no-border"><i class="fa fa-arrow-left"></i> Trở lại</a>
+                                    </div>
+                                    <table ng-if="vm.entries.length > 0" id="bsTableControl" bs-table-control="vm.bsTableControl"></table>
+                                    <div ng-if="vm.entries.length <= 0" class="no-content1 margin-bottom-30">Chưa cập nhật thông tin về điều trị bằng thuốc thay thế Methadone.<span ng-if="vm.orgsWritable.length > 0 && vm.patient.editable"> Bạn có thể <a href="#" ng-click="vm.openEditMMT();" class="bold">nhấn vào đây</a> để cập nhật.</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+
+<script type="text/ng-template" id="edit_entry_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" data-ng-disabled="true" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-pencil"></i> Cập nhật thông tin điều trị Methadone</h4>
+        </div>
+        <div class="modal-body summary-panel">
+            <div class="row">
+                <div class="col-xs-12 margin-top-10">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_on_mmt" ng-model="vm.entry.onMMT" class="md-check">
+                        <label for="chk_on_mmt" class="bold">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Bệnh nhân được điều trị Methadone.
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row margin-top-20">
+                <div class="col-xs-6 form-controller-alt-2">
+                    <label class="bold">Ngày bắt đầu điều trị</label>
+                    <input id="vm.entry.startDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker1.dateOpts"
+                           fp-on-setup="vm.datepicker1.datePostSetup(fpItem)"
+                           ng-model="vm.entry.startDate"
+                           data-enabletime="false" />
+                    <a ng-if="vm.entry.startDate" class="clear-picker input-has-label" ng-click="vm.datepicker1.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                </div>
+                <div class="col-xs-6 form-controller-alt-2">
+                    <label>Ngày kết thúc điều trị</label>
+                    <input id="vm.entry.endDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker2.dateOpts"
+                           fp-on-setup="vm.datepicker2.datePostSetup(fpItem)"
+                           ng-model="vm.entry.endDate"
+                           data-enabletime="false" />
+                    <a ng-if="vm.entry.endDate" class="clear-picker input-has-label" ng-click="vm.datepicker2.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                </div>
+            </div>
+            <div class="row margin-top-20">
+                <div class="col-xs-12">
+                    <label>Tên cơ sở điều trị</label>
+                    <input type="text" class="form-control" ng-model="vm.entry.facilityName" />
+                </div>
+            </div>
+            <div class="row margin-top-20">
+                <div class="col-xs-12">
+                    <label>Ghi chú</label>
+                    <textarea class="form-control" ng-model="vm.entry.note" rows="2"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Bỏ qua</button>
+            <button type="button" ng-click="vm.saveEntry()" class="btn btn-primary" data-dismiss="modal">Lưu lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="delete_entry_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Xoá bản ghi</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="icon-exclamation"></i></div>
+            <div><span>Bạn có chắc chắn muốn xoá bản ghi đã chọn không?</span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Không</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-danger no-border" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>Có</button>
+        </div>
+    </div>
+</script>
+
+<div ng-include="'_treatment/views/fragments/_noneditable_alert.html?v=' + settings.versionNumber"></div>

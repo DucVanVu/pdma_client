@@ -1,0 +1,41 @@
+<script type="text/ng-template" id="clinical_stages_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="fa fa-line-chart"></i> Lịch sử thay đổi giai đoạn lâm sàng của bệnh nhân</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-12 opc-toolbar">
+                    <button data-ng-disabled="true" class="btn btn-primary no-border"><i class="fa fa-plus margin-right-10"></i>Giai đoạn lâm sàng mới</button>
+                    <div class="vertical-seperator float-right"></div>
+                    <button ng-click="vm.deleteClinicalStage();" class="btn btn-danger no-border" data-ng-disabled="vm.orgsWritable.length <= 0 || !vm.selClinicalStage || !vm.selClinicalStage.id"><i class="icon-trash margin-right-10"></i>Xóa</button>
+                </div>
+                <div class="col-xs-12 margin-top-10">
+                    <table id="bsTableControl4ClinicalStages" bs-table-control="vm.bsTableControl4ClinicalStages"></table>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="delete_clinical_stage_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Xoá bản ghi</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="icon-exclamation"></i></div>
+            <div><span>Bạn có chắc chắn muốn xoá thông tin giai đoạn lâm sàng đã chọn của bệnh nhân <strong>{{vm.entry.person.fullname}}</strong> không?
+            </span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Không</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-danger no-border" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>Có</button>
+        </div>
+    </div>
+</script>

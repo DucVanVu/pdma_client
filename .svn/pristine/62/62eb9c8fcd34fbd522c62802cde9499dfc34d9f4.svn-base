@@ -1,0 +1,61 @@
+<div login-screen>
+    <div class="user-login-5">
+        <div class="row bs-reset">
+            <div class="col-md-6 bs-reset mt-login-5-bsfix">
+                <div class="login-bg" style="background-image:url(assets/images/bg3.jpg)">
+                    <img class="login-logo" src="assets/images/logo-light.png?v=2" />
+                </div>
+            </div>
+            <div class="col-md-6 login-container bs-reset mt-login-5-bsfix">
+                <div class="login-content">
+                    <h1>Đăng nhập hệ thống</h1>
+                    <p> Hệ thống báo cáo cho chương trình phòng - chống HIV/AIDS tại Việt Nam. Xin mời đăng nhập trước khi sử dụng.</p>
+                    <p ng-if="vm.showNewVersion" class="announcement"><span class="bold">Thông báo:</span> Hệ thống mới được nâng cấp lên phiên bản {{settings.clientVersion}}. Vui lòng giữ phím Ctrl và nhấn phím F5 nếu lần đầu bạn nhìn thấy thông báo này.</p>
+                    <form action="javascript:;" class="login-form" method="post">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <label class="bold">Tên đăng nhập</label>
+                                <input class="form-control form-control-solid username placeholder-no-fix form-group" type="text"  autocomplete="off" placeholder="Nhập tên đăng nhập..." id="username" data-ng-model="vm.user.username" /> </div>
+                            <div class="col-xs-6">
+                                <label class="bold">Mật khẩu</label>
+                                <input class="form-control form-control-solid password placeholder-no-fix form-group" type="password" autocomplete="off" placeholder="Nhập mật khẩu..." id="password" data-ng-model="vm.user.password" /> </div>
+                        </div>
+                        <div class="row">
+                            <div class="margin-top-20 col-sm-12 text-right">
+                                <div class="forgot-password">
+                                    <a href="javascript:;" ng-click="vm.forgotPassword()" id="forget-password" class="forget-password">Bạn đã quên mật khẩu?</a>
+                                </div>
+                                <button class="btn green" data-ng-click="vm.login()" class="btn green uppercase">Đăng nhập</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="login-footer">
+                    <div class="row bs-reset">
+                        <div class="col-xs-12 bs-reset">
+                            <div class="login-copyright text-right">
+                                <p>Hệ thống báo cáo PDMA Online - Phiên bản <b>{{settings.clientVersion}}</b></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/ng-template" id="forgot-password-modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-lock-open"></i> Quên mật khẩu?</h4>
+        </div>
+        <div class="modal-body">
+            <p>Vui lòng liên hệ với quản trị viên hệ thống để lấy lại mật khẩu tạm thời. Bạn cần phải đổi mật khẩu mới sau khi đăng nhập thành công.</p>
+            <p>Điện thoại liên hệ: <a class="bold" href="tel:+84348568106">034 856 8106</a></p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$close('yes')" class="btn btn-default" data-dismiss="modal">ĐÓNG LẠI</button>
+        </div>
+    </div>
+</script>

@@ -1,0 +1,29 @@
+<script type="text/ng-template" id="_coupon_existed_alert_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Thông báo</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="icon-exclamation"></i></div>
+            <div data-ng-if="vm.findByCodeCoupon.testOrganization">
+                <span>Mã khách hàng <span class="text-red">{{vm.findByCodeCoupon.couponCode}}</span> đã thực hiện xét nghiệm tại cơ sở
+                    <br/>
+                    <span class="text-red">{{vm.findByCodeCoupon.testOrganization.name}}</span>
+                    <br/>
+                    Bạn không thể tạo mới thông tin cho mã này
+                </span>
+            </div>
+            <div data-ng-if="!vm.findByCodeCoupon.testOrganization">
+                <span href="#/sns-edit/{{vm.findByCodeCoupon.id}}">Mã khách hàng <span class="text-red">{{vm.findByCodeCoupon.couponCode}}</span> đã tồn tại, bạn có muốn đi tới trang thông tin chi tiết cho mã này?</span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>
+                <span data-ng-if="!vm.findByCodeCoupon.testOrganization">Không</span>
+                <span data-ng-if="vm.findByCodeCoupon.testOrganization">Đóng lại</span>                
+            </button>
+            <button data-ng-if="!vm.findByCodeCoupon.testOrganization" type="button" ng-click="$close('yes')" class="btn btn-danger no-border" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>Có</button>
+        </div>
+    </div>
+</script>

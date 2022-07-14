@@ -1,0 +1,125 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="icon-calendar margin-right-5"></i> Bệnh nhân khám muộn</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#/opc/appointment-cal"><i class="fa fa-th-large"></i> Lịch khám</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#">Đặt lịch khám</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body" id="stickey-container">
+                <div class="display-block no-content1 margin-top-10" ng-if="isAdministrator(currentUser)">
+                    Bạn không có quyền xem nội dung này.
+                </div>
+                <div class="row" ng-if="!isAdministrator(currentUser)">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs">
+                                <li class="uppercase">
+                                    <a href="#/opc-dashboard" uib-tooltip="Tổng quan"><i class="fa fa-area-chart"></i><span class="hidden-xs" ng-class="{'hidden-sm' : isSiteManager(currentUser) || (vm.selectedEntry && vm.selectedEntry.theCase.person)}"> Tổng quan</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/patients" uib-tooltip="Quản&nbsp;lý bệnh&nbsp;nhân"><i class="fa fa-wheelchair-alt"></i><span class="hidden-xs hidden-sm hidden-md"> Bệnh nhân</span></a>
+                                </li>
+                                <li class="active uppercase" ng-if="isSiteManager(currentUser)">
+                                    <a href="#" uib-tooltip="Khám&nbsp;bệnh&nbsp;-&nbsp;Cấp&nbsp;thuốc"><i class="icon-calendar"></i><span class="hidden-xs"> Lịch khám </span></a>
+                                    <!--<span class="tab-new-function"><i class="fa fa-flash"></i> mới</span>-->
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/report" uib-tooltip="Báo&nbsp;cáo"><i class="fa fa-bar-chart"></i><span class="hidden-xs"> Báo cáo</span></a>
+                                </li>
+                                <li class="uppercase" ng-if="vm.selectedEntry && vm.selectedEntry.theCase.person && vm.selectedEntry.theCase.person.id">
+                                    <a uib-tooltip="Thông&nbsp;tin&nbsp;bệnh&nbsp;nhân" href="#/opc/view-patient/{{vm.selectedEntry.id}}"><i class="fa {{vm.selectedEntry.theCase.person.genderIcon}}"></i> {{vm.selectedEntry.theCase.person.fullname}} ({{vm.selectedEntry.theCase.person.age}} tuổi)</a>
+                                </li>
+                                <li class="uppercase" ng-if="vm.editingEntry">
+                                    <a uib-tooltip="Cập&nbsp;nhật&nbsp;hồ&nbsp;sơ" href="#/opc/edit-patient/{{vm.editingEntry.id ? vm.editingEntry.id : 0}}"><i class="icon-pencil"></i> {{vm.editingEntry.theCase.person && vm.editingEntry.theCase.person.fullname ? vm.editingEntry.theCase.person.fullname : 'Bệnh nhân mới'}}</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content summary-panel">
+                                <div class="tab-pane active margin-bottom-30">
+                                    <!--<div class="info-box-alt"><span class="bold"><i class="fa fa-lightbulb-o"></i> Chỉ dẫn:</span> Mục này giúp ghi nhận các lần xét nghiệm CD4 của bệnh nhân {{vm.patient.person.fullname}}.</div>-->
+                                    <div class="opc-toolbar margin-top-10 margin-bottom-10 sticky-panel" hl-sticky="" container="sticky-container" sticky-class="is-sticky custom-alt-2 padding-right-20 padding-left-20">
+                                        <div expandable-control="" class="input-group search col-lg-2 col-md-3 col-sm-4 col-xs-6 hidden-xs">
+                                            <input type="text" class="form-control border-bottom-only" ng-model="vm.filter.keyword" ng-enter="vm.getEntries()" placeholder="Tìm BN muộn khám..." />
+                                            <span class="indicator icon-magnifier"></span>
+                                        </div>
+                                        <span class="expandable-placeholder">nhấn ENTER để tìm...</span>
+                                        <div class="margin-right-10 toolbar-org-selector">
+                                            <ui-select uib-tooltip="Chọn cơ sở khám bệnh" tooltip-placement="auto" id="vm.filter.organization" ng-change="vm.getEntries()" ng-model="vm.filter.organization" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                <ui-select-match allow-clear="false" placeholder="Chọn cơ sở...">{{$select.selected.name}}</ui-select-match>
+                                                <ui-select-choices repeat="opc in vm.grantedOPCs | filter: {name: $select.search}">
+                                                    <div class="bold" ng-bind-html="opc.name | highlight: $select.search"></div>
+                                                    <div class="small">&mdash; {{opc.province}}</div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                        <div class="vertical-seperator float-right"></div>
+                                        <div class="btn-group margin-left-10">
+                                            <a type="button" class="btn dropdown-toggle" ng-class="{'btn-default no-border' : !vm.lateSelector.value, 'btn-danger' : vm.lateSelector.value > 0}" data-toggle="dropdown" tabindex="-1">
+                                                <i class="fa fa-filter"></i><span class="hidden-xs"> Lọc danh sách... </span><i class="fa fa-angle-down"></i>
+                                            </a>
+                                            <ul class="dropdown-menu pull-left">
+                                                <li>
+                                                    <button class="btn no-border" ng-class="{'btn-danger' : vm.lateSelector.value == 0, 'btn-default' : vm.lateSelector.value != 0}" ng-click="vm.lateSelector.change(0);" style="width: 100%; text-align: left;"><i class="fa margin-right-10" ng-class="{'fa-check' : vm.lateSelector.value == 0, 'fa-filter' : vm.lateSelector.value != 0}"></i>Tất cả bệnh nhân muộn khám</button>
+                                                </li>
+                                                <li class="divider"> </li>
+                                                <li>
+                                                    <button class="btn no-border" ng-class="{'btn-danger' : vm.lateSelector.value == 1, 'btn-default' : vm.lateSelector.value != 1}" ng-click="vm.lateSelector.change(1);" style="width: 100%; text-align: left;"><i class="fa margin-right-10" ng-class="{'fa-check' : vm.lateSelector.value == 1, 'fa-filter' : vm.lateSelector.value != 1}"></i>BN muộn >= 84 ngày</button>
+                                                </li>
+                                                <li class="divider" ng-if="vm.lateSelector.value == 2"> </li>
+                                                <li ng-if="vm.lateSelector.value == 2">
+                                                    <button class="btn no-border btn-danger" ng-class="{'btn-danger' : vm.lateSelector.value == 2, 'btn-default' : vm.lateSelector.value != 2}" ng-click="vm.lateSelector.change(2);" style="width: 100%; text-align: left;"><i ng-if="vm.lateSelector.value == 2" class="fa fa-check"></i>BN muộn >= {{vm.filter.lateDays}} ngày</button>
+                                                </li>
+                                                <li class="divider"> </li>
+                                                <li>
+                                                    <button class="btn btn-default no-border" ng-click="vm.filterLatePatients();" style="width: 100%; text-align: left;"><i class="icon-equalizer margin-right-10"></i>Tùy chọn số ngày muộn</button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="vertical-seperator float-right"></div>
+                                        <button ng-click="vm.exportLateAppointment();" class="btn btn-default no-border"><i class="fa fa-download"></i> Xuất danh sách</button>
+                                    </div>
+                                    <div class="margin-top-20">
+                                        <div class="tabbable-line">
+                                            <ul class="nav nav-tabs special-tab">
+                                                <li>
+                                                    <a href="#/opc/appointment-cal/edit" uib-tooltip="Bệnh nhân được hẹn"><i class="fa fa-th-list"></i><span class="hidden-xs"> Lịch ngày</span></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#/opc/appointment-cal" uib-tooltip="Lịch&nbsp;hẹn&nbsp;theo&nbsp;tháng" tooltip-placement="auto"><i class="icon-calendar"></i><span class="hidden-xs"> Lịch tháng</span></a>
+                                                </li>
+                                                <li class="active">
+                                                    <a href="#" uib-tooltip="Bệnh nhân muộn khám"><i class="fa fa-clock-o"></i><span class="hidden-xs"> Muộn khám</span><span class="badge badge-danger margin-left-5">{{vm.bsTableControl.options.totalRows}}</span></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="tab-content summary-panel margin-top-15">
+                                            <div class="tab-pane active margin-bottom-30">
+                                                <div class="dragon" drag-on>
+                                                    <table id="bsTableControl" bs-table-control="vm.bsTableControl"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<div ng-include="'_treatment/views/fragments/_information.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_confirmation.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_patients_missing_appointments.html?v=' + settings.versionNumber"></div>

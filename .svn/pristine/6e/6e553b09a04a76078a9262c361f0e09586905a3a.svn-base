@@ -1,0 +1,362 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="im im-icon-Drop"></i> Thông báo xét nghiệm BT/BC của người có HIV</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#/reporting/weekly/dashboard">Trang chủ</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#">
+                Thông báo xét nghiệm BT/BC của người có HIV
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body" id="sticky-container">
+                <div class="tabbable-line">
+                    <ul class="nav nav-tabs ">
+                        <li class="uppercase">
+                            <a href="#/prevention/dashboard" uib-tooltip="Tổng quan"><i class="fa fa-area-chart"></i> Tổng quan</a>
+                        </li>
+                        <li ng-if="isPeRole || isAdministrator(currentUser) || isProvincialManager(currentUser)" class="uppercase">
+                            <a href="#/prevention/pe" uib-tooltip="Tiếp cận cộng đồng"><i class="im im-icon-Cube-Molecule2"></i><span class="hidden-xs hidden-sm hidden-md"> TCCĐ</span></a>
+                        </li>
+                        <li ng-if="isHtsRole || isAdministrator(currentUser) || isProvincialManager(currentUser)" class="uppercase 8">
+                            <!-- <a href="#" uib-tooltip="{{vm.entry.id ? 'TVXN: Cập nhật khách hàng' : 'TVXN: Thêm mới khách hàng'}}"><i class="im im-icon-Drop"></i><span class="hidden-xs hidden-sm hidden-md"> TVXN - {{vm.entry.id ? 'Cập nhật' : 'Thêm mới'}}</span></a> -->
+                            <a href="#/prevention/hts" uib-tooltip="Tư vấn XN HIV"><i class="im im-icon-Drop"></i><span class="hidden-xs hidden-sm hidden-md"> TVXN HIV</span></a>
+                        </li>
+                        <li ng-if="isPnsRole || isAdministrator(currentUser) || isProvincialManager(currentUser)" class="uppercase active">
+                            <a href="#/prevention/pns" uib-tooltip="Thông báo XN BT/BC"><i class="im im-icon-Twister"></i><span class="hidden-xs hidden-sm hidden-md"> TB XN BT/BC</span></a>
+                        </li>
+                        <li ng-if="isSnsRole || isAdministrator(currentUser) || isProvincialManager(currentUser)" class="uppercase">
+                            <a href="#/prevention/sns" uib-tooltip="Dữ liệu SNS"><i class="im im-icon-Chemical-5"></i><span class="hidden-xs hidden-sm hidden-md"> SNS</span></a>
+                        </li>
+                        <li ng-if="isSelfTestRole || isAdministrator(currentUser) || isProvincialManager(currentUser)" class="uppercase">
+                            <a href="#/prevention/self_test" uib-tooltip="Tự xét nghiệm"><i class="im im-icon-Microscope"></i><span class="hidden-xs hidden-sm hidden-md"> Tự xét nghiệm</span></a>
+                        </li>
+                        <li class="uppercase">
+                            <a href="#/prevention/report" uib-tooltip="Báo cáo"><i class="fa fa-bar-chart"></i><span class="hidden-xs hidden-sm hidden-md"> Báo cáo</span></a>
+                        </li>
+                        <li ng-if="isAdministrator(currentUser)" class="uppercase">
+                            <a href="#/prevention/import" uib-tooltip="Import"><i class="fa fa-cloud-upload"></i><span class="hidden-xs hidden-sm hidden-md"> Import</span></a>
+                        </li>
+                    </ul>
+                    <div class="tab-content summary-panel">
+                        <div class="tab-pane active">
+                            <div class="row">
+                                <div class="col-xs-12 padding-left-20 padding-right-20 padding-bottom-30">
+                                    <div class="opc-toolbar margin-bottom-10 sticky-panel" hl-sticky="" container="sticky-container" sticky-class="is-sticky custom-alt-2 padding-left-20">
+                                        <!--<div class="opc-toolbar margin-bottom-10 sticky-panel hl-sticky" hl-sticky="" container="sticky-container" sticky-class="is-sticky custom-alt-2" style="">-->
+                                        <button class="btn btn-primary jumping" data-ng-disabled="!vm.isWrited" data-ng-click="vm.saveEntry()" uib-tooltip="Lưu lại và Thoát khỏi màn hình nhập liệu" tooltip-placement="auto"><i class="fa fa-check"></i> Lưu lại</button>
+                                        <div class="vertical-seperator"></div>
+                                        <button data-ng-click="vm.cancel()" class="btn btn-default no-border font-weight-500 text-muted" uib-tooltip="Hủy bỏ" tooltip-placement="auto"><i class="fa fa-close"></i><span> Hủy bỏ</span></button>
+                                    </div>
+                                    <div class="section-head with-background-1 bold">
+                                        <i class="im im-icon-Add-User color-7"></i> Thêm thông tin khách hàng mới
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 margin-top-20 form-controller-alt-2">
+                                            <label class="bold">C2. Tên cơ sở: </label>
+                                            <ui-select id="vm.entry.c2" ng-model="vm.entry.c2" on-select="vm.changeOrg()" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                <ui-select-choices repeat="c in vm.orgsWritable | propsFilter: {name: $select.search}">
+                                                    <div class="bold" ng-bind-html="c.name | highlight: $select.search"></div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 margin-top-20 form-controller-alt-2">
+                                            <label class="bold">C3. Họ tên tư vấn viên: </label>
+                                            <ui-select id="vm.entry.c3" ng-model="vm.entry.c3" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.fullName}}</ui-select-match>
+                                                <ui-select-choices repeat="c in vm.staffs | propsFilter: {fullName: $select.search}">
+                                                    <div class="bold" ng-bind-html="c.fullName | highlight: $select.search"></div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 margin-top-20 form-controller-alt-2">
+                                            <label class="bold">C4. Mã số khách hàng: </label>
+                                            <input type="text" id="vm.entry.c4" class="form-control" data-ng-model="vm.entry.c4" ng-blur="vm.checkCode()" >
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 margin-top-20 form-controller-alt-2">
+                                            <label class="bold">C5. Ngày tư vấn dịch vụ TBXNBT/BC:</label>
+                                            <input id="vm.entry.c5" class="form-control"
+                                                   placeholder="Chọn ngày..."
+                                                   ng-flatpickr
+                                                   fp-opts="vm.c5Date.dateOpts"
+                                                   fp-on-setup="vm.c5Date.datePostSetup(fpItem)"
+                                                   ng-model="vm.entry.c5"
+                                                   data-enabletime="false" />
+                                            <a ng-if="vm.entry.c5" class="clear-picker input-has-label" ng-click="vm.c5Date.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                                        </div>
+                                        <div class="col-lg-4 col-sm-4 margin-top-20 form-controller-alt-2">
+                                            <label class="bold">C6. Đồng ý nhận dịch vụ TBXNBT/BC?
+                                            </label>
+                                            <input type="text" style="width:0px;height:0px" id="vm.entry.c6" ng-if="vm.alertC6" >
+                                            <div class="md-radio-inline">
+                                                <div class="md-radio" data-ng-repeat="c in vm.c6Values">
+                                                    <input type="radio" id="c6_{{c.id}}"  name="c6_{{c.id}}" ng-model="vm.entry.c6" value="{{c.val}}" class="md-radiobtn">
+                                                    <label for="c6_{{c.id}}">
+                                                        {{c.name}}
+                                                        <span></span>
+                                                        <span class="check"></span>
+                                                        <span class="box"></span>
+                                                    </label>
+                                                </div>
+                                                <img ng-if="vm.alertC6" width="32px" src="assets/images/Alert.gif">
+                                            </div>
+                                        </div>
+                                        <div data-ng-if="vm.entry.c6=='YES'" class="col-lg-4 col-sm-4 margin-top-20 form-controller-alt-2">
+                                            <label class="bold">- Ngày đồng ý nhận dịch vụ:
+                                            </label>
+                                            <input id="vm.entry.c6Date" class="form-control"
+                                            placeholder="Chọn ngày..."
+                                            ng-flatpickr
+                                            fp-opts="vm.c6Date.dateOpts"
+                                            fp-on-setup="vm.c6Date.datePostSetup(fpItem)"
+                                            ng-model="vm.entry.c6Date"
+                                            data-enabletime="false" />
+                                            <a ng-if="vm.entry.c6Date" class="clear-picker input-has-label" ng-click="vm.c6Date.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 margin-top-20 form-controller-alt-2">
+                                            <label class="bold">C7. Họ tên người có HIV: </label>
+                                            <input type="text" data-ng-disabled="vm.entry.c7==='-'" class="form-control" ng-model="vm.entry.c7" id="vm.entry.c7">
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 margin-top-20 form-controller-alt-2">
+                                            <label class="bold">C8. Giới tính khi sinh:</label>
+                                            <div class="md-radio-inline">
+                                                <div class="md-radio">
+                                                    <input type="radio" id="vm.entry.c8Male" ng-change="vm.c8Change()" name="vm.entry.c8Male" ng-model="vm.entry.c8" value="MALE" class="md-radiobtn">
+                                                    <label for="vm.entry.c8Male">
+                                                        NAM
+                                                        <span></span>
+                                                        <span class="check"></span>
+                                                        <span class="box"></span>
+                                                    </label>
+                                                </div>
+                                                <div class="md-radio">
+                                                    <input type="radio" id="vm.entry.c8FeMale" ng-change="vm.c8Change()" name="vm.entry.c8FeMale" ng-model="vm.entry.c8" value="FEMALE" class="md-radiobtn">
+                                                    <label for="vm.entry.c8FeMale">
+                                                        NỮ
+                                                        <span></span>
+                                                        <span class="check"></span>
+                                                        <span class="box"></span>
+                                                    </label>
+                                                </div>
+                                                <img ng-if="vm.alertC8" width="32px" src="assets/images/Alert.gif">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 margin-top-20 form-controller-alt-2">
+                                            <label class="bold">C9. Năm sinh: </label>
+                                            <ui-select id="vm.entry.c9" ng-model="vm.entry.c9" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                <ui-select-choices repeat="year.id as year in vm.years | propsFilter: {name: $select.search}">
+                                                    <div class="bold" ng-bind-html="year.name | highlight: $select.search"></div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-4 col-sm-4 margin-top-20 form-controller-alt-2">
+                                            <label class="bold">C10. Ngày XN khẳng định HIV+:</label>
+                                            <input id="vm.entry.c10" class="form-control"
+                                                   placeholder="Chọn ngày..."
+                                                   ng-flatpickr
+                                                   fp-opts="vm.c10Date.dateOpts"
+                                                   fp-on-setup="vm.c10Date.datePostSetup(fpItem)"
+                                                   ng-model="vm.entry.c10"
+                                                   data-enabletime="false"/>
+                                            <a ng-if="vm.entry.c10" class="clear-picker input-has-label" ng-click="vm.c10Date.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 margin-top-20 form-controller-alt-2">
+                                            <label class="bold">C11. Tình trạng ĐT ARV?</label>
+                                            <ui-select id="vm.entry.c11" ng-model="vm.entry.c11" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                <ui-select-choices repeat="c.val as c in vm.c11Values | propsFilter: {name: $select.search}">
+                                                    <div class="bold" ng-bind-html="c.name | highlight: $select.search"></div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 margin-top-20 form-controller-alt-2">
+                                            <label class="bold" uib-tooltip="Nhiều lựa chọn; tư vấn viên đánh giá và xác định">C12. Khách hàng thuộc nhóm nguy cơ nào?</label>
+                                            <img ng-if="vm.alertC12" width="32px" src="assets/images/Alert.gif">
+                                            <div class="row">
+                                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 form-controller-alt-2">
+                                                    <div  ng-repeat="n in [0,1,2,3,4,5]" class="md-checkbox margin-top-20">
+                                                        <input  data-ng-disabled="vm.entry.c8=='FEMALE' && n==1" type="checkbox" id="c12_{{vm.c12Values[n].val}}_{{n}}" ng-change="vm.c12CheckChange(vm.c12Values[n],n)" ng-model="vm.c12Values[n].isCheck" class="md-check ng-pristine ng-untouched ng-valid ng-empty">
+                                                        <label class="font-weight-500" for="c12_{{vm.c12Values[n].val}}_{{n}}">
+                                                            <span></span>
+                                                            <span class="check"></span>
+                                                            <span class="box"></span> {{n+1}}. {{vm.c12Values[n].name}}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 form-controller-alt-2">
+                                                    <div  ng-repeat="n in [6,7,8,9,10,11]" class="md-checkbox margin-top-20">
+                                                        <input data-ng-disabled="vm.entry.c8=='MALE' && n==7" type="checkbox" id="c12_{{vm.c12Values[n].val}}_{{n}}" ng-change="vm.c12CheckChange(vm.c12Values[n],n)" ng-model="vm.c12Values[n].isCheck" class="md-check ng-pristine ng-untouched ng-valid ng-empty">
+                                                        <label class="font-weight-500" for="c12_{{vm.c12Values[n].val}}_{{n}}">
+                                                            <span></span>
+                                                            <span class="check"></span>
+                                                            <span class="box"></span> {{n+1}}. {{vm.c12Values[n].name}}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 form-controller-alt-2">
+                                                    <div  ng-repeat="n in [12,13,14,15]" class="md-checkbox margin-top-20">
+                                                        <input data-ng-disabled="vm.entry.c8=='MALE' && n==14" type="checkbox" id="c12_{{vm.c12Values[n].val}}_{{n}}" ng-change="vm.c12CheckChange(vm.c12Values[n],n)" ng-model="vm.c12Values[n].isCheck" class="md-check ng-pristine ng-untouched ng-valid ng-empty">
+                                                        <label class="font-weight-500" for="c12_{{vm.c12Values[n].val}}_{{n}}">
+                                                            <span></span>
+                                                            <span class="check"></span>
+                                                            <span class="box"></span> {{n+1}}. {{vm.c12Values[n].name}}
+                                                        </label>
+                                                    </div>
+                                                    <div  data-ng-if='vm.c12Values[15].isCheck==true' class="md-checkbox margin-top-20">
+                                                        <input  id="vm.entry.c12Note" type="text" class="form-control" data-ng-model="vm.entry.c12Note">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="section-head with-background-1 bold" data-ng-if="vm.entry.id">
+                                        <i class="im im-icon-Add-User color-7"></i> Danh sách bạn tình bạn chích của khách hàng này
+                                    </div>
+                                    <div class="row" data-ng-if="vm.entry.id">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-controller-alt-2">
+                                            <button href="#" data-ng-disabled="!vm.isWrited" ng-click="vm.addContact();" class="btn btn-primary jumping no-border" uib-tooltip="Thêm bạn tình/bạn chích">
+                                                <i class="fa fa-plus"></i>
+                                                <span class="hidden-xs">Thêm bạn tình/bạn chích</span>
+                                            </button>
+                                            <div class="dragon custom-table-header-1 margin-top-20">
+                                                <div class="bootstrap-table">
+                                                    <div class="fixed-table-toolbar"></div>
+                                                    <div class="fixed-table-container" style="padding-bottom: 0px;">
+                                                        <div class="fixed-table-header" style="display: none;"><table></table></div>
+                                                        <div class="fixed-table-body" style="overflow: auto;">
+                                                            <div class="dragon custom-table-header-1" drag-on>
+                                                                <table id="bsTableControl" bs-table-control="vm.bsTableControl"></table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/ng-template" id="_alert_add_contact_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <h4 class="modal-title">Bạn đã lưu thông tin thành công</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-controller-alt-2">
+                    <button href="#" ng-click="vm.addContact();" class="btn btn-primary jumping no-border" uib-tooltip="Thêm bạn tình/bạn chích">
+                        <i class="fa fa-plus"></i>
+                        <span class="hidden-xs">Thêm bạn tình/bạn chích cho khách hàng này?</span>
+                    </button>
+                    <div class="dragon custom-table-header-1 margin-top-20"  data-ng-if="vm.entry.id && vm.entry.contacts && vm.entry.contacts.length>0">
+                        <div class="bootstrap-table">
+                            <div class="fixed-table-toolbar"></div>
+                            <div class="fixed-table-container" style="padding-bottom: 0px;">
+                                <div class="fixed-table-header" style="display: none;"><table></table></div>
+                                <div class="fixed-table-body">
+                                    <table class="table table-hover table-striped">
+                                        <tr>
+                                            <th style="width:10%" data-field="" tabindex="0">
+                                                <div class="th-inner ">Thao tác</div>
+                                                <div class="fht-cell"></div>
+                                            </th>
+                                            <th>STT</th>
+                                            <th>Họ tên</th>
+                                            <th>Giới tính</th>
+                                            <th>Năm sinh</th>
+                                            <th>Số điện thoại</th>
+                                        </tr>
+                                        <tr data-ng-repeat="e in vm.entry.contacts">
+                                            <td style="white-space: nowrap; ">
+                                                <div class="opc-toolbar">
+                                                    <a href="#/prevention/pns-edit-contact/{{e.id}}" class="btn btn-primary no-padding-tb jumping no-border" uib-tooltip="Sửa" tooltip-placement="auto"><i class="icon-pencil"></i></a>
+                                                    <div class="vertical-seperator shorter float-right"></div>
+                                                    <a data-ng-click="vm.deleteContactEntry(e.id)" class="btn btn-primary no-padding-tb jumping no-border" uib-tooltip="Xóa" href="#" tooltip-placement="auto"><i class="fa fa-trash"></i></a>
+                                                </div>
+                                            </td>
+                                            <td>{{$index+1}}</td>
+                                            <td>{{e.person.fullname}}</td>
+                                            <td>
+                                                <span data-ng-if="e.person.gender=='MALE'">Nam</span>
+                                                <span data-ng-if="e.person.gender=='FEMALE'">Nữ</span>
+                                                <span data-ng-if="e.person.gender!='FEMALE' && e.person.gender!='MALE'">Khác</span>
+                                            </td>
+                                            <td>
+                                                {{e.yearOfBirth}}
+                                            </td>
+                                            <td>{{e.person.mobilePhone}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="vm.addPNS()" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-plus margin-right-10"></i>Quay lại màn hình nhập liệu</button>
+            <button type="button" ng-click="vm.cancel()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Quay lại trang chính</button>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="delete_entry_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Xoá bạn tình/ bạn chích</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="icon-exclamation"></i></div>
+            <div><span>Bạn có chắc chắn muốn xoá bạn tình/bạn chích đã chọn không?</span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Không</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-danger no-border" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>Có</button>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="select_entry_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$close('no')" aria-hidden="true"></button>
+            <h4 class="modal-title">Thông báo</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="icon-exclamation"></i></div>
+            <div><span>Khách hàng này đã làm PNS</span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$close('no')" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Quay lại</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-success no-border" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>Xem chi tiết</button>
+        </div>
+    </div>
+</script>
+<!-- END MAIN CONTENT -->
+<!-- BEGIN MAIN JS-->
+<!-- BEGIN MAIN JS -->

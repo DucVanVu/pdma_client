@@ -1,0 +1,80 @@
+<div class="section-head bold margin-top-30">
+    <i class="fa fa-envira icon-muted"></i> Phần 3. Ghi nhận về đào tạo và xử trí tình huống không mong muốn
+</div>
+
+<div class="grid-2-col">
+    <div class="grid-body">
+        <div class="first-child">
+            <div>3.1. Nhân viên/tư vấn viên dịch vụ TBXNBT/BC đã được tập huấn về xử trí tình huống không mong muốn trong BT/BC?</div>
+            <div>
+                <div class="md-radio-inline">
+                    <div class="md-radio margin-top-20">
+                        <input ng-disabled="vm.entry.locked" g type="radio" id="checkbox_q3_1_yes" name="radio_q3_1" ng-change="vm.updateBooleanProps('q3_1')" ng-model="vm.entry.q3_1" value="1" class="md-radiobtn">
+                        <label for="checkbox_q3_1_yes">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Có
+                        </label>
+                    </div>
+                    <div class="md-radio margin-top-20 margin-left-20">
+                        <input ng-disabled="vm.entry.locked" type="radio" id="checkbox_q3_1_no" name="radio_q3_1" ng-change="vm.updateBooleanProps('q3_1')" ng-model="vm.entry.q3_1" value="0" class="md-radiobtn">
+                        <label for="checkbox_q3_1_no">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Không
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div>3.2. Số nhân viên/tư vấn viên dịch vụ TBXNBT/BC đã được tập huấn về xử trí tình huống không mong muốn trong BT/BC</div>
+            <div>
+                <input ng-disabled="vm.entry.locked" class="form-control" type="number" data-ng-model="vm.entry.q3_2" />
+            </div>
+        </div>
+        <div>
+            <div>3.3. Loại giáo trình tập huấn về xử trí tình huống không mong muốn trong BT/BC đã được sử dụng</div>
+            <div>
+                <input ng-disabled="vm.entry.locked" class="form-control" type="text" data-ng-model="vm.entry.q3_3" />
+            </div>
+        </div>
+        <div>
+            <div>Hãy tải lên tài liệu tập huấn về xử trí tình huống không mong muốn trong BT/BC (gồm chương trình tập huấn, các bài trình bày, v.v..). Lưu ý: không tải tài liệu có thông tin định danh cá nhân của khách hàng.</div>
+            <div>
+                <span ng-if="!vm.entry.q3_3_file_name && vm.entry.locked">&mdash;</span>
+                <a href="#" class="no-content1" ng-if="!vm.entry.q3_3_file_name && !vm.entry.locked" ng-click="vm.uploader.showUploadModal('q3_3_file')"><i class="fa fa-upload"></i> Tải tệp tin lên</a>
+                <div ng-if="vm.entry.q3_3_file_name">
+                    <p>Tệp tin: <span class="bold">{{vm.entry.q3_3_file_name}}</span></p>
+                    <a href="#" ng-click="vm.downloadAttachment(vm.entry.id, 'q3_3_file')"><i class="fa fa-download margin-right-10"></i>Tải xuống</a>
+                    <a href="#" class="margin-left-20" ng-if="!vm.entry.locked" ng-click="vm.uploader.showUploadModal('q3_3_file');"><i class="fa fa-refresh margin-right-10"></i>Tải tệp tin mới hơn</a>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div>{{vm.questions.q3_4.name}}</div>
+            <div>
+                <div class="md-checkbox margin-top-20" ng-repeat="opt in vm.questions.q3_4.options">
+                    <input ng-disabled="vm.entry.locked" type="checkbox" id="checkbox_q3_4_{{opt.id}}" class="md-check" ng-change="vm.updateDelimitedProps('q3_4')" ng-model="vm.entry.q3_4_tmp[$index]">
+                    <label for="checkbox_q3_4_{{opt.id}}">
+                        <span></span>
+                        <span class="check"></span>
+                        <span class="box"></span> {{opt.name}}
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div ng-if="vm.entry.q3_4 && vm.entry.q3_4.includes('5')">
+            <div>Bạn đã chọn "Khác", xin vui lòng mô tả ngắn gọn về khóa đào tạo</div>
+            <div>
+                <textarea ng-disabled="vm.entry.locked" class="form-control" rows="4" data-ng-model="vm.entry.q3_4_text" placeholder="Nhập nội dung mô tả..."></textarea>
+            </div>
+        </div>
+        <div>
+            <div>3.5. Số giờ của lớp tập huấn về xử trí tình huống không mong muốn trong BT/BC</div>
+            <div>
+                <input ng-disabled="vm.entry.locked" class="form-control" type="number" data-ng-model="vm.entry.q3_5" />
+            </div>
+        </div>
+    </div>
+</div>

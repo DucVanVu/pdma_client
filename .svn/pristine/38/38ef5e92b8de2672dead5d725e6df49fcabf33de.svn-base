@@ -1,0 +1,54 @@
+<div login-screen>
+    <div class="logo">
+        <a href="index.html">
+            <img src="assets/images/logo-light.png" alt="" width="150" class="margin-bottom-20 margin-top-20" /> </a>
+    </div>
+    <!-- END LOGO -->
+    <!-- BEGIN LOGIN -->
+    <div class="content">
+        <div class="pannel-left">
+        </div>
+        <div class="pannel-right">
+            <!-- BEGIN LOGIN FORM -->
+            <h3 class="form-title">Đăng nhập</h3>
+            <div class="form-group">
+                <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+                <label class="control-label visible-ie8 visible-ie9">Tên đăng nhập</label>
+                <input on-key-press="vm.login()" when-key-code="13" class="form-control form-control-solid placeholder-no-fix" type="text" autocomplete="off" placeholder="Nhập tên đăng nhập..." id="username" data-ng-model="vm.user.username" /> </div>
+            <div class="form-group margin-top-20">
+                <label class="control-label visible-ie8 visible-ie9">Mật khẩu</label>
+                <input on-key-press="vm.login()" when-key-code="13" class="form-control form-control-solid placeholder-no-fix" type="password" autocomplete="off" placeholder="Nhập mật khẩu..." id="password" data-ng-model="vm.user.password" /> </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-default margin-right-10" ng-click="vm.forgotPassword()">Bạn quên mật khẩu?</button>
+                <button type="button" data-ng-click="vm.login()" class="btn btn-primary"><i class="fa fa-check"></i> Đăng nhập</button>
+            </div>
+            <div class="login-options">
+                <p class="margin-top-0">
+                    Hệ thống báo cáo trực tuyến chương trình phòng chống HIV/AIDS. <span class="bold bg-red" style="color: white;">Hãy nhấn tổ hợp phím <span class="underline">Ctrl + F5</span> để tải bản mới nhất!</span><br />
+                </p>
+            </div>
+            <div class="create-account">
+                <p>
+                    <span>Phiên bản {{settings.clientVersion}}</span>
+                </p>
+            </div>
+        </div>
+</div>
+
+<script type="text/ng-template" id="forgot-password-modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-lock-open"></i> Quên mật khẩu?</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="im im-icon-Bio-Hazard"></i></div>
+            <div><span>Vui lòng liên hệ với quản trị viên hệ thống để lấy lại mật khẩu tạm thời. Bạn cần phải đổi mật khẩu mới sau khi đăng nhập thành công.
+            <br /><br/>Điện thoại liên hệ: <a class="bold" href="tel:+84348568106">034 856 8106</a>
+            </span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$close('yes')" class="btn btn-default" data-dismiss="modal">ĐÓNG LẠI</button>
+        </div>
+    </div>
+</script>

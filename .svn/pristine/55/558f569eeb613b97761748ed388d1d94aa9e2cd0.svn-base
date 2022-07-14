@@ -1,0 +1,53 @@
+/**
+ * Created by bizic on 30/8/2016.
+ */
+(function () {
+    'use strict';
+
+    angular.module('PDMA.PREV_REPORT').service('PrevDashboardService', PrevDashboardService);
+
+    PrevDashboardService.$inject = [
+        '$http',
+        '$q',
+        'settings',
+        'Utilities'
+    ];
+
+    function PrevDashboardService($http, $q, settings, utils) {
+        let self = this;
+        self.getAdminUnit = getAdminUnit;
+        self.getOrganization = getOrganization;
+        self.getChart1=getChart1;
+        self.getChart2=getChart2;
+        let baseUrl = settings.api.baseUrl + settings.api.apiV1Url;
+
+        function getChart1(filter){
+            let url = baseUrl + 'prev_chart/chart1';
+            return utils.resolveAlt(url, 'POST', null, filter, {
+                'Content-Type': 'application/json; charset=utf-8'
+            }, angular.noop, angular.noop);
+        }
+
+        function getChart2(filter){
+            let url = baseUrl + 'prev_chart/chart2';
+            return utils.resolveAlt(url, 'POST', null, filter, {
+                'Content-Type': 'application/json; charset=utf-8'
+            }, angular.noop, angular.noop);
+        }
+
+        function getAdminUnit(filter) {
+            let url = baseUrl + 'admin_unit/all';
+
+            return utils.resolveAlt(url, 'POST', null, filter, {
+                'Content-Type': 'application/json; charset=utf-8'
+            }, angular.noop, angular.noop);
+        }
+        function getOrganization(filter) {
+            let url = baseUrl + 'organization/all';
+
+            return utils.resolveAlt(url, 'POST', null, filter, {
+                'Content-Type': 'application/json; charset=utf-8'
+            }, angular.noop, angular.noop);
+        }
+    }
+})();

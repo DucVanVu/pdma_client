@@ -1,0 +1,160 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="im im-icon-Chemical-4"></i> Chương trình dự phòng</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#/">Trang chủ</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#">Báo cáo</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body" id="stickey-container">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs ">
+                                <li class="uppercase">
+                                    <a href="#/prevention/dashboard" uib-tooltip="Tổng quan"><i class="fa fa-area-chart"></i> Tổng quan</a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/pe" uib-tooltip="Tiếp cận cộng đồng"><i class="im im-icon-Cube-Molecule2"></i><span class="hidden-xs hidden-sm hidden-md"> TCCĐ</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/hts" uib-tooltip="Tư vấn XN HIV"><i class="im im-icon-Drop"></i><span class="hidden-xs hidden-sm hidden-md"> TVXN HIV</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/pns" uib-tooltip="Thông báo XN BT/BC"><i class="im im-icon-Twister"></i><span class="hidden-xs hidden-sm hidden-md"> TB XN BT/BC</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/sns" uib-tooltip="Dữ liệu SNS"><i class="im im-icon-Chemical-5"></i><span class="hidden-xs hidden-sm hidden-md"> SNS</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/self_test" uib-tooltip="Tự xét nghiệm"><i class="im im-icon-Microscope"></i><span class="hidden-xs hidden-sm hidden-md"> Tự xét nghiệm</span></a>
+                                </li>
+                                <li class="uppercase active">
+                                    <a href="#" uib-tooltip="Báo cáo"><i class="fa fa-bar-chart"></i><span class="hidden-xs hidden-sm hidden-md"> Báo cáo</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/import" uib-tooltip="Import"><i
+                                            class="fa fa-cloud-upload"></i><span class="hidden-xs hidden-sm hidden-md"> Import</span></a>
+                                </li>
+                            </ul>
+                            <div class="tab-content summary-panel" ng-if="isAdministrator(currentUser)">
+                                <div class="tab-pane active padding-bottom-30">
+                                    <div class="display-block no-content1 margin-top-10 font-weight-600">
+                                        Bạn không có quyền xem nội dung này.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-content summary-panel" ng-if="!isAdministrator(currentUser)">
+                                <div class="tab-pane active">
+                                    <div class="col-md-7 col-sm-12 col-xs-12">
+                                        <div class="row">
+                                            <div class="col-xs-12 margin-top-10 label-with-line">
+                                                <label class="bold text-muted"><i class="fa fa-filter margin-right-10"></i>Chọn loại báo cáo</label>
+                                                <div></div>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12 col-xs-12 margin-top-10">
+                                                <ui-select id="vm.report.type" ng-model="vm.report.type" sortable="true" ng-change="vm.onTypeChange()" close-on-select="true" style="width: 100%!important;">
+                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                    <ui-select-choices repeat="type.id as type in vm.listReport | propsFilter: {name: $select.search}">
+                                                        <div class="bold" ng-bind-html="type.name | highlight: $select.search"></div>
+                    
+                                                    </ui-select-choices>
+                                                </ui-select>      
+                                            </div>
+                                                                              
+                                            <div class="col-xs-12">
+                                                <div class="row">
+                                                    <div class="col-xs-12 margin-top-20 label-with-line">
+                                                        <label class="bold text-muted"><i class="fa fa-filter margin-right-10"></i>Chọn giai đoạn báo cáo</label>
+                                                        <div></div>
+                                                    </div>
+                                                    <div class="col-xs-6 margin-top-10">
+                                                        <label class="bold">Ngày bắt đầu</label>
+                                                        <input id="vm.report.fromDate" class="form-control" placeholder="Chọn ngày..."
+                                                               ng-flatpickr
+                                                               fp-opts="vm.datepicker1.dateOpts"
+                                                               fp-on-setup="vm.datepicker1.datePostSetup(fpItem)"
+                                                               ng-model="vm.report.fromDate"
+                                                               data-enabletime="false" />
+                                                    </div>
+                                                    <div class="col-xs-6 margin-top-10">
+                                                        <label class="bold">Ngày kết thúc</label>
+                                                        <input id="vm.report.toDate" class="form-control" placeholder="Chọn ngày..."
+                                                               ng-flatpickr
+                                                               fp-opts="vm.datepicker2.dateOpts"
+                                                               fp-on-setup="vm.datepicker2.datePostSetup(fpItem)"
+                                                               ng-model="vm.report.toDate"
+                                                               data-enabletime="false" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 margin-top-20 label-with-line">
+                                                <label class="bold text-muted"><i class="fa fa-filter margin-right-10"></i>Chọn cơ sở báo cáo</label>
+                                                <div></div>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12 col-xs-12 margin-top-10">
+                                                
+                                                <label class="bold">Chọn đơn vị báo cáo</label>
+
+                                                <ui-select multiple="true" id="vm.report.orgIds"
+                                                        ng-model="vm.report.orgIds" on-select="vm.changeOrg()"
+                                                        sortable="true" close-on-select="true"
+                                                        style="width: 100%!important;">
+                                                        <ui-select-match allow-clear="false"
+                                                            placeholder="Cơ sở báo cáo...">{{$item.name}}
+                                                        </ui-select-match>
+                                                        <ui-select-choices
+                                                            repeat="c.id as c in vm.orgsWritable | propsFilter: {name: $select.search}">
+                                                            <div class="bold "
+                                                                ng-bind-html="c.name | highlight: $select.search">
+                                                            </div>
+                                                        </ui-select-choices>
+                                                    </ui-select>
+                                                
+                                                <!-- <ui-select multiple="true"  ng-model="vm.report.orgIds" on-select="vm.changeOrg()" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                    <ui-select-choices repeat="c.id as c in vm.orgsWritable | propsFilter: {name: $select.search}">
+                                                        <div class="bold" ng-bind-html="c.name | highlight: $select.search"></div>
+                                                    </ui-select-choices>
+                                                </ui-select> -->
+                                            </div>
+                                            <div class="col-md-12 col-sm-12 col-xs-12 margin-top-30 margin-bottom-30 align-right">
+                                                <!--<button class="btn btn-default margin-right-20" ng-click="vm.reset();"><i class="fa fa-close margin-right-5"></i>Làm lại từ đầu</button>-->
+                                                <button ng-click="vm.exportReport()" class=" btn btn-primary jumping"> <i class="fa fa-download excel"></i> Xuất Excel và tải về</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            <!-- BEGIN: MAP EXAMPLE -->
+                <!--<div class="margin-top-40"></div>-->
+                <!--<div class="row">-->
+                    <!--<div class="col-md-6">-->
+                        <!--<div class="font-weight-600 text-center">Bản đồ Việt Nam</div>-->
+                        <!--<div id="map_container_1"></div>-->
+                    <!--</div>-->
+                    <!--<div class="col-md-6">-->
+                        <!--<div class="font-weight-600 text-center">Bản đồ Tp. Hà Nội</div>-->
+                        <!--<div id="map_container_2"></div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!-- END: MAP EXAMPLE -->
+            </div>
+        </div>
+    </div>
+</div>

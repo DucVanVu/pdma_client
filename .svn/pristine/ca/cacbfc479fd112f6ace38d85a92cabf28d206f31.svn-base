@@ -1,0 +1,14 @@
+<div class="section-head bold margin-top-30 curved-right">
+    <span><i class="fa fa-envira icon-muted"></i> Kết quả đánh giá cụ thể.</span>
+    <a ng-if="vm.entry.finalScore != null && !vm.prohibited.value" href="#" ng-click="vm.printFacilityReport();" class="btn-print"><i class="icon-printer margin-right-5"></i> In kết quả</a>
+</div>
+
+<div class="grid-1-col first-child">
+    <span ng-if="vm.entry.finalScore == 33" class="inline-block margin-right-10">Kết luận: </span><span ng-if="vm.entry.finalScore == 33">Cơ sở đạt 33/33 tiêu chuẩn tối thiểu.</span>
+    <span ng-if="vm.entry.finalScore < 33" class="inline-block margin-right-10">Kết luận: </span><span ng-if="vm.entry.finalScore < 33">Cơ sở đạt {{vm.entry.finalScore}}/33 tiêu chuẩn tối thiểu. Danh sách các tiêu chuẩn không đạt như sau:</span>
+    <span ng-if="vm.entry.finalScore == null && vm.prohibited.value">Bạn không được phép thực hiện ghi nhận thêm một đánh giá mới tại thời điểm này.</span>
+</div>
+
+<div class="grid-1-col" ng-repeat="cee in vm.entry.failedCEETexts">
+    <a class="#" ng-click="vm.page.jump(cee.page)" uib-tooltip="Xem câu trả lời">{{cee.val}}</a>
+</div>

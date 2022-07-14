@@ -1,0 +1,116 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="icon-layers"></i> Reporting tools</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#">Trackr</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#/reporting">Reporting tools</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-xs-12">
+        <div class="no-content2">
+            <div class="reporting-menu">
+                <p><a href="#" ng-click="vm.newReportWizard()" class="btn green-jungle btn-outline btn-circle btn-lg"><i class="icon-magic-wand"></i> New report wizard</a></p>
+                <div class="hidden-md hidden-sm hidden-xs"><span><b><i class="im im-icon-Light-BulbLeaf"></i></b> <span>Somebody may have created what you are looking for, and you may find them in the lists below. Generating reports takes time and consumes system resources. Please consider before doing so.</span></span></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 margin-top-20">
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="icon-bar-chart font-dark"></i>
+                    <span class="caption-subject font-dark uppercase">Listing reports</span>
+                    <span class="caption-helper">created and saved...</span>
+                </div>
+                <div class="tools">
+                    <a href="" class="collapse" data-original-title="" title=""> </a>
+                    <a href="" class="reload" data-original-title="" title=""> </a>
+                </div>
+                <div class="actions margin-right-20">
+                    <div class="btn-group">
+                        <button class="btn btn-danger btn-outline btn-circle btn-sm margin-left-10" ng-if="isAdministrator(currentUser)" data-ng-click="vm.deleteSelectedReports()" data-ng-disabled="vm.existingReports.selectedItems.length <= 0"><i class="icon-trash"></i> Delete</button>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <table id="bsTableControl" bs-table-control="vm.bsTableControl"></table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 margin-top-20">
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="icon-bar-chart font-dark"></i>
+                    <span class="caption-subject font-dark uppercase">Indicator reports</span>
+                    <span class="caption-helper">created and saved...</span>
+                </div>
+                <div class="tools">
+                    <a href="" class="collapse" data-original-title="" title=""> </a>
+                    <a href="" class="reload" data-original-title="" title=""> </a>
+                </div>
+                <div class="actions margin-right-20">
+                    <div class="btn-group">
+                        <button class="btn btn-danger btn-outline btn-circle btn-sm margin-left-10" ng-if="isAdministrator(currentUser)" data-ng-click="vm.deleteSelectedReports()" data-ng-disabled="vm.existingReports.selectedItems.length <= 0"><i class="icon-trash"></i> Delete</button>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <table id="bsTableControl2" bs-table-control="vm.bsTableControl"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<!-- BEGIN MAIN JS-->
+<script type="text/ng-template" id="new_report_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-question"></i> New report wizard</h4>
+        </div>
+        <div class="modal-body">
+            <div class="instruction">— <b>Instruction:</b> Please select a type of report you want to generate.</div>
+            <div class="row">
+                <div class="col-md-6 margin-top-30 text-center">
+                    <button ng-click="vm.selectReportType(0)" class="btn green-jungle btn-outline btn-circle btn-lg"><i class="icon-grid"></i> Listing report</button>
+                </div>
+                <div class="col-md-6 margin-top-30 text-center">
+                    <button ng-click="vm.selectReportType(1)" data-ng-disabled="true" class="btn green-jungle btn-outline btn-circle btn-lg"><i class="icon-chart"></i> Indicator report</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <!--<a type="button" ng-click="$close('no')" class="btn btn-link" data-dismiss="modal">Cancel</a>-->
+            <!--<button type="button" ng-click="vm.newReport.wizardMove(-1)" data-ng-disabled="vm.newReport.step <= 1" class="btn btn-default">Back</button>-->
+            <!--<button type="button" ng-click="vm.newReport.wizardMove(1)" data-ng-disabled="vm.newReport.step >= 3 || vm.newReport.step <= 1" class="btn btn-default">Next step</button>-->
+            <!--<button type="button" ng-click="$close('yes')" data-ng-if="vm.newReport.step == 3" data-ng-disabled="!vm.saveable()" class="btn btn-primary margin-left-20">Save report</button>-->
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="confirm_delete_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-question"></i> Delete permanently!!!</h4>
+        </div>
+        <div class="modal-body">
+            Are you sure you want to delete this record permanently? This cannot be undone.
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$close('no')" class="btn btn-default" data-dismiss="modal">No</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-primary" data-dismiss="modal">Yes</button>
+        </div>
+    </div>
+</script>
+<!-- BEGIN MAIN JS -->

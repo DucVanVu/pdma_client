@@ -1,0 +1,93 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="pdma-ext1-icon-lab-2 margin-right-5"></i> Xét nghiệm tải lượng virus HIV</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#/opc/patients"><i class="fa fa-th-large"></i> Danh sách</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li ng-if="!vm.filter.noResultOnly">
+            <a href="#/opc/view-patient/{{vm.patient.id}}">{{vm.patient.theCase.person.fullname}}</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#">Xét nghiệm TLVR HIV</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs sticky-panel" hl-sticky="" sticky-class="is-sticky custom-alt">
+                                <li class="uppercase">
+                                    <a href="#/opc-dashboard" uib-tooltip="Tổng quan"><i class="fa fa-area-chart"></i><span class="hidden-xs" ng-class="{'hidden-sm' : isSiteManager(currentUser) || (vm.selectedEntry && vm.selectedEntry.theCase.person)}"> Tổng quan</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/patients" uib-tooltip="Quản&nbsp;lý bệnh&nbsp;nhân"><i class="fa fa-wheelchair-alt"></i><span class="hidden-xs hidden-sm hidden-md"> Bệnh nhân</span></a>
+                                </li>
+                                <li class="uppercase" ng-if="isSiteManager(currentUser)">
+                                    <a href="#/opc/appointment-cal/edit" uib-tooltip="Khám&nbsp;bệnh&nbsp;-&nbsp;Cấp&nbsp;thuốc"><i class="icon-calendar"></i><span class="hidden-xs"> Lịch khám </span></a>
+                                    <!--<span class="tab-new-function"><i class="fa fa-flash"></i> mới</span>-->
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/report" uib-tooltip="Báo&nbsp;cáo"><i class="fa fa-bar-chart"></i><span class="hidden-xs"> Báo cáo</span></a>
+                                </li>
+                                <li class="active uppercase">
+                                    <a href="#"><i class="icon-pencil"></i> <span class="font-weight-600">Xét nghiệm TLVR</span></a>
+                                </li>
+                                <li class="uppercase" ng-if="vm.editingEntry">
+                                    <a uib-tooltip="Cập&nbsp;nhật&nbsp;hồ&nbsp;sơ" href="#/opc/edit-patient/{{vm.editingEntry.id ? vm.editingEntry.id : 0}}"><i class="icon-pencil"></i> {{vm.editingEntry.theCase.person && vm.editingEntry.theCase.person.fullname ? vm.editingEntry.theCase.person.fullname : 'Bệnh nhân mới'}}</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content summary-panel">
+                                <div class="tab-pane active margin-bottom-30">
+                                    <div class="info-box-alt" ng-if="vm.filter.noResultOnly"><span class="bold"><i class="fa fa-lightbulb-o"></i> Chỉ dẫn:</span> Mục này liệt kê danh sách các xét nghiệm tải lượng virus HIV <span class="underline-alt">chưa có kết quả</span>.</div>
+                                    <div class="info-box-alt" ng-if="!vm.filter.noResultOnly && vm.patient.theCase.arvStartDate && vm.patient.theCase.treatments.length > 0"><span class="bold"><i class="fa fa-lightbulb-o"></i> Chỉ dẫn:</span> Mục này giúp ghi nhận các lần xét nghiệm tải lượng virus HIV của bệnh nhân {{vm.patient.theCase.person.fullname}}.</div>
+                                    <div class="info-box-alt" ng-if="!vm.filter.noResultOnly && (!vm.patient.theCase.arvStartDate || vm.patient.theCase.treatments.length <= 0)"><span class="bold"><i class="fa fa-exclamation-circle"></i> Thông báo:</span> Bệnh nhân {{vm.patient.theCase.person.fullname}} chưa được điều trị bằng thuốc ARV, nên không được làm xét nghiệm tải lượng virus.</div>
+                                    <div class="opc-toolbar margin-top-10 margin-bottom-10">
+                                        <button href="#" data-ng-disabled="vm.filter.noResultOnly || vm.orgsWritable.length <= 0 || !vm.patient.theCase.arvStartDate" ng-click="vm.openAddVLTest();" class="btn btn-default no-border" uib-tooltip="Thêm&nbsp;yêu&nbsp;cầu&nbsp;XN&nbsp;TLVR"><i class="fa fa-plus"></i><span class="hidden-xs">Thêm yêu cầu xét nghiệm</span></button>
+                                        <div class="vertical-seperator float-right"></div>
+                                        <a ng-if="!vm.filter.noResultOnly" href="#/opc/view-patient/{{vm.patient.id}}" uib-tooltip="Quay&nbsp;trở&nbsp;lại" class="btn btn-default no-border"><i class="fa fa-arrow-left"></i> Trở lại</a>
+                                        <a ng-if="vm.filter.noResultOnly" href="#/opc-dashboard" uib-tooltip="Quay&nbsp;trở&nbsp;lại" class="btn btn-default no-border"><i class="fa fa-arrow-left"></i> Trở lại</a>
+                                    </div>
+                                    <div class="dragon custom-table-header-1" drag-on>
+                                        <table id="bsTableControl" bs-table-control="vm.bsTableControl"></table>
+                                    </div>
+                                    <!--<div class="loading-button btn btn-default">Đang tải dữ liệu...</div>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+
+<div ng-include="'_treatment/views/fragments/_viralload_edit.html?v=' + settings.versionNumber"></div>
+
+<script type="text/ng-template" id="delete_entry_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Xoá bản ghi</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="icon-exclamation"></i></div>
+            <div><span>Bạn có chắc chắn muốn xoá bản ghi đã chọn không?</span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Không</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-danger no-border" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>Có</button>
+        </div>
+    </div>
+</script>
+
+<div ng-include="'_treatment/views/fragments/_noneditable_alert.html?v=' + settings.versionNumber"></div>

@@ -1,0 +1,105 @@
+<script type="text/ng-template" id="shortcuts.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-if="vm.dialog.allowDismissing" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Truy cập nhanh</h4>
+        </div>
+        <div class="modal-body summary-panel">
+            <div class="info-box-alt"><span class="bold"><i class="fa fa-lightbulb-o"></i> Chỉ dẫn:</span> Bạn có thể lựa chọn <span class="underline">tối đa 03 chức năng</span> mà bạn muốn truy cập nhanh từ màn hình danh sách bệnh nhân.</div>
+            <!--<div class="section-head dark-blue bolder"><i class="icon-grid color-7"></i> Chọn chức năng bạn muốn truy cập nhanh</div>-->
+            <div class="section-head margin-top-20"><span class="text-muted fa fa-braille"></span> Các chức năng bạn muốn truy cập nhanh</div>
+            <div class="row margin-top-20">
+                <div class="col-xs-6">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_edit_case" ng-model="vm.shortcuts.editCase" class="md-check">
+                        <label for="chk_edit_case">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Cập nhật hồ sơ
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_cd4" ng-model="vm.shortcuts.cd4" class="md-check">
+                        <label for="chk_cd4">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Xét nghiệm CD4
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row margin-top-20">
+                <div class="col-xs-6">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_vl" ng-model="vm.shortcuts.vl" class="md-check">
+                        <label for="chk_vl">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Xét nghiệm tải lượng virus HIV
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_shi" ng-model="vm.shortcuts.shi" class="md-check">
+                        <label for="chk_shi">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Cập nhật thông tin BHYT
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row margin-top-20">
+                <div class="col-xs-6">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_tb" ng-model="vm.shortcuts.tb" class="md-check">
+                        <label for="chk_tb">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Dự phòng, chẩn đoán và điều trị lao
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_hep" ng-model="vm.shortcuts.hep" class="md-check">
+                        <label for="chk_hep">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Xét nghiệm, điều trị viêm gan B/C
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row margin-top-20 margin-bottom-20">
+                <div class="col-xs-6">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_dr" ng-model="vm.shortcuts.dr" class="md-check">
+                        <label for="chk_dr">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Xét nghiệm kháng thuốc ARV
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_pregnancy" ng-model="vm.shortcuts.pregnancy" class="md-check">
+                        <label for="chk_pregnancy">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Thông tin mang thai, sinh đẻ
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="vm.updateShortcuts();" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>Lưu lại</button>
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Hủy bỏ</button>
+        </div>
+    </div>
+</script>

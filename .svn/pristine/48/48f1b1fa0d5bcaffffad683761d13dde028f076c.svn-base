@@ -1,0 +1,413 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="im im-icon-Find-User margin-right-5"></i> Thông tin bệnh nhân</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#/opc/patients"><i class="fa fa-th-large"></i> Danh sách</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#/opc/view-patient/{{vm.entry.id}}">{{vm.entry.theCase.person.fullname}}</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="display-block no-content1 margin-top-10" ng-if="isAdministrator(currentUser)">
+                    Bạn không có quyền xem nội dung này.
+                </div>
+                <div class="row" ng-if="!isAdministrator(currentUser)">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs">
+                                <li class="uppercase">
+                                    <a href="#/opc-dashboard" uib-tooltip="Tổng quan"><i class="fa fa-area-chart"></i><span class="hidden-xs" ng-class="{'hidden-sm' : isSiteManager(currentUser) || (vm.selectedEntry && vm.selectedEntry.theCase.person)}"> Tổng quan</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/patients" uib-tooltip="Quản&nbsp;lý bệnh&nbsp;nhân"><i class="fa fa-wheelchair-alt"></i><span class="hidden-xs hidden-sm hidden-md"> Bệnh nhân</span></a>
+                                </li>
+                                <li class="uppercase" ng-if="isSiteManager(currentUser)">
+                                    <a href="#/opc/appointment-cal/edit" uib-tooltip="Khám&nbsp;bệnh&nbsp;-&nbsp;Cấp&nbsp;thuốc"><i class="icon-calendar"></i><span class="hidden-xs"> Lịch khám </span></a>
+                                    <!--<span class="tab-new-function"><i class="fa fa-flash"></i> mới</span>-->
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/report" uib-tooltip="Báo&nbsp;cáo"><i class="fa fa-bar-chart"></i><span class="hidden-xs"> Báo cáo</span></a>
+                                </li>
+                                <li class="active uppercase">
+                                    <a href="#"><span class="font-weight-600"><i class="fa {{vm.entry.theCase.person.genderIcon}}"></i> {{vm.entry.theCase.person.fullname}}</span> ({{vm.entry.theCase.person.age}} tuổi)</a>
+                                </li>
+                                <li class="uppercase" ng-if="vm.editingEntry">
+                                    <a uib-tooltip="Cập&nbsp;nhật&nbsp;hồ&nbsp;sơ" href="#/opc/edit-patient/{{vm.editingEntry.id ? vm.editingEntry.id : 0}}"><i class="icon-pencil"></i> {{vm.editingEntry.theCase.person && vm.editingEntry.theCase.person.fullname ? vm.editingEntry.theCase.person.fullname : 'Bệnh nhân mới'}}</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content summary-panel">
+                                <div class="tab-pane active">
+                                    <div class="boxed">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="general-status" ng-if="vm.entry.theCase.deleted"><i class="circle deleted-record"></i><span>Hồ sơ bệnh nhân đã bị xóa.<span class="font-weight-500" ng-if="isSiteManager(currentUser)"> Vui lòng liên hệ với tuyến tỉnh để phục hồi hồ sơ nếu muốn.</span></span></div>
+                                                <div class="general-status" ng-if="!vm.entry.theCase.deleted">
+                                                    <span class="organization-info" ng-class="vm.entry.patientStatusCssClass">Tại {{vm.entry.organization.name}}</span><i class="fa fa-caret-right margin-left-10 margin-right-10" style="font-size: 18px"></i><span>Bệnh nhân này {{vm.entry.patientStatusName}}</span>
+                                                    <span ng-if="vm.entry.status == 'PENDING_ENROLLMENT' && vm.prevEntry.id" class="font-weight-500"><i class="fa fa-long-arrow-left"></i> từ <span class="underline-alt">{{vm.prevEntry.organization.name}}</span> vào {{vm.prevEntry.endDate | date:'dd/MM/yyyy'}}</span>
+                                                    <span ng-if="vm.entry.status == 'TRANSFERRED_OUT' && vm.nextEntry.id" class="font-weight-500"><i class="fa fa-long-arrow-right"></i> <span class="underline-alt">{{vm.nextEntry.organization.name}}</span> vào {{vm.entry.endDate | date:'dd/MM/yyyy'}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12 opc-toolbar sticky-panel" hl-sticky="" container="sticky-container" sticky-class="is-sticky custom-alt-2">
+                                            <button class="btn btn-default no-border" ng-if="vm.orgsWritable.length > 0 && vm.entry.status == 'PENDING_ENROLLMENT'" ng-click="vm.enrollPatient()" uib-tooltip="Tiếp&nbsp;nhận" tooltip-placement="auto"><i class="im im-icon-Add-User"></i><span class="hidden-xs">Tiếp nhận hồ sơ</span></button>
+                                            <div class="vertical-seperator float-right" ng-if="vm.orgsWritable.length > 0 && vm.entry.status == 'PENDING_ENROLLMENT'"></div>
+                                            <button data-ng-disabled="vm.orgsWritable.length <= 0 || !vm.entry.editable" class="btn btn-default no-border" ng-click="vm.openEditPatientProfile();" uib-tooltip="Cập&nbsp;nhật&nbsp;hồ&nbsp;sơ" tooltip-placement="auto"><i class="icon-pencil"></i><span class="hidden-xs">Sửa hồ sơ</span></button>
+                                            <!--<div class="vertical-seperator float-right"></div>-->
+                                            <div data-ng-if="vm.orgsWritable.length > 0 && isSiteManager(currentUser)" class="vertical-seperator float-right"></div>
+                                            <button ng-click="vm.captureAppointmentResult()" data-ng-disabled="vm.entry.theCase.deleted || vm.entry.status != 'ACTIVE'" data-ng-if="vm.orgsWritable.length > 0 && isSiteManager(currentUser)" class="btn btn-primary jumping no-border" uib-tooltip="Khám - cấp thuốc" tooltip-placement="auto"><i class="fa fa-heart"></i> Khám bệnh</button>
+                                            <div class="vertical-seperator float-right"></div>
+                                            <button data-ng-disabled="vm.entry.deleted" ng-click="vm.openPatientStatusHistory()" class="btn btn-primary no-border" uib-tooltip="Lịch&nbsp;sử&nbsp;gián&nbsp;đoạn&nbsp;điều&nbsp;trị" tooltip-placement="auto"><i class="fa fa-random margin-right-5"></i><span class="hidden-xs hidden-sm">Gián đoạn điều trị</span></button>
+                                            <div class="vertical-seperator float-right"></div>
+                                            <button class="btn btn-default no-border" ng-click="vm.clearSelectedPatient();" uib-tooltip="Trở&nbsp;lại&nbsp;danh&nbsp;sách" tooltip-placement="auto"><i class="fa fa-close"></i><span class="hidden-xs hidden-sm"> Đóng lại</span></button>
+                                            <!--<div class="vertical-seperator float-right"></div>-->
+                                            <!--<a href="#" ng-click="vm.statusPaneVis.toggle();" class="btn btn-default" ng-class="{'btn-selected' : vm.statusPaneVis.value, 'no-border' : !vm.statusPaneVis.value}"><i class="fa margin-right-10" ng-class="{'fa-eye-slash' : vm.statusPaneVis.value, 'fa-eye' : !vm.statusPaneVis.value}"></i><span class="hidden-xs">{{vm.statusPaneVis.value ? 'Ẩn' : 'Hiện'}} trạng thái</span></a>-->
+                                            <!--<div class="vertical-seperator float-right" ng-if="vm.entry.deleted && isProvincialManager(currentUser)"></div>-->
+                                            <button href="#" ng-if="vm.orgsReadable.length > 0 && vm.entry.theCase.deleted && isProvincialManager(currentUser)" ng-click="vm.restorePatientRecord();" class="btn btn-default no-border float-right" uib-tooltip="Khôi phục thông tin bệnh nhân" tooltip-placement="auto"><i class="icon-action-undo"></i><span class="hidden-sm hidden-xs">Khôi phục</span></button>
+                                            <!--<div class="vertical-seperator float-right" ng-if="!vm.entry.deleted"></div>-->
+                                            <button href="#" ng-if="!vm.entry.theCase.deleted" data-ng-disabled="vm.orgsWritable.length <= 0 || !vm.entry.editable || vm.entry.undeleteable" ng-click="vm.confirmDeletePatient();" class="btn btn-danger no-border float-right" uib-tooltip="Xoá&nbsp;bệnh&nbsp;nhân" tooltip-placement="auto"><i class="icon-trash"></i><span class="hidden-sm hidden-xs">Xoá hồ sơ</span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" expandable-row-content="" padding="10">
+    <div class="col-md-6 col-sm-12 summary-panel patient-dashlet">
+        <div class="portlet light bordered">
+            <div class="portlet-body patient-info">
+                <div class="section-head blue smaller-top-margin bolder solid-border"><i class="fa fa-id-card-o"></i> Thông tin chung</div>
+                <ul class="listing no-padding-bottom no-margin-bottom with-margin-left">
+                </ul>
+                <ul class="listing no-padding-top">
+                    <li><span>Họ tên:</span><span>{{vm.entry.theCase.person.fullname}}</span></li>
+                    <li><span>Giới tính:</span><span>{{vm.utils.gender2String(vm.entry.theCase.person.gender)}}</span></li>
+                    <li><span>Ngày sinh:</span><span>{{vm.entry.theCase.person.dob | date:'dd/MM/yyyy'}}</span></li>
+                    <li><span>Dân tộc:</span><span>{{vm.entry.theCase.person.ethnic ? vm.entry.theCase.person.ethnic.value : '&mdash;'}}</span></li>
+                    <li><span>Nghề nghiệp:</span><span>{{vm.entry.theCase.person.occupationName ? vm.entry.theCase.person.occupationName : '&mdash;'}}</span></li>
+                    <li><span>CMTND/CCCD:</span><span>{{vm.entry.theCase.person.nidNumber ? vm.entry.theCase.person.nidNumber : '&mdash;'}}</span></li>
+                    <li><span>Mã HIVInfo:</span><span>
+                        {{vm.entry.theCase.hivInfoId ? vm.entry.theCase.hivInfoId : '&mdash;'}}
+                        <div class="margin-top-10" ng-if="isProvincialManager(currentUser)">
+                            <button ng-click="vm.updateHIVInfoID(1);" class="btn btn-primary no-border jumping"><i class="margin-right-5 icon-muted icon-pencil"></i>cập nhật mã HIVInfo</button>
+                            <button ng-click="vm.updateHIVInfoID(2);" data-ng-disabled="!vm.entry.theCase.hivInfoId" class="btn btn-danger no-border jumping"><i class="margin-right-5 icon-muted icon-trash"></i>xoá mã</button>
+                        </div>
+                    </span></li>
+                    <li><span>Số điện thoại:</span><span>{{vm.entry.theCase.person.mobilePhone ? vm.entry.theCase.person.mobilePhone : '&mdash;'}}</span></li>
+                    <li><span>Nơi thường trú:</span><span ng-bind-html="vm.entry.theCase.residentAddress"></span></li>
+                    <li><span>Nơi ở hiện tại:</span><span ng-bind-html="vm.entry.theCase.currentAddress"></span></li>
+                    <li><span>Ngày sàng lọc HIV:</span><span>{{vm.entry.theCase.hivScreenDate ? (vm.entry.theCase.hivScreenDate | date:'dd/MM/yyyy') : '&mdash;'}}</span></li>
+                    <li><span>Ngày XNKĐ HIV:</span><span>{{vm.entry.theCase.hivConfirmDate | date:'dd/MM/yyyy'}}</span></li>
+                    <li><span>Nơi XNKĐ HIV:</span><span>{{(vm.entry.theCase.confirmLab && vm.entry.theCase.confirmLab.id) ? vm.entry.theCase.confirmLab.name : (vm.entry.theCase.confirmLabName ? vm.entry.theCase.confirmLabName : '&mdash;')}}</span></li>
+                    <li><span>Ghi chú:</span><span>{{vm.entry.note ? vm.entry.note : '&mdash;'}}</span></li>
+                </ul>
+                <div class="patient-photo">
+                    <div id="_patient_photo" ng-if="!vm.entry.hasPhoto" style="background-image: url({{ '../../assets/images/' + (vm.entry.person.gender == 'MALE' ? 'male.png' : 'female.png')}})">
+                        <!--<a href="#" ng-if="vm.entry.editable" ng-click="vm.patientPhoto.showUploadModal();"><i class="im im-icon-Camera-3"></i> Tải ảnh</a>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-sm-12  summary-panel patient-dashlet">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="section-head blue smaller-top-margin bolder solid-border"><i class="fa fa-heartbeat"></i> Điều trị bằng thuốc ARV</div>
+                <div class="opc-toolbar padding-left-20 margin-bottom-10">
+                    <a href="#/opc/patient/{{vm.entry.id}}/arv-history" uib-tooltip="Danh sách các phác đồ thuốc ARV đã kê cho bệnh nhân" tooltip-placement="auto" class="btn btn-primary no-border jumping"><i class="fa fa-medkit margin-right-5"></i> Phác đồ</a>
+                    <div class="vertical-seperator float-right"></div>
+                    <a href="#" uib-tooltip="Lịch sử cấp thuốc nhiều tháng" tooltip-placement="auto" ng-click="vm.showMMDOverview();" class="btn btn-primary no-border jumping"><i class="icon-grid margin-right-5"></i> ARV nhiều tháng</a>
+                    <div class="vertical-seperator float-right"></div>
+                    <a href="#" uib-tooltip="Lịch sử đánh giá giai đoạn lâm sàng" tooltip-placement="auto" ng-click="vm.openClinicalStages();" class="btn btn-primary no-border jumping"><i class="fa fa-puzzle-piece margin-right-5"></i> Giai đoạn L/sàng</a>
+                </div>
+                <ul class="listing listing-equal">
+                    <li><span>Giai đoạn lâm sàng gần nhất:</span><span>{{ vm.entry.theCase.whoStage ? ('GĐLS ' + vm.entry.theCase.whoStage ) : '&mdash;'}}</span></li>
+                    <li><span class="underline cursor-help" uib-tooltip="Là ngày đầu tiên bệnh nhân được nhận ARV sau khi có kết quả xét nghiệm khẳng định HIV+">Ngày bắt đầu ARV:</span><span>{{vm.entry.theCase.arvStartDate ? (vm.entry.theCase.arvStartDate | date:'dd/MM/yyyy') : 'Chưa điều trị ARV'}}</span></li>
+                    <li><span>Cấp thuốc ARV nhiều tháng:</span><span ng-bind-html="vm.entry.theCase.mmdStatusLabel ? vm.entry.theCase.mmdStatusLabel : 'Không có thông tin'"></span></li>
+                    <li class="single-column"><span class="bold"><i class="fa fa-caret-right margin-right-5"></i>Phác đồ ARV gần đây nhất của bệnh nhân</span></li>
+                    <li><span>Thông tin phác đồ:</span><span>{{vm.entry.theCase.currentArvRegimenName ? vm.entry.theCase.currentArvRegimenName : 'Chưa điều trị ARV'}}{{vm.entry.theCase.currentArvRegimenName && vm.entry.theCase.currentArvRegimenLine ? ' ( bậc ' + vm.entry.theCase.currentArvRegimenLine + ' ) ' : ''}}</span></li>
+                    <li><span>Ngày bắt đầu phác đồ:</span><span>{{vm.entry.theCase.currentArvRegimenStartDate ? (vm.entry.theCase.currentArvRegimenStartDate | date: 'dd/MM/yyyy') : '&mdash;'}}</span></li>
+                    <li><span>Ngày chuyển phác đồ bậc 2:</span><span>{{vm.entry.theCase.secondLineStartDate ? (vm.entry.theCase.secondLineStartDate | date: 'dd/MM/yyyy') : '&mdash;'}}</span></li>
+                    <li ng-if="vm.entry.thirdLineStartDate"><span>Ngày chuyển phác đồ bậc 3:</span><span>{{vm.entry.thirdLineStartDate | date: 'dd/MM/yyyy'}}</span></li>
+                    <li class="single-column"><span class="bold"><i class="fa fa-caret-right margin-right-5"></i>Đợt điều trị gần đây nhất<span ng-if="isSiteManager(currentUser)"> tại <span class="badge badge-primary">{{vm.entry.organization.name}}</span></span></span></li>
+                    <li ng-if="isProvincialManager(currentUser)"><span>Cơ sở ĐT gần đây nhất:</span><span>{{vm.entry.organization ? vm.entry.organization.name : '&mdash;'}}</span></li>
+                    <li><span>Ngày đăng ký:</span><span>{{(vm.entry.startDate && vm.entry.status != 'PENDING_ENROLLMENT') ? (vm.entry.startDate | date:'dd/MM/yyyy') : '&mdash;'}}</span></li>
+                    <li><span>Loại hình đăng ký:</span><span>{{vm.entry.enrollmentType | enrollmentType}}</span></li>
+                    <li><span>Mã bệnh án:</span><span>{{vm.entry.patientChartId ? vm.entry.patientChartId : '&mdash;'}}</span></li>
+                    <!--<li><span>Ngày bắt đầu nhận ARV:</span><span>{{(vm.entry.arvStartDate && vm.entry.status != 'PENDING_ENROLLMENT') ? (vm.entry.arvStartDate | date:'dd/MM/yyyy') : '&mdash;'}}</span></li>-->
+                    <li><span>Trạng thái:</span><span>{{vm.entry.status | patientStatus}}</span></li>
+                    <li ng-if="vm.entry.endDate"><span>Kết thúc đợt điều trị:</span><span>{{vm.entry.endDate | date:'dd/MM/yyyy'}}</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 col-sm-12 summary-panel patient-dashlet">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="section-head blue bolder thick-border margin-bottom-20"><i class="fa fa-flask"></i> Xét nghiệm tải lượng HIV
+                    <div class="extra-btns">
+                        <a class="btn btn-sm btn-default" href="#/opc/patient/{{vm.entry.id}}/viral-load" uib-tooltip="Xem&nbsp;chi&nbsp;tiết"><i class="icon-grid"></i> chi tiết</a>
+                        <!--<a href="#" uib-tooltip="Thu&nbsp;nhỏ&nbsp;lại"><i class="icon-arrow-down"></i></a>-->
+                    </div>
+                </div>
+                <div id="vl_chart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12 summary-panel patient-dashlet">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="section-head blue bolder thick-border margin-bottom-20"><i class="fa fa-flask"></i> Xét nghiệm CD4
+                    <div class="extra-btns">
+                        <a class="btn btn-sm btn-default" href="#/opc/patient/{{vm.entry.id}}/cd4" uib-tooltip="Xem&nbsp;chi&nbsp;tiết"><i class="icon-grid"></i> chi tiết</a>
+                        <!--<a href="#" uib-tooltip="Thu&nbsp;nhỏ&nbsp;lại"><i class="icon-arrow-down"></i></a>-->
+                    </div>
+                </div>
+                <div id="cd4_chart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 col-sm-12 summary-panel patient-dashlet">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="section-head blue bolder thick-border"><i class="im im-icon-Drop "></i> Thẻ bảo hiểm y tế
+                    <div class="extra-btns">
+                        <a class="btn btn-sm btn-default" href="#/opc/patient/{{vm.entry.id}}/shi-interview/{{vm.latestShi ? vm.latestShi.id : 0}}"><i ng-class="{'icon-pencil': vm.entry.editable, 'icon-grid' : !vm.entry.editable}"></i> {{ vm.entry.editable ? "cập nhật" : "chi tiết"}}</a>
+                        <!--<a href="#" uib-tooltip="Thu&nbsp;nhỏ&nbsp;lại"><i class="icon-arrow-down"></i></a>-->
+                    </div>
+                </div>
+                <div class="summary-with-icon">
+                    <i class="pdma-ext1-icon-life-insurance-2"></i>
+                    <div>
+                        <ul class="listing-alt" ng-if="vm.entry.theCase.shi && vm.entry.theCase.shi.id">
+                            <li ng-if="!vm.entry.theCase.shi.shiCardNumber"><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Bệnh nhân không có thẻ bảo hiểm y tế.</li>
+                            <li ng-if="vm.entry.theCase.shi.shiCardNumber"><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Bệnh nhân có thẻ BHYT, hết hạn vào ngày <span class="bold">{{vm.entry.theCase.shi.shiExpiryDate | date:'dd/MM/yyyy'}}</span>.</li>
+                            <li><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Ghi nhận lần cuối vào ngày {{vm.entry.theCase.shi.interviewDate | date:'dd/MM/yyyy'}}.</li>
+                        </ul>
+                    </div>
+                    <div class="not-applicable" ng-if="!vm.entry.theCase.shi || !vm.entry.theCase.shi.id">
+                        Chưa có thông tin bảo hiểm y tế.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12 summary-panel patient-dashlet">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="section-head blue bolder thick-border"><i class="im im-icon-Drop "></i> Đánh giá nhóm nguy cơ
+                    <div class="extra-btns">
+                        <a class="btn btn-sm btn-default" href="#/opc/patient/{{vm.entry.id}}/risk-interview" uib-tooltip="Xem&nbsp;chi&nbsp;tiết"><i class="icon-grid"></i> chi tiết</a>
+                    </div>
+                </div>
+                <div class="summary-with-icon">
+                    <i class="pdma-ext1-icon-puzzle-2"></i>
+                    <div ng-if="vm.entry.theCase.riskInterviews && vm.entry.theCase.riskInterviews.length > 0" ng-init="risk = vm.entry.theCase.riskInterviews[0]">
+                        <ul class="listing-alt">
+                            <li><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>
+                                Nhóm: <span class="font-weight-600"><span ng-repeat="r in risk.risks">{{r.value}}<span ng-if="$index < risk.risks.length - 1">/</span></span><span ng-if="risk.otherRiskGroupText"><span ng-if="risk.risks.length > 0">/</span>{{risk.otherRiskGroupText}}</span>.</span>
+                            </li>
+                            <li><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Ghi nhận lần cuối vào ngày {{risk.interviewDate | date:'dd/MM/yyyy'}}.</li>
+                        </ul>
+                    </div>
+                    <div class="not-applicable" ng-if="!vm.entry.theCase.riskInterviews || vm.entry.theCase.riskInterviews.length <= 0">
+                        Chưa có thông tin về phân nhóm nguy cơ.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-sm-12 summary-panel patient-dashlet">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="section-head blue bolder thick-border"><i class="im im-icon-Drop "></i> Dự phòng lao - Chẩn đoán và điều trị lao
+                    <div class="extra-btns">
+                        <a class="btn btn-sm btn-default" href="#/opc/patient/{{vm.entry.id}}/tb-hiv" uib-tooltip="Xem&nbsp;chi&nbsp;tiết"><i class="icon-grid"></i> chi tiết</a>
+                        <!--<a href="#" uib-tooltip="Thu&nbsp;nhỏ&nbsp;lại"><i class="icon-arrow-down"></i></a>-->
+                    </div>
+                </div>
+                <div class="summary-with-icon">
+                    <i class="pdma-ext1-icon-lungs"></i>
+                    <div>
+                        <ul class="listing-alt">
+                            <li class="heading">Chẩn đoán - điều trị lao</li>
+                            <li class="double-height" ng-if="!vm.entry.theCase.tbTreatment || !vm.entry.theCase.tbTreatment.id">&mdash; Chưa có thông tin chẩn đoán - điều trị lao.</li>
+                            <li ng-if="vm.entry.theCase.tbTreatment && vm.entry.theCase.tbTreatment.id && !vm.entry.theCase.tbTreatment.txStartDate"><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Bệnh nhân mắc lao nhưng chưa điều trị lao.</li>
+                            <li ng-if="vm.entry.theCase.tbTreatment && vm.entry.theCase.tbTreatment.txStartDate && !vm.entry.theCase.tbTreatment.txEndDate"><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Bệnh nhân được điều trị lao từ ngày <span class="bold">{{vm.entry.theCase.tbTreatment.txStartDate | date:'dd/MM/yyyy'}}.</span></li>
+                            <li ng-if="vm.entry.theCase.tbTreatment && vm.entry.theCase.tbTreatment.txStartDate && vm.entry.theCase.tbTreatment.txEndDate"><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Bệnh nhân được điều trị lao từ ngày <span class="bold">{{vm.entry.theCase.tbTreatment.txStartDate | date:'dd/MM/yyyy'}} - {{vm.entry.theCase.tbTreatment.txEndDate | date:'dd/MM/yyyy'}}.</span></li>
+                            <li ng-if="vm.entry.theCase.tbTreatment && vm.entry.theCase.tbTreatment.facilityName"><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Cơ sở ĐT: <span class="bold">{{vm.entry.theCase.tbTreatment.facilityName}}.</span></li>
+                            <li ng-if="vm.entry.theCase.tbTreatment && !vm.entry.theCase.tbTreatment.facilityName"><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Cơ sở ĐT: <span class="bold">Không được ghi nhận.</span></li>
+
+                            <li class="heading">Điều trị dự phòng lao</li>
+                            <li class="double-height" ng-if="!vm.entry.theCase.tbProphylaxis || !vm.entry.theCase.tbProphylaxis.id">&mdash; Chưa có thông tin điều trị dự phòng lao.</li>
+                            <li ng-if="vm.entry.theCase.tbProphylaxis && vm.entry.theCase.tbProphylaxis.id"><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Bệnh nhân được dự phòng lao từ ngày: <span class="bold">{{vm.entry.theCase.tbProphylaxis.startDate | date:'dd/MM/yyyy'}}</span>.</li>
+                            <li ng-if="vm.entry.theCase.tbProphylaxis && vm.entry.theCase.tbProphylaxis.id"><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Kết quả dự phòng: <span class="bold">{{vm.entry.theCase.tbProphylaxis.resultText}}.</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12 summary-panel patient-dashlet">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="section-head blue bolder thick-border"><i class="im im-icon-Drop "></i> Sàng lọc viêm gan B - Viêm gan C
+                    <div class="extra-btns">
+                        <a class="btn btn-sm btn-default" href="#/opc/patient/{{vm.entry.id}}/hepatitis" uib-tooltip="Xem&nbsp;chi&nbsp;tiết"><i class="icon-grid"></i> chi tiết</a>
+                        <!--<a href="#" uib-tooltip="Thu&nbsp;nhỏ&nbsp;lại"><i class="icon-arrow-down"></i></a>-->
+                    </div>
+                </div>
+                <div class="summary-with-icon">
+                    <i class="pdma-ext1-icon-liver-2"></i>
+                    <div>
+                        <ul class="listing-alt">
+                            <li class="heading">Viêm gan B</li>
+                            <li class="double-height" ng-if="!vm.entry.theCase.hepB">&mdash; Chưa có thông tin xét nghiệm viêm gan B.</li>
+                            <li ng-if="vm.entry.theCase.hepB"><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Bệnh nhân {{vm.entry.hepB.testPositive ? '' : 'không'}} mắc viêm gan B.</li>
+                            <li ng-if="vm.entry.theCase.hepB && vm.entry.theCase.hepB.testDate"><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Lần xét nghiệm gần nhất: <span class="bold">{{vm.entry.theCase.hepB.testDate | date: 'dd/MM/yyyy'}}.</span></li>
+                            <li ng-if="vm.entry.theCase.hepB && !vm.entry.theCase.hepB.testDate"><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Không có thông tin ngày xét nghiệm gần nhất.</li>
+
+                            <li class="heading">Viêm gan C</li>
+                            <li class="double-height" ng-if="!vm.entry.theCase.hepC">&mdash; Chưa có thông tin xét nghiệm viêm gan C.</li>
+                            <li ng-if="vm.entry.theCase.hepC"><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Bệnh nhân {{vm.entry.theCase.hepC.testPositive ? '' : 'không'}} mắc viêm gan C.</li>
+                            <li ng-if="vm.entry.theCase.hepC && vm.entry.theCase.hepC.testDate"><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Lần xét nghiệm gần nhất: <span class="bold">{{vm.entry.theCase.hepC.testDate | date: 'dd/MM/yyyy'}}.</span></li>
+                            <li ng-if="vm.entry.theCase.hepC && !vm.entry.theCase.hepC.testDate"><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Không có thông tin ngày xét nghiệm gần nhất.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 col-sm-12 summary-panel patient-dashlet">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="section-head blue bolder thick-border"><i class="im im-icon-Drop "></i> Xét nghiệm kháng thuốc ARV
+                    <div class="extra-btns">
+                        <a class="btn btn-sm btn-default" href="#/opc/patient/{{vm.entry.id}}/hiv-dr" uib-tooltip="Xem&nbsp;chi&nbsp;tiết"><i class="icon-grid"></i> chi tiết</a>
+                        <!--<a href="#" uib-tooltip="Thu&nbsp;nhỏ&nbsp;lại"><i class="icon-arrow-down"></i></a>-->
+                    </div>
+                </div>
+                <div class="summary-with-icon">
+                    <i class="pdma-ext1-icon-lab"></i>
+                    <div ng-if="vm.entry.theCase.dr">
+                        <ul class="listing-alt">
+                            <li><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Kết quả: <span class="bold">{{vm.entry.theCase.dr.resultText}}.</span></li>
+                            <li><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Ngày lấy mẫu: <span class="bold">{{vm.entry.theCase.dr.sampleDate | date:'dd/MM/yyyy'}}.</span></li>
+                        </ul>
+                    </div>
+                    <div class="not-applicable" ng-if="!vm.entry.theCase.dr">
+                        Chưa có thông tin xét nghiệm kháng thuốc.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12 summary-panel patient-dashlet">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="section-head blue bolder thick-border"><i class="im im-icon-Drop "></i> Điều trị thuốc thay thế (MMT)
+                    <div class="extra-btns">
+                        <a class="btn btn-sm btn-default" href="#/opc/patient/{{vm.entry.id}}/mmt" uib-tooltip="Xem&nbsp;chi&nbsp;tiết"><i class="icon-grid"></i> chi tiết</a>
+                        <!--<a href="#" uib-tooltip="Thu&nbsp;nhỏ&nbsp;lại"><i class="icon-arrow-down"></i></a>-->
+                    </div>
+                </div>
+                <div class="summary-with-icon">
+                    <i class="pdma-ext1-icon-pills-2"></i>
+                    <div ng-if="vm.entry.theCase.mmt && vm.entry.theCase.mmt.id > 0">
+                        <ul class="listing-alt">
+                            <li><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Bệnh nhân được điều trị bằng thuốc thay thế.</li>
+                            <li><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Từ ngày <span class="bold">{{vm.entry.theCase.mmt.startDate | date:'dd/MM/yyyy'}} - {{vm.entry.theCase.mmt.endDate ? (vm.entry.theCase.mmt.endDate|date:'dd/MM/yyyy') : '//'}}.</span></li>
+                        </ul>
+                    </div>
+                    <div class="not-applicable" ng-if="!vm.entry.theCase.mmt || !vm.entry.theCase.mmt.id">
+                        Chưa có thông tin điều trị bằng thuốc thay thế.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12 summary-panel patient-dashlet" ng-if="vm.entry.theCase.person.gender == 'FEMALE'">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="section-head blue bolder thick-border"><i class="im im-icon-Drop "></i> Lịch sử mang thai - sinh đẻ
+                    <div class="extra-btns">
+                        <a class="btn btn-sm btn-default" href="#/opc/patient/{{vm.entry.id}}/pregnancy" uib-tooltip="Xem&nbsp;chi&nbsp;tiết"><i class="icon-grid"></i> chi tiết</a>
+                        <!--<a href="#" uib-tooltip="Thu&nbsp;nhỏ&nbsp;lại"><i class="icon-arrow-down"></i></a>-->
+                    </div>
+                </div>
+                <div class="summary-with-icon">
+                    <i class="pdma-ext1-icon-pregnancy"></i>
+                    <div ng-if="vm.entry.theCase.pregnancies && vm.entry.theCase.pregnancies.length > 0" ng-init="pregnancy = vm.entry.theCase.pregnancies[0]">
+                        <ul class="listing-alt">
+                            <li><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Bệnh nhân đã được ghi nhận có mang thai.</li>
+                            <li ng-if="pregnancy.pregResult == 'GAVEBIRTH'"><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Bệnh nhân đã sinh nở{{pregnancy.childDob ? (' ngày' + pregnancy.childDob | date:'dd/MM/yyyy') : '' }}.</li>
+                            <li ng-if="pregnancy.pregResult != 'GAVEBIRTH'"><i class="fa fa-caret-right icon-muted-alt margin-right-5"></i>Bệnh nhân chưa sinh.<span ng-if="pregnancy.dueDate"> Dự sinh vào ngày {{pregnancy.dueDate | date:'dd/MM/yyyy'}}</span></li>
+                        </ul>
+                    </div>
+                    <div class="not-applicable" ng-if="!vm.entry.theCase.pregnancies || vm.entry.theCase.pregnancies.length <= 0">
+                        Chưa có thông tin về mang thai/sinh đẻ.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+
+<script type="text/ng-template" id="delete_patient_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Xoá bản ghi</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="icon-exclamation"></i></div>
+            <div><span>Bạn có chắc chắn muốn xoá hồ sơ của bệnh nhân <strong>{{vm.entry.person.fullname}}</strong> không?
+            <br /><br/><strong>LƯU Ý: </strong>Thông tin bệnh nhân sẽ không bị xóa hoàn toàn khỏi cơ sở dữ liệu. Bạn vẫn có thể xem lại thông tin sau khi đã xoá. Bạn cũng có thể yêu cầu tuyến tỉnh khôi phục lại hồ sơ bệnh nhân đã bị xóa.
+            </span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Không</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-danger no-border" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>Có</button>
+        </div>
+    </div>
+</script>
+
+<div ng-include="'_treatment/views/fragments/_input.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_confirmation.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_general_error.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_patient_photo.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_patient_status_history.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_clinical_stages.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_noneditable_alert.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_individual_appointments.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_mmd_overview.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_record_found_confirmation.html?v=' + settings.versionNumber"></div>

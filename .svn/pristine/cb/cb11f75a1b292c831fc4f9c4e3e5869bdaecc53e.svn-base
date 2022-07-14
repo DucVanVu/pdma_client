@@ -1,0 +1,67 @@
+<script type="text/ng-template" id="shi_entry_edit_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <!--sửa phần khi nhấn vào "X" thì không đóng được tab cập nhật thông tin thẻ bảo hiểm y tế -->
+            <h4 class="modal-title"><i class="icon-pencil"></i> Cập nhật thông tin thẻ bảo hiểm y tế</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-6 margin-top-10" ng-repeat="opt in vm.options.shiAvailability">
+                    <div class="md-radio-inline">
+                        <div class="md-radio">
+                            <input type="radio" id="checkbox_shiavail_{{opt.id}}" name="checkbox_shi_availability" ng-model="vm.shiEntry.hasShiCard" ng-value="opt.id" class="md-radiobtn">
+                            <label for="checkbox_shiavail_{{opt.id}}">
+                                <span></span>
+                                <span class="check"></span>
+                                <span class="box"></span> {{opt.name}}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="margin-top-10"><div class="with-border-top darker"></div></div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-10">
+                    <label class="bold" ng-class="{'text-muted mutter' : !vm.shiEntry.hasShiCard}">Mã thẻ BHYT</label>
+                    <input id="vm.shiEntry.shiCardNumber" class="form-control" ng-model="vm.shiEntry.shiCardNumber" input-mask="AA 9 99 999 999 9999" ng-disabled="!vm.shiEntry.hasShiCard" />
+                </div>
+                <div class="col-xs-6 margin-top-10 form-controller-alt-2">
+                    <label class="bold" ng-class="{'text-muted mutter' : !vm.shiEntry.hasShiCard}">Hạn dùng thẻ BHYT</label>
+                    <input class="form-control" ng-if="!vm.shiEntry.hasShiCard" disabled="disabled" />
+                    <input id="vm.shiEntry.shiExpiryDate" ng-if="vm.shiEntry.hasShiCard" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.shiExpireDatepicker.dateOpts"
+                           fp-on-setup="vm.shiExpireDatepicker.datePostSetup(fpItem)"
+                           ng-model="vm.shiEntry.shiExpiryDate"
+                           data-enabletime="false" />
+                    <a ng-if="vm.shiEntry.hasShiCard && vm.shiEntry.shiExpiryDate" class="clear-picker input-has-label" ng-click="vm.shiExpireDatepicker.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 margin-top-20">
+                    <label class="bold" ng-class="{'text-muted mutter' : !vm.shiEntry.hasShiCard}">Cơ sở đăng ký khám chữa bệnh ban đầu</label>
+                    <input class="form-control" ng-if="!vm.shiEntry.hasShiCard" disabled="disabled" />
+                    <ui-select id="vm.shiEntry.primaryCareFacility" ng-if="vm.shiEntry.hasShiCard" ng-model="vm.shiEntry.primaryCareFacility" ng-change="vm.onPrimaryCareFacilityChange()" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="f in vm.options.opcs | filter: {name: $select.search}">
+                            <div class="bold" ng-if="$index != 1" ng-bind-html="f.name | highlight: $select.search"></div>
+                            <div class="small" ng-if="$index > 1 && f.address && f.address.province" ng-bind-html="('&mdash; ' + f.address.province.name)"></div>
+                            <hr class="small-margin" ng-if="$index == 1" />
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <div class="row" ng-if="vm.shiEntry.primaryCareFacility && vm.shiEntry.primaryCareFacility.id == 0">
+                <div class="col-xs-12 margin-top-20">
+                    <label class="bold">Nhập tên cơ sở đăng ký khám chữa bệnh ban đầu</label>
+                    <input id="vm.shiEntry.primaryCareFacilityName" class="form-control" ng-model="vm.shiEntry.primaryCareFacilityName" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default no-border" data-dismiss="modal">Đóng lại</button>
+            <button type="button" data-ng-disabled="vm.shiSubmitDisabled" ng-click="vm.saveShiEntry()" ng-if="!vm.shiEntry.readOnly && vm.patient.editable" class="btn btn-primary jumping" data-dismiss="modal">Lưu lại</button>
+        </div>
+    </div>
+</script>

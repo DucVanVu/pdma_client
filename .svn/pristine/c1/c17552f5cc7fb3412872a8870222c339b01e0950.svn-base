@@ -1,0 +1,307 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="icon-layers"></i> Thiết lập cấu hình</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#">Trang chủ</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#">Thiết lập cấu hình</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs ">
+                                <li class="active">
+                                    <a href="#" data-toggle="tab"><i class="icon-magic-wand"></i> CƠ BẢN </a>
+                                </li>
+                                <li class="disabled">
+                                    <a href="#"><i class="icon-settings"></i> NÂNG CAO </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content small-gap">
+                                <div class="tab-pane active summary-panel padding-bottom-30">
+                                    <!--<div class="row margin-top-20">-->
+                                        <!--<div class="col-xs-12">-->
+                                            <!--<div class="section-head" style="padding-bottom: 10px">-->
+                                                <!--<i class="im im-icon-Biotech color-7"></i> Quản lý dữ liệu demo-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="row">-->
+                                        <!--<div class="col-md-12 margin-top-10">-->
+                                            <!--<div class="buttons-group">-->
+                                                <!--<button class="btn btn-default" data-ng-click="vm.resetPassword4DemoUsers()"><i class="icon-refresh"></i> Reset demo user password</button>-->
+                                                <!--<button class="btn btn-default margin-left-10" data-ng-click="vm.forceWeeklyDataSynthesis()"><i class="icon-chart"></i> Force data synthesis</button>-->
+                                                <!--<button class="btn btn-danger margin-left-10" data-ng-click="vm.deleteDemoWeeklyData()"><i class="icon-trash"></i> Delete demo weekly report data</button>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="row margin-top-20">-->
+                                        <!--<div class="col-xs-12">-->
+                                            <!--<div class="section-head" style="padding-bottom: 10px">-->
+                                                <!--<i class="im im-icon-Biotech color-7"></i> Chức năng phục vụ riêng cho tập huấn (không được dùng trong bản production)-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+
+                                    <div class="row">
+                                        <div class="col-md-3 margin-top-20">
+                                            <label>Mật khẩu dùng chung</label>
+                                            <input type="text" class="form-control" autofocus ng-model="vm.userObj.password" />
+                                        </div>
+                                        <div class="col-md-9 margin-top-20" style="padding-top: 25px;">
+                                            <button class="btn btn-danger" data-ng-click="vm.dangerousReset()">Reset mật khẩu cho toàn bộ người dùng!!!</button>
+                                        </div>
+                                    </div>
+
+                                    <!--<div class="row margin-top-20">-->
+                                        <!--<div class="col-xs-12">-->
+                                            <!--<div class="section-head" style="padding-bottom: 10px">-->
+                                                <!--<i class="im im-icon-Biotech color-7"></i> Chức năng phục vụ cho triển khai OPC-Assist-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="row">-->
+                                        <!--<div class="col-md-12 margin-top-20">-->
+                                            <!--<label>Danh sách các tỉnh đã triển khai OPC-Assist</label>-->
+                                            <!--<ui-select multiple ng-model="vm.opcassist.provinces" sortable="true" close-on-select="false" style="width: 100%!important;">-->
+                                                <!--<ui-select-match allow-clear="true" placeholder="Xin mời chọn..."><i class="fa fa-check"></i> {{$item.name}}</ui-select-match>-->
+                                                <!--<ui-select-choices repeat="prov.id as prov in vm.provinces | propsFilter: {name: $select.search}">-->
+                                                    <!--<div class="bold" ng-bind-html="prov.name | highlight: $select.search"></div>-->
+                                                <!--</ui-select-choices>-->
+                                            <!--</ui-select>-->
+                                        <!--</div>-->
+                                        <!--<div class="col-md-12 margin-top-20">-->
+                                            <!--<button class="btn btn-default" data-ng-click="vm.saveOPCAssistProvinces()">Lưu lại danh sách tỉnh</button>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <div class="row margin-top-20">
+                                        <div class="col-xs-6">
+                                            <!--<div class="section-head" style="padding-bottom: 10px">-->
+                                                <!--<i class="im im-icon-Biotech color-7"></i> Import dữ liệu OPC-Assist Offline-->
+                                            <!--</div>-->
+                                            <!--<div class="row">-->
+                                                <!--<div class="col-md-12 margin-top-20">-->
+                                                    <!--<a class="no-content1 display-block link" ngf-select="vm.uploadFiles($file, $invalidFiles)"-->
+                                                       <!--accept="*/*" ngf-max-size="{{vm.MAX_FILE_SIZE}}"><i class="fa fa-cloud-upload"></i> Chọn tệp tin để tải lên</a>-->
+                                                <!--</div>-->
+
+                                                <!--<div class="col-md-12 margin-top-20" ng-if="vm.uploadedFile != null">-->
+                                                    <!--<div class="row">-->
+                                                        <!--<div class="col-xs-5 align-right">-->
+                                                            <!--<label>Tệp tin đã chọn:</label>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="col-xs-7">-->
+                                                            <!--<span class="bold">{{vm.uploadedFile.name}}</span>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+
+                                                <!--<div class="col-md-12 margin-top-20" ng-if="vm.errorFile != null && vm.errorFile.$error != ''">-->
+                                                    <!--Lỗi: <span class="bold" ng-if="vm.errorFile.$error == 'maxSize'">Kích thước tệp tin phải nhỏ hơn {{vm.errorFile.$errorParam}}</span>-->
+                                                    <!--<span class="bold" ng-if="vm.errorFile.$error != null && vm.errorFile.$error != 'maxSize'">Tệp tin {{vm.errorFile.name}} không hợp lệ. Vui lòng chọn tệp tin khác.</span>-->
+                                                <!--</div>-->
+
+                                                <!--<div class="col-md-12 margin-top-20" ng-if="vm.uploadedFile.progress >= 0">-->
+                                                    <!--<div class="progress" style="height: 20px">-->
+                                                        <!--<div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" ng-bind="vm.uploadedFile.progress + '%'" style="width:{{vm.uploadedFile.progress}}%;">-->
+                                                            <!--{{vm.uploadedFile.progress}}%-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                            <!--<div class="margin-top-20">-->
+                                                <!--<label class="bold">Mời chọn đơn vị</label>-->
+                                                <!--<ui-select id="vm.opcId" ng-model="vm.opcId" sortable="true" close-on-select="true" style="width: 100%!important;">-->
+                                                    <!--<ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>-->
+                                                    <!--<ui-select-choices repeat="opc.id as opc in vm.opcs | propsFilter: {name: $select.search}">-->
+                                                        <!--<div class="bold" ng-bind-html="opc.name | highlight: $select.search"></div>-->
+                                                    <!--</ui-select-choices>-->
+                                                <!--</ui-select>-->
+                                            <!--</div>-->
+                                            <!--<div class="margin-top-20">-->
+                                                <!--<button class="btn btn-default" data-ng-click="vm.startUploadFile(vm.uploadedFile, 'IMPORT-DB')">Bắt đầu Import!</button>-->
+                                            <!--</div>-->
+                                            <div class="section-head" style="padding-bottom: 10px">
+                                                <i class="im im-icon-Biotech color-7"></i> Import dữ liệu MMT
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12 margin-top-20">
+                                                    <a class="no-content1 display-block link" ngf-select="vm.uploadFiles($file, $invalidFiles)"
+                                                       accept="*/*" ngf-max-size="{{vm.MAX_FILE_SIZE}}"><i class="fa fa-cloud-upload"></i> Chọn tệp tin để tải lên</a>
+                                                </div>
+
+                                                <div class="col-md-12 margin-top-20" ng-if="vm.uploadedFile != null">
+                                                    <div class="row">
+                                                        <div class="col-xs-5 align-right">
+                                                            <label>Tệp tin đã chọn:</label>
+                                                        </div>
+                                                        <div class="col-xs-7">
+                                                            <span class="bold">{{vm.uploadedFile.name}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12 margin-top-20" ng-if="vm.errorFile != null && vm.errorFile.$error != ''">
+                                                    Lỗi: <span class="bold" ng-if="vm.errorFile.$error == 'maxSize'">Kích thước tệp tin phải nhỏ hơn {{vm.errorFile.$errorParam}}</span>
+                                                    <span class="bold" ng-if="vm.errorFile.$error != null && vm.errorFile.$error != 'maxSize'">Tệp tin {{vm.errorFile.name}} không hợp lệ. Vui lòng chọn tệp tin khác.</span>
+                                                </div>
+
+                                                <div class="col-md-12 margin-top-20" ng-if="vm.uploadedFile.progress >= 0">
+                                                    <div class="progress" style="height: 20px">
+                                                        <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" ng-bind="vm.uploadedFile.progress + '%'" style="width:{{vm.uploadedFile.progress}}%;">
+                                                            {{vm.uploadedFile.progress}}%
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="margin-top-20">
+                                                <button class="btn btn-default" data-ng-click="vm.startUploadFile(vm.uploadedFile, 'IMPORT-DB')">Bắt đầu Import!</button>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <div class="section-head" style="padding-bottom: 10px">
+                                                <i class="im im-icon-Biotech color-7"></i> Import dữ liệu HIVInfo ID
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12 margin-top-20">
+                                                    <a class="no-content1 display-block link" ngf-select="vm.uploadFiles($file, $invalidFiles)"
+                                                       accept="*/*" ngf-max-size="{{vm.MAX_FILE_SIZE}}"><i class="fa fa-cloud-upload"></i> Chọn tệp tin để tải lên</a>
+                                                </div>
+
+                                                <div class="col-md-12 margin-top-20" ng-if="vm.uploadedFile != null">
+                                                    <div class="row">
+                                                        <div class="col-xs-5 align-right">
+                                                            <label>Tệp tin đã chọn:</label>
+                                                        </div>
+                                                        <div class="col-xs-7">
+                                                            <span class="bold">{{vm.uploadedFile.name}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12 margin-top-20" ng-if="vm.errorFile != null && vm.errorFile.$error != ''">
+                                                    Lỗi: <span class="bold" ng-if="vm.errorFile.$error == 'maxSize'">Kích thước tệp tin phải nhỏ hơn {{vm.errorFile.$errorParam}}</span>
+                                                    <span class="bold" ng-if="vm.errorFile.$error != null && vm.errorFile.$error != 'maxSize'">Tệp tin {{vm.errorFile.name}} không hợp lệ. Vui lòng chọn tệp tin khác.</span>
+                                                </div>
+
+                                                <div class="col-md-12 margin-top-20" ng-if="vm.uploadedFile.progress >= 0">
+                                                    <div class="progress" style="height: 20px">
+                                                        <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" ng-bind="vm.uploadedFile.progress + '%'" style="width:{{vm.uploadedFile.progress}}%;">
+                                                            {{vm.uploadedFile.progress}}%
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="margin-top-20">
+                                                <button class="btn btn-default" data-ng-click="vm.startUploadFile(vm.uploadedFile, 'IMPORT-HIVINFO-ID')">Bắt đầu Import!</button>
+                                            </div>
+                                            <!--<div class="margin-top-20">-->
+                                                <!--<button class="btn btn-danger" data-ng-click="vm.forceWeeklyDataSynthesis()"><i class="icon-chart"></i> Force data synthesis</button>-->
+                                            <!--</div>-->
+                                        </div>
+                                    </div>
+                                    <!--div class="row margin-top-20 margin-bottom-30">
+                                        <div class="col-xs-6">
+                                            <div class="section-head" style="padding-bottom: 10px">
+                                                <i class="im im-icon-Biotech color-7"></i> Import dữ liệu OPC-Assist offline
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12 margin-top-20">
+                                                    <a class="no-content1 display-block link" ngf-select="vm.uploadFiles($file, $invalidFiles)"
+                                                       accept="*/*" ngf-max-size="{{vm.MAX_FILE_SIZE}}"><i class="fa fa-cloud-upload"></i> Chọn tệp tin để tải lên</a>
+                                                </div>
+
+                                                <div class="col-md-12 margin-top-20" ng-if="vm.uploadedFile != null">
+                                                    <div class="row">
+                                                        <div class="col-xs-5 align-right">
+                                                            <label>Tệp tin đã chọn:</label>
+                                                        </div>
+                                                        <div class="col-xs-7">
+                                                            <span class="bold">{{vm.uploadedFile.name}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12 margin-top-20" ng-if="vm.errorFile != null && vm.errorFile.$error != ''">
+                                                    Lỗi: <span class="bold" ng-if="vm.errorFile.$error == 'maxSize'">Kích thước tệp tin phải nhỏ hơn {{vm.errorFile.$errorParam}}</span>
+                                                    <span class="bold" ng-if="vm.errorFile.$error != null && vm.errorFile.$error != 'maxSize'">Tệp tin {{vm.errorFile.name}} không hợp lệ. Vui lòng chọn tệp tin khác.</span>
+                                                </div>
+
+                                                <div class="col-md-12 margin-top-20" ng-if="vm.uploadedFile.progress >= 0">
+                                                    <div class="progress" style="height: 20px">
+                                                        <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" ng-bind="vm.uploadedFile.progress + '%'" style="width:{{vm.uploadedFile.progress}}%;">
+                                                            {{vm.uploadedFile.progress}}%
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="margin-top-20">
+                                                <button class="btn btn-default" data-ng-click="vm.startUploadFile(vm.uploadedFile, 'IMPORT-DB-2')">Bắt đầu Import!</button>
+                                            </div>
+                                        </div>
+                                    </div-->
+                                    <!--<div class="row margin-top-20">-->
+                                        <!--<div class="col-xs-12">-->
+                                            <!--<div class="section-head" style="padding-bottom: 10px">-->
+                                                <!--<i class="im im-icon-Biotech color-7"></i> Xóa dữ liệu OPC-Assist-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="row">-->
+                                        <!--<div class="col-md-6">-->
+                                            <!--<label class="bold">Mời chọn đơn vị</label>-->
+                                            <!--<ui-select id="vm.delFilter.orgId" ng-model="vm.delFilter.orgId" sortable="true" close-on-select="true" style="width: 100%!important;">-->
+                                                <!--<ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>-->
+                                                <!--<ui-select-choices repeat="opc.id as opc in vm.opcs | propsFilter: {name: $select.search}">-->
+                                                    <!--<div class="bold" ng-bind-html="opc.name | highlight: $select.search"></div>-->
+                                                <!--</ui-select-choices>-->
+                                            <!--</ui-select>-->
+                                        <!--</div>-->
+                                        <!--<div class="col-md-6">-->
+                                            <!--<label class="bold">Mật mã</label>-->
+                                            <!--<input type="password" name="vm.delFilter.passcode" ng-model="vm.delFilter.passcode" class="form-control" autocomplete="off" readonly="readonly" onfocus="this.removeAttribute('readonly');" />-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="row">-->
+                                        <!--<div class="col-md-12 margin-top-20 margin-bottom-30">-->
+                                            <!--<button class="btn btn-danger" data-ng-click="vm.delOpcAssistData()">Bắt đầu xóa!</button>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<!-- BEGIN MAIN JS-->
+<script type="text/ng-template" id="confirm_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-exclamation"></i> NGUY HIỂM!!!</h4>
+        </div>
+        <div class="modal-body">
+            <span class="text-danger bold">CHÚ Ý! </span> Thao tác này cực kỳ nguy hiểm. Mật khẩu của toàn bộ người dùng trong hệ thống (ngoại trừ những người dùng không được kích hoạt và người dùng admin) sẽ bị đổi thành {{vm.userObj.password}}. Bạn có chắc chắn muốn thực hiện không?
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-primary" data-dismiss="modal">Không</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-default" data-dismiss="modal">Có</button>
+        </div>
+    </div>
+</script>
+<!-- BEGIN MAIN JS -->

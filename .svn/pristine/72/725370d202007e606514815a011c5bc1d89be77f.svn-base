@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js" data-ng-app="PDMA"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js" data-ng-app="PDMA"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" data-ng-app="PDMA">
+<!--<![endif]-->
+    <head>
+        <title data-ng-bind="'PDMA - Báo cáo trực tuyến | ' + $state.current.data.pageTitle"></title>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=0.86, maximum-scale=3.0, minimum-scale=0.86, shrink-to-fit=yes">
+        <meta content="An online reporting platform for the HIV/AIDS prevention and control program in Vietnam, supported by U.S. CDC Vietnam office." name="description" />
+        <meta content="Nguyen Tuan Anh (mail2anhnt@gmail.com)" name="author" />
+
+        <meta property="og:title" content="PDMA Online">
+        <meta property="og:description" content="An online reporting platform for the HIV/AIDS prevention and control program in Vietnam, supported by U.S. CDC Vietnam office.">
+        <meta property="og:image" content="https://pdma.epic.org.vn/assets/images/95s-card.png">
+        <meta property="og:url" content="https://pdma.epic.org.vn">
+        <meta name="twitter:card" content="https://pdma.epic.org.vn/assets/images/95s-card.png">
+        <meta property="og:site_name" content="EPIC Project">
+        <meta name="twitter:image:alt" content="Towards 95-95-95 targets!">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+        <script>WebFont.load({google:{"families":["Quicksand:300,400,500,600,700", "Chonburi:400"]},active:function(){sessionStorage.fonts = true;}});</script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-177530836-1"></script>
+        <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config','UA-177530836-1');</script>
+
+        <!--build:css assets/css/dist/compiled-plugins.min.css-->
+        <link href="assets/css/external/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/external/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/external/iconsmind.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/external/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/external/bootstrap-table.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/external/select.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/external/toastr-alt.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/external/jquery.webui-popover.min.css" rel="stylesheet" type="text/css"/>
+        <link href="assets/css/external/angular-block-ui.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/external/ui-cropper.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/external/flatpickr-4-6-6.min.js.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/external/flatpickr-monthselect.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/external/textAngular.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/external/fullcalendar.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/external/jstree-style.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/external/ng-tree-dnd.min.css" rel="stylesheet" type="text/css" />
+        <!--endbuild-->
+
+        <link id="ng_load_plugins_before" />
+
+        <!--build:css assets/css/compiled-client.min.css-->
+        <link href="assets/css/components-md.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/plugins-md.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/layout.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/grey.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/login.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/loader.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/custom.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/custom-fonts.css" rel="stylesheet" type="text/css" />
+        <!--endbuild-->
+
+        <link rel="shortcut icon" type="image/png" href="assets/images/favicon.png?v=1.1" />
+
+        <!--[if lt IE 9]><script src="assets/scripts/external/support_lt_ie9.js" type="text/javascript"></script><script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js" type="text/javascript"></script><script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/2.2.0/es5-shim.js" type="text/javascript"></script><link href="assets/css/external/flatpickr-ie.css" rel="stylesheet" type="text/css" /><![endif]-->
+    </head>
+    <body ng-controller="AppController" class="page-sidebar-closed-hide-logo page-container-bg-solid page-boxed" ng-class="{'page-content-white': settings.layout.pageContentWhite,'page-container-bg-solid': settings.layout.pageBodySolid, 'page-sidebar-closed': settings.layout.pageSidebarClosed}">
+        <div ng-spinner-bar class="preloader">
+            <div id="cssload-loader">
+                <div class="cssload-dot"></div>
+                <div class="cssload-dot"></div>
+                <div class="cssload-dot"></div>
+                <div class="cssload-dot"></div>
+                <div class="cssload-dot"></div>
+                <div class="cssload-dot"></div>
+                <div class="cssload-dot"></div>
+                <div class="cssload-dot"></div>
+            </div>
+        </div>
+        
+        <ui-view></ui-view>
+
+        <!--build:js assets/scripts/dist/compiled-core-jquery.min.js-->
+        <script src="assets/scripts/external/jquery.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/js.cookie.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/bootstrap.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/jquery.blockui.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/bootstrap-table.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/bootstrap-tabdrop.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/jquery.webui-popover.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/jquery.inputmask.bundle.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/jquery.slimscroll.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/moment-with-locales.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/highcharts.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/highcharts-3d.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/highcharts-exporting.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/highcharts-export-data.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/highcharts_heatmap.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/highcharts_treemap.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/fullcalendar-3.10.2.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/jquery.print.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/underscore-min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/drag-on.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/autogrow.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/jstree.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/bootstrap-treeview.js" type="text/javascript"></script>
+        <!--endbuild-->
+
+        <!--build:js assets/scripts/dist/compiled-core-angular.min.js-->
+        <script src="assets/scripts/external/angular.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/angular-locale_vi-vn.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/angular-sanitize.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/angular-touch.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/angular-cookies.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/angular-ui-router.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/angular-route.min.js" type="text/javascript"></script>
+
+        <script src="assets/scripts/external/ocLazyLoad.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/query-string.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/angular-oauth2.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/ui-bootstrap-tpls-2.5.0.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/bootstrap-table-angular.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/bootstrap-table-vi-VN.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/select.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/angular-toastr.tpls.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/angular-block-ui.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/textAngular-rangy.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/textAngular-sanitize.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/textAngular.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/ng-file-upload-shim.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/ng-file-upload.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/focusIf.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/angular-sticky.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/ui-cropper.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/angular-input-masks-standalone.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/angular-idle.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/sortable.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/angular-countUp.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/angular-timeago-core.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/time-ago-language-vi_VN.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/hotkeys.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/resize-sensor.min.js" type="text/javascript"></script>
+
+        <script src="assets/scripts/external/flatpickr.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/flatpickr-weekselect.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/flatpickr-month.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/flatpickr-vn.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/flatpickr-scrollplugin.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/ng-flatpickr-3-6-4.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/ngJsTree.min.js" type="text/javascript"></script>
+        <script src="assets/scripts/external/ng-tree-dnd.min.js" type="text/javascript"></script>
+        <!--endbuild-->
+
+        <!--build:js assets/scripts/compiled-application.min.js-->
+        <script src="application.js" type="text/javascript"></script>
+        <script src="application.configs.js" type="text/javascript"></script>
+        <script src="application.services.js" type="text/javascript"></script>
+        <script src="application.controllers.js" type="text/javascript"></script>
+        <script src="common/common.module.js" type="text/javascript"></script>
+        <script src="dashboard/dashboard.module.js" type="text/javascript"></script>
+        <script src="announcements/announcement.module.js" type="text/javascript"></script>
+        <script src="dictionaries/dictionary.module.js" type="text/javascript"></script>
+        <script src="documents/document.module.js" type="text/javascript"></script>
+        <script src="_peer-outreach/pe.module.js" type="text/javascript"></script>
+        <script src="_testing-counselling/hts.module.js" type="text/javascript"></script>
+        <script src="_treatment/tx.module.js" type="text/javascript"></script>
+        <script src="_prevention_report/prev_report.module.js" type="text/javascript"></script>
+        <script src="pns/pns.module.js" type="text/javascript"></script>
+        <script src="uid/uid.module.js" type="text/javascript"></script>
+        <script src="settings/setting.module.js" type="text/javascript"></script>
+        <script src="users/user.module.js" type="text/javascript"></script>
+        <script src="reporting/reporting.module.js" type="text/javascript"></script>
+        <script src="sns/sns.module.js" type="text/javascript"></script>
+        <script src="self_test/self_test.module.js" type="text/javascript"></script>
+        <script src="_index_testing/pns.module.js" type="text/javascript"></script>
+
+        <script src="users/business/UserService.js" type="text/javascript"></script>
+        <script src="common/business/NotificationService.js" type="text/javascript"></script>
+        <!--endbuild-->
+
+        <!--build:js assets/scripts/compiled-layout.min.js-->
+        <script src="common/utils/directives.js" type="text/javascript"></script>
+        <script src="common/utils/utilities.js" type="text/javascript"></script>
+        <script src="assets/scripts/app.js" type="text/javascript"></script>
+        <script src="assets/scripts/layout.js" type="text/javascript"></script>
+        <!--endbuild-->
+        <!--<div id="fb-root"></div><script>window.fbAsyncInit=function(){FB.init({xfbml : true, version : 'v8.0'});}; (function(d, s, id){var js, fjs=d.getElementsByTagName(s)[0]; if (d.getElementById(id)) return; js=d.createElement(s); js.id=id; js.src='https://connect.facebook.net/vi_VN/sdk/xfbml.customerchat.js'; fjs.parentNode.insertBefore(js, fjs);}(document, 'script', 'facebook-jssdk'));</script> <div class="fb-customerchat" attribution=setup_tool page_id="100492201783203" theme_color="#ff7e29" logged_in_greeting="Chào bạn. Bạn có cần trợ giúp gì không?" logged_out_greeting="Chào bạn. Bạn có cần trợ giúp gì không?"> </div>-->
+    </body>
+</html>

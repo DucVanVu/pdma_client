@@ -1,0 +1,285 @@
+/**
+ * Created by bizic on 28/8/2016.
+ */
+(function () {
+    'use strict';
+
+    angular.module('PDMA.PREV_REPORT').controller('PrevDashboardController', PrevDashboardController);
+
+    PrevDashboardController.$inject = [
+        '$rootScope',
+        '$scope',
+        '$state',
+        'blockUI',
+        '$timeout',
+        'settings',
+        '$uibModal',
+        'toastr',
+        'Utilities',
+        'PrevDashboardService'
+    ];
+    
+    function PrevDashboardController ($rootScope, $scope, $state, blockUI, $timeout,settings, modal, toastr, utils, service) {
+        $scope.$on('$viewContentLoaded', function() {
+            // initialize core components
+            App.initAjax();
+        });
+
+        // set sidebar closed and body solid layout mode
+        $rootScope.settings.layout.pageContentWhite = true;
+        $rootScope.settings.layout.pageBodySolid = false;
+        $rootScope.settings.layout.pageSidebarClosed = true;
+
+        // wait for current user object
+        blockUI.start();
+        $scope.$watch('currentUser.loaded', function (newVal, old) {
+            if (!newVal) {
+                return;
+            }
+
+            blockUI.stop();
+
+            // todo if necessary check if the current user is allowed to access this page
+        });
+
+        let vm = this;
+        vm.waitingLabel = 'Đang tải dữ liệu. Vui lòng chờ...';
+
+        vm.data = {
+            summaryDataAvailable: false,
+            chart1DataAvailable: false,
+            chart2DataAvailable: false,
+            chart3DataAvailable: false,
+            chart4DataAvailable: false,
+            chart5DataAvailable: false,
+            chart6DataAvailable: false
+        };
+
+        //Administrative Unit Filter
+        vm.adminUnitFilter = {};
+        vm.organizationFilter = {};
+        vm.provinces = [];
+        vm.reportTypes = [
+            {id:1, name:"MER"},
+            {id:2, name:"Không tính vào chỉ tiêu MER"}
+        ];
+
+        vm.modalities = [
+            {id:1, name:"Cơ sở cố định"},
+            {id:2, name:"Cộng đồng"},
+        ];
+
+        vm.getAllProvinces = function(){
+            vm.adminUnitFilter.excludeVoided=true;
+            vm.adminUnitFilter.parentCode="country_1";
+            blockUI.start();
+            service.getAdminUnit(vm.adminUnitFilter, function success() {
+            }, function failure() {
+                blockUI.stop();
+            }).then(function (data) {
+                vm.provinces = data;
+                blockUI.stop();
+            });
+        };
+        vm.getAllProvinces();
+        
+        $scope.$watch('vm.filter.province', function (newVal, oldVal) {
+            if(newVal){
+                vm.filter.district = null;
+                vm.filter.facility = null;
+                let adminUnitFilter={};
+                adminUnitFilter.excludeVoided=true;
+                adminUnitFilter.parentId=newVal.id;
+                
+                blockUI.start();
+                service.getAdminUnit(adminUnitFilter, function success() {
+                }, function failure() {
+                    blockUI.stop();
+                }).then(function (data) {
+                    blockUI.stop();
+                    vm.districts = data;
+                });
+
+                let organizationFilter={};
+                organizationFilter.province={
+                    id: newVal.id,
+                };
+
+                blockUI.start();
+                service.getOrganization(organizationFilter, function success() {
+                }, function failure() {
+                    blockUI.stop();
+                }).then(function (data) {
+                    blockUI.stop();
+                    vm.facilities = data;
+                });
+            }
+        });
+
+        $scope.$watch('vm.filter.district', function (newVal, oldVal) {
+            if(newVal){
+                vm.facilities = null;
+                vm.filter.facility = null;
+                let organizationFilter={};
+                organizationFilter.district={
+                    id: newVal.id,
+                };
+
+                blockUI.start();
+                service.getOrganization(organizationFilter, function success() {
+                }, function failure() {
+                    blockUI.stop();
+                }).then(function (data) {
+                    blockUI.stop();
+                    vm.facilities = data;
+                });
+            }
+        });
+        
+        drawCharts($scope, vm);
+
+        vm.refresh = function () {
+            vm.data = {
+                summaryDataAvailable: false,
+                chart1DataAvailable: false,
+                chart2DataAvailable: false,
+                chart3DataAvailable: false,
+                chart4DataAvailable: false,
+                chart5DataAvailable: false,
+                chart6DataAvailable: false,
+                summaryData: {},
+                summaryData2: {},
+                chart1Data: [],
+                chart2Data: [],
+                chart3Data: {},
+                chart4Data: {},
+                chart5Data: [],
+                chart6Data: []
+            };
+
+            // making sure this does not block the query for administrative data
+            $timeout(function () {
+
+                // Section 1
+                // vm.getSummary4Section1();
+                vm.getDataForChart1();
+                vm.getDataForChart2();
+                vm.getDataForChart3();
+                vm.getDataForChart4();
+                vm.getDataForChart5();
+                vm.getDataForChart6();
+                vm.getDataForChart7();
+                vm.getDataForChart8();
+
+                // Section 2
+                // vm.getSummary4Section2();
+                vm.getDataForChart9();
+                vm.getDataForChart10();
+
+                // Section 3
+                // vm.getSummary4Section3();
+                vm.getDataForChart11();
+                vm.getDataForChart12();
+            }, 150);
+        };
+
+        vm.refresh();
+
+        vm.getDataForChart1 = function () {
+            vm.data.chart1DataAvailable = true;
+            $timeout(function () {
+                vm.drawChart1();
+            }, 500);
+        };
+
+        vm.getDataForChart2 = function () {
+            vm.data.chart2DataAvailable = true;
+            $timeout(function () {
+                vm.drawChart2();
+            }, 500);
+        };
+
+        vm.getDataForChart3 = function () {
+            vm.data.chart3DataAvailable = true;
+            $timeout(function () {
+                vm.drawChart3();
+            }, 500);
+        };
+
+        vm.getDataForChart4 = function () {
+            vm.data.chart4DataAvailable = true;
+            $timeout(function () {
+                vm.drawChart4();
+            }, 500);
+        };
+
+        vm.getDataForChart5 = function () {
+            vm.data.chart5DataAvailable = true;
+            $timeout(function () {
+                vm.drawChart5();
+            }, 500);
+        };
+
+        vm.getDataForChart6 = function () {
+            vm.data.chart6DataAvailable = true;
+            $timeout(function () {
+                vm.drawChart6();
+            }, 500);
+        };
+
+        vm.getDataForChart7 = function () {
+            vm.data.chart7DataAvailable = true;
+            $timeout(function () {
+                vm.drawChart7();
+            }, 500);
+        };
+
+        vm.getDataForChart8 = function () {
+            vm.data.chart8DataAvailable = true;
+            $timeout(function () {
+                vm.drawChart8();
+            }, 500);
+        };
+
+        // -----------------------------------------------------------------------
+        // Section 2: Xét nghiệm phát hiện mới nhiễm HIV
+        // -----------------------------------------------------------------------
+
+        // Chart 9: Xét nghiệm phát hiện mới nhiễm HIV theo thời gian báo cáo
+        vm.getDataForChart9 = function () {
+            vm.data.chart9DataAvailable = true;
+            $timeout(function () {
+                vm.drawChart9();
+            }, 500);
+        };
+
+        // Chart 10: Xét nghiệm phát hiện mới nhiễm HIV theo đơn vị hành chính
+        vm.getDataForChart10 = function () {
+            vm.data.chart10DataAvailable = true;
+            $timeout(function () {
+                vm.drawChart10();
+            }, 500);
+        };
+
+        // -----------------------------------------------------------------------
+        // Section 3: Thông báo xét nghiệm bạn tình, bạn chích chung của người có HIV
+        // -----------------------------------------------------------------------
+
+        // Chart 11: Thông báo xét nghiệm bạn tình, bạn chích chung của người có HIV theo thời gian báo cáo
+        vm.getDataForChart11 = function () {
+            vm.data.chart11DataAvailable = true;
+            $timeout(function () {
+                vm.drawChart11();
+            }, 500);
+        };
+
+        // Chart 12: Thông báo xét nghiệm bạn tình, bạn chích chung của người có HIV theo đơn vị hành chính
+        vm.getDataForChart12 = function () {
+            vm.data.chart12DataAvailable = true;
+            $timeout(function () {
+                vm.drawChart12();
+            }, 500);
+        };
+    }
+
+})();

@@ -1,0 +1,190 @@
+<script type="text/ng-template" id="mmd_overview_modal.html">
+    <div modal-movable auto-height="no" sticky-toolbar="yes" full-width="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="im im-icon-Clock-Back"></i> Lịch sử đánh giá ổn định &amp; cấp thuốc nhiều tháng</h4>
+        </div>
+        <div class="modal-body">
+            <div class="opc-toolbar margin-bottom-10">
+                <button type="button" data-ng-disabled="!isSiteManager(currentUser) || vm.patient.status != 'ACTIVE'" ng-click="vm.addMMDEntry();" class="btn btn-default no-border margin-right-10"><i class="fa fa-plus margin-right-10"></i>Thêm đánh giá</button>
+                <div class="vertical-seperator float-right"></div>
+                <button type="button" ng-click="$dismiss()" class="btn btn-default no-border margin-right-10" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Đóng lại</button>
+                <div class="vertical-seperator float-right"></div>
+                <div class="margin-left-20 margin-right-20">
+                    <div class="md-checkbox" style="margin-top: 8px;">
+                        <input type="checkbox" id="chk_include_deleted" ng-change="vm.onIncludeDeleteSelected();" ng-model="vm.mmdFilter.includeDeleted" class="md-check">
+                        <label class="font-weight-500" for="chk_include_deleted">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Hiển thị cả những bản ghi bị xoá
+                        </label>
+                    </div>
+                    <!--<div class="md-checkbox" style="margin-top: 8px">-->
+                        <!--<input type="checkbox" ng-model="vm.mmdFilter.includeDeleted" class="md-check highlight-focus" tabindex="0">-->
+                        <!--<label ng-class="{'font-weight-600' : false}">-->
+                            <!--<span></span>-->
+                            <!--<span class="check"></span>-->
+                            <!--<span class="box"></span> Hiển thị cả những bản ghi bị xoá-->
+                        <!--</label>-->
+                    <!--</div>-->
+                </div>
+                <div class="vertical-seperator float-right"></div>
+                <div class="font-weight-500 margin-left-20" style="margin-top: 8px;"><i class="icon-info margin-right-10"></i> Danh sách các lần đánh giá gần đây nhất</div>
+            </div>
+            <div class="dragon custom-table-header-1" drag-on>
+                <table id="bsTableControlMMDHistory" bs-table-control="vm.bsTableControlMMDHistory"></table>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="mmd_update_modal.html">
+    <div modal-movable auto-height="no">
+        <div class="modal-header">
+            <button id="mmd_update_modal_closebtn" type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 id="mmd_update_modal_title" class="modal-title">Cập nhật bản ghi đánh giá ổn định &amp; cấp thuốc nhiều tháng</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row margin-top-5">
+                <div class="col-xs-12">
+                    <div class="exam-container align-left">
+                        <div class="step-container  color-style-5 white-bg">
+                            <div>
+                                <div class="date-picker-container font-weight-600">
+                                    Ngày đánh giá ổn định/cấp thuốc nhiều tháng:
+                                    <input id="vm.mmdEntry4Update.evaluationDate" class="as-link with-border-bottom" placeholder="Chọn ngày..."
+                                           ng-flatpickr
+                                           fp-opts="vm.mmdDatePicker1.dateOpts"
+                                           fp-on-setup="vm.mmdDatePicker1.datePostSetup(fpItem)"
+                                           ng-model="vm.mmdEntry4Update.evaluationDate"
+                                           data-enabletime="false" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-container color-style-5 white-bg">
+                            <div>
+                                <div class="row margin-top-5">
+                                    <div class="col-xs-12 margin-bottom-10">
+                                        <div class="underline-alt padding-bottom-5 bold">Bốn (04) tiêu chí mềm</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="md-checkbox" style="margin-top: 8px">
+                                            <input type="checkbox" id="edit_mmd_chk_good_adherence" ng-change="vm.onBooleanPropertyChanged4Mmd('goodAdherence')" ng-model="vm.mmdEntry4Update.goodAdherence" class="md-check highlight-focus" tabindex="0">
+                                            <label ng-class="{'font-weight-600' : vm.mmdEntry4Update.goodAdherence}" for="edit_mmd_chk_good_adherence">
+                                                <span></span>
+                                                <span class="check"></span>
+                                                <span class="box"></span> Bệnh nhân tuân thủ điều trị tốt?
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="md-checkbox" style="margin-top: 8px">
+                                            <input type="checkbox" id="edit_mmd_chk_has_oi" ng-change="vm.onBooleanPropertyChanged4Mmd('hasOI')" ng-model="vm.mmdEntry4Update.hasOI" class="md-check">
+                                            <label ng-class="{'font-weight-600' : vm.mmdEntry4Update.hasOI}" for="edit_mmd_chk_has_oi">
+                                                <span></span>
+                                                <span class="check"></span>
+                                                <span class="box"></span> Bệnh nhân có nhiễm trùng cơ hội?
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 margin-top-10">
+                                        <div class="md-checkbox" style="margin-top: 8px">
+                                            <input type="checkbox" id="edit_mmd_chk_drug_ae" ng-change="vm.onBooleanPropertyChanged4Mmd('hasDrugAE')" ng-model="vm.mmdEntry4Update.hasDrugAE" class="md-check">
+                                            <label ng-class="{'font-weight-600' : vm.mmdEntry4Update.hasDrugAE}" for="edit_mmd_chk_drug_ae">
+                                                <span></span>
+                                                <span class="check"></span>
+                                                <span class="box"></span> Bệnh nhân có tác dụng phụ của thuốc?
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 margin-top-10">
+                                        <div class="md-checkbox" style="margin-top: 8px">
+                                            <input type="checkbox" ng-disabled="vm.patient.person.gender != 'FEMALE'" id="edit_mmd_chk_pregnant" ng-change="vm.onBooleanPropertyChanged4Mmd('pregnant')" ng-model="vm.mmdEntry4Update.pregnant" class="md-check">
+                                            <label ng-class="{'font-weight-600' : vm.mmdEntry4Update.pregnant}" for="edit_mmd_chk_pregnant">
+                                                <span></span>
+                                                <span class="check"></span>
+                                                <span class="box"></span> Bệnh nhân đang mang thai/cho con bú?
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-container color-style-5 white-bg">
+                            <div>
+                                <div class="row margin-top-5">
+                                    <div class="col-xs-12 margin-bottom-10">
+                                        <div class="underline-alt padding-bottom-5 bold">Ba (03) tiêu chí cứng <span class="font-weight-500 text-danger" ng-if="!vm.mmdEntry4Update.id">&mdash; hệ thống tự tính toán các tiêu chí này</span></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="md-checkbox" style="margin-top: 8px">
+                                            <input type="checkbox" id="edit_mmd_chk_adult" ng-disabled="!vm.mmdEntry4Update.id" ng-change="vm.onBooleanPropertyChanged4Mmd('adult')" ng-model="vm.mmdEntry4Update.adult" class="md-check highlight-focus" tabindex="0">
+                                            <label ng-class="{'font-weight-600' : vm.mmdEntry4Update.adult}" for="edit_mmd_chk_adult">
+                                                <span></span>
+                                                <span class="check"></span>
+                                                <span class="box"></span> Bệnh nhân &ge; 3 tuổi
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="md-checkbox" style="margin-top: 8px">
+                                            <input type="checkbox" id="edit_mmd_chk_vl_lt200" ng-disabled="!vm.mmdEntry4Update.id" ng-change="vm.onBooleanPropertyChanged4Mmd('vlLt200')" ng-model="vm.mmdEntry4Update.vlLt200" class="md-check">
+                                            <label ng-class="{'font-weight-600' : vm.mmdEntry4Update.vlLt200}" for="edit_mmd_chk_vl_lt200">
+                                                <span></span>
+                                                <span class="check"></span>
+                                                <span class="box"></span> Xét nghiệm TLVR &lt; 50 bản sao/ml
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 margin-top-10">
+                                        <div class="md-checkbox" style="margin-top: 8px">
+                                            <input type="checkbox" id="edit_mmd_chk_arv_gt12month" ng-disabled="!vm.mmdEntry4Update.id" ng-change="vm.onBooleanPropertyChanged4Mmd('arvGt12Month')" ng-model="vm.mmdEntry4Update.arvGt12Month" class="md-check">
+                                            <label ng-class="{'font-weight-600' : vm.mmdEntry4Update.arvGt12Month}" for="edit_mmd_chk_arv_gt12month">
+                                                <span></span>
+                                                <span class="check"></span>
+                                                <span class="box"></span> Bệnh nhân điều trị ARV &ge; 6 tháng
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-container color-style-5 white-bg">
+                            <div>
+                                <div class="row margin-top-5">
+                                    <div class="col-xs-12 margin-bottom-10">
+                                        <div class="underline-alt padding-bottom-5 bold">Kết luận</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="md-checkbox" style="margin-top: 8px">
+                                            <input type="checkbox" ng-disabled="!vm.mmdEntry4Update.eligibleEditable" id="edit_mmd_chk_eligible" ng-change="vm.onBooleanPropertyChanged4Mmd('eligible')" ng-model="vm.mmdEntry4Update.eligible" class="md-check highlight-focus" tabindex="0">
+                                            <label ng-class="{'font-weight-600' : vm.mmdEntry4Update.eligible}" for="edit_mmd_chk_eligible">
+                                                <span></span>
+                                                <span class="check"></span>
+                                                <span class="box"></span> Bệnh nhân được đánh giá ổn định
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="md-checkbox" style="margin-top: 8px">
+                                            <input type="checkbox" ng-disabled="!vm.mmdEntry4Update.eligible" id="edit_mmd_chk_onmmd" ng-change="vm.onBooleanPropertyChanged4Mmd('onMmd')" ng-model="vm.mmdEntry4Update.onMmd" class="md-check">
+                                            <label ng-class="{'font-weight-600' : vm.mmdEntry4Update.hasOI}" for="edit_mmd_chk_onmmd">
+                                                <span></span>
+                                                <span class="check"></span>
+                                                <span class="box"></span> Bệnh nhân được cấp thuốc nhiều tháng
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default margin-right-10" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Đóng lại</button>
+            <button type="button" ng-click="$close('yes');" data-dismiss="modal" class="btn btn-primary">Lưu lại</button>
+        </div>
+    </div>
+</script>

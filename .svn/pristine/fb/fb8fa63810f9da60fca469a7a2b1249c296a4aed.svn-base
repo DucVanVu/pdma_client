@@ -1,0 +1,97 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="fa fa-flash"></i> Tình huống không mong muốn khi làm TBXNBT/BC</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#">Trang chủ</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#/pns-ae">Báo cáo tình huống</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="display-block no-content1 margin-top-10" ng-if="!isSiteManager(currentUser) && !isDistrictManager(currentUser) && !isProvincialManager(currentUser) && !isNationalManager(currentUser) && !isDonor(currentUser)">
+                    Bạn không có quyền xem nội dung này.
+                </div>
+                <div ng-if="isSiteManager(currentUser) || isDistrictManager(currentUser) || isProvincialManager(currentUser) || isNationalManager(currentUser) || isDonor(currentUser)">
+                    <div class="opc-toolbar margin-top-10 margin-bottom-10">
+                        <button class="btn btn-default no-border" ng-click="vm.addEntry()" data-ng-disabled="!isSiteManager(currentUser)"><i class="fa fa-plus margin-right-10"></i>Thêm báo cáo</button>
+                        <div class="vertical-seperator float-right" ng-if="isSiteManager(currentUser)"></div>
+                        <button class="btn btn-default no-border" ng-click="vm.exportReport()"><i class="fa fa-download margin-right-10"></i>Xuất báo cáo</button>
+                        <!--<div class="vertical-seperator float-right"></div>-->
+                        <!--<a ng-click="vm.showIntro();" class="btn btn-default no-border" href="#"><i class="im im-icon-Light-Bulb2"></i><span class="hidden-xs"> Giới thiệu</span></a>-->
+                    </div>
+                    <table id="bsTableControl" bs-table-control="vm.bsTableControl"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<!-- BEGIN MAIN JS-->
+<script type="text/ng-template" id="delete_entry_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Xoá bản ghi</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="icon-exclamation"></i></div>
+            <div><span>Bạn có chắc chắn muốn xoá thông tin báo cáo tình huống đã chọn không?
+            </span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Không</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-danger no-border" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>Có</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="report_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="fa fa-download"></i> Xuất dữ liệu báo cáo tổng hợp</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row margin-top-10">
+                <div class="col-xs-12 label-with-line">
+                    <label class="bold text-muted">Chọn giai đoạn báo cáo</label>
+                    <div></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <label class="font-weight-500">Từ ngày</label>
+                    <input id="vm.report.fromDate" class="form-control" placeholder="Chọn thời điểm bắt đầu..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker1.dateOpts"
+                           fp-on-setup="vm.datepicker1.datePostSetup(fpItem)"
+                           ng-model="vm.report.fromDate"
+                           data-enabletime="false" />
+                </div>
+                <div class="col-xs-6">
+                    <label class="font-weight-500">Đến ngày</label>
+                    <input id="vm.report.toDate" class="form-control" placeholder="Chọn thời điểm kết thúc..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker2.dateOpts"
+                           fp-on-setup="vm.datepicker2.datePostSetup(fpItem)"
+                           ng-model="vm.report.toDate"
+                           data-enabletime="false" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default no-border" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Đóng lại</button>
+            <button type="button" ng-click="vm.generateReport()" class="btn btn-primary"><i class="fa fa-download margin-right-10"></i>Xuất báo cáo</button>
+        </div>
+    </div>
+</script>
+<!-- BEGIN MAIN JS -->

@@ -1,0 +1,226 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="icon-screen-desktop margin-right-10"></i>PDMA - Hệ thống báo cáo trực
+        tuyến</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <button data-ng-disabled="true" href="#" class="btn btn-default transparent"><i class="icon-equalizer"></i>
+                Tùy chọn
+            </button>
+        </li>
+    </ul>
+</div>
+
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row">
+    <div class="col-xs-12 summary-panel">
+        <div class="section-head bold"><i class="icon-calculator color-7"></i> Các ứng dụng chính</div>
+    </div>
+</div>
+<div class="row margin-top-20">
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-if="!isAdministrator(currentUser) && !((currentUser.pnsOnly || currentUser.opcAssistOnly))">
+        <a class="dashboard-stat dashboard-stat-v2 large-container blue" href="#/reporting/weekly-dashboard">
+            <div class="visual">
+                <i class="im im-icon-Line-Chart4"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span>Báo cáo tuần</span>
+                </div>
+                <div class="desc"> Báo cáo nhanh tiến độ thực hiện chương trình</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-if="!(isAdministrator(currentUser) || currentUser.pnsOnly) || (!isAdministrator(currentUser) && currentUser.opcAssistOnly)">
+        <a class="dashboard-stat dashboard-stat-v2 large-container yellow-mint" href="#/opc-dashboard">
+            <div class="visual">
+                <i class="pdma-ext1-icon-pills-2"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span>OPC-Assist</span>
+                </div>
+                <div class="desc"> Phiên bản trực tuyến với nhiều tính năng mở rộng</div>
+            </div>
+        </a>
+    </div>
+    <!--<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-if="!(isAdministrator(currentUser) || currentUser.pnsOnly) || (!isAdministrator(currentUser) && currentUser.opcAssistOnly)">-->
+        <!--<a class="dashboard-stat dashboard-stat-v2 large-container blue" href="#/sns">-->
+            <!--<div class="visual">-->
+                <!--<i class="im im-icon-Files"></i>-->
+            <!--</div>-->
+            <!--<div class="details">-->
+                <!--<div class="number">-->
+                    <!--<span data-counter="counterup" data-value="89">SNS</span>-->
+                <!--</div>-->
+                <!--<div class="desc"> Sổ theo dõi khách hàng SNS</div>-->
+            <!--</div>-->
+        <!--</a>-->
+    <!--</div>-->
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-if="!isAdministrator(currentUser)">
+        <!--<a class="dashboard-stat dashboard-stat-v2 large-container purple" href="#/prevention/dashboard">-->
+        <a class="dashboard-stat dashboard-stat-v2 large-container purple" target="_blank" href="https://pdma.epic.org.vn/p">
+            <div class="visual">
+                <i class="im im-icon-Microscope"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span data-counter="counterup" data-value="89">Dự phòng</span>
+                </div>
+                <div class="desc"> Hệ thống báo cáo của chương trình dự phòng</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-if="isAdministrator(currentUser)">
+        <a class="dashboard-stat dashboard-stat-v2 large-container green-dark" href="#/dictionary/organizations">
+            <div class="visual">
+                <i class="im im-icon-Building"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span data-counter="counterup" data-value="89">O-Units</span>
+                </div>
+                <div class="desc"> Quản lý thông tin cơ sở dịch vụ (xét nghiệm, điều trị)</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-if="isAdministrator(currentUser)">
+        <a class="dashboard-stat dashboard-stat-v2 large-container blue-dark" href="#/dictionary/admin-units">
+            <div class="visual">
+                <i class="im im-icon-Map2"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span data-counter="counterup" data-value="89">A-Units</span>
+                </div>
+                <div class="desc"> Quản lý thông tin đơn vị hành chính (tỉnh, huyện, xã)</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-if="isAdministrator(currentUser)">
+        <a class="dashboard-stat dashboard-stat-v2 large-container red-mint" href="#/dictionary/staff">
+            <div class="visual">
+                <i class="im im-icon-People-onCloud"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span data-counter="counterup" data-value="89">Cán bộ</span>
+                </div>
+                <div class="desc"> Quản lý thông tin cán bộ y tế tại các cơ sở</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-if="isAdministrator(currentUser)">
+        <a class="dashboard-stat dashboard-stat-v2 large-container yellow-gold" href="#/dictionary/regimens">
+            <div class="visual">
+                <i class="pdma-ext1-icon-pills"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span data-counter="counterup" data-value="89">Phác đồ</span>
+                </div>
+                <div class="desc"> Quản lý thông tin các phác đồ thuốc</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-if="isAdministrator(currentUser)">
+        <a class="dashboard-stat dashboard-stat-v2 large-container blue-oleo" href="#/settings">
+            <div class="visual">
+                <i class="fa fa-puzzle-piece"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span data-counter="counterup" data-value="89">Từ điển</span>
+                </div>
+                <div class="desc"> Quản lý các từ điển dữ liệu khác</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-if="isAdministrator(currentUser)">
+        <a class="dashboard-stat dashboard-stat-v2 large-container red-intense" href="#/user/listing">
+            <div class="visual">
+                <i class="im im-icon-Business-ManWoman"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span data-counter="counterup" data-value="89">Người dùng</span>
+                </div>
+                <div class="desc"> Quản lý tài khoản người dùng hệ thống</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-if="isAdministrator(currentUser)">
+        <a class="dashboard-stat dashboard-stat-v2 large-container purple-intense" href="#/settings">
+            <div class="visual">
+                <i class="fa fa-cogs"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span data-counter="counterup" data-value="89">Cấu hình</span>
+                </div>
+                <div class="desc"> Thiết lập cấu hình hệ thống PDMA Online</div>
+            </div>
+        </a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 summary-panel">
+        <div class="section-head bold"><i class="icon-calculator color-7"></i> Các ứng dụng bổ sung</div>
+    </div>
+</div>
+<div class="row margin-top-20">
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-if="!isAdministrator(currentUser) && !currentUser.opcAssistOnly">
+        <a class="dashboard-stat dashboard-stat-v2 large-container blue-dark" href="#/pns-assess">
+            <div class="visual">
+                <i class="im im-icon-Check-2"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span>PNS-33</span>
+                </div>
+                <div class="desc"> Bộ công cụ đánh giá theo 33 tiêu chuẩn tối thiểu</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-if="!isAdministrator(currentUser) && !currentUser.opcAssistOnly">
+        <a class="dashboard-stat dashboard-stat-v2 large-container red" href="#/pns-ae">
+            <div class="visual">
+                <i class="im im-icon-Security-Camera"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span>PNS-AE</span>
+                </div>
+                <div class="desc"> Báo cáo tình huống không mong muốn từ dịch vụ PNS</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-if="!(currentUser.pnsOnly || currentUser.opcAssistOnly)">
+        <a class="dashboard-stat dashboard-stat-v2 large-container green-sharp" href="#/announcements">
+            <div class="visual">
+                <i class="im im-icon-Microphone-2"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span data-counter="counterup" data-value="89">Thông báo</span>
+                </div>
+                <div class="desc"> Các thông báo từ tuyến BQLDA TW liên quan đến phần mềm này</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-if="!(currentUser.pnsOnly || currentUser.opcAssistOnly)">
+        <a class="dashboard-stat dashboard-stat-v2 large-container white" href="#/documents">
+            <div class="visual">
+                <i class="im im-icon-Files"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span data-counter="counterup" data-value="89">Tài liệu</span>
+                </div>
+                <div class="desc"> Tài liệu tập huấn, tài liệu tham khảo, văn bản pháp quy...</div>
+            </div>
+        </a>
+    </div>
+</div>
+<div ng-include="'_treatment/views/fragments/_information.html'"></div>

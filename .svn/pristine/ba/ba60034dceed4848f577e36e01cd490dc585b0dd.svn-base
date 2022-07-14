@@ -1,0 +1,67 @@
+<script type="text/ng-template" id="advanced_search_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-magnifier"></i> Tìm kiếm nâng cao</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-6">
+                    <label class="bold text-muted">Cơ sở dịch vụ</label>
+                    <ui-select id="vm.filterSelector.organization" ng-model="vm.filterSelector.organization" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="true" placeholder="Tất cả cơ sở...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="org in vm.grantedOrgs | filter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="org.name | highlight: $select.search"></div>
+                            <div class="small">&mdash; {{org.province}}</div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-xs-6">
+                    <label class="bold text-muted">Loại sinh phẩm</label>
+                    <ui-select ng-model="vm.filterSelector.specimen" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="true" placeholder="Tất cả sinh phẩm...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="s.code as s in vm.specimens | filter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="s.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="row margin-top-15">
+                        <div class="col-xs-12 label-with-line">
+                            <label class="bold text-muted">Tìm theo ngày cấp sinh phẩm tự xét nghiệm</label>
+                            <div></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 form-controller-alt-2 with-label">
+                            <label>Từ ngày:</label>
+                            <input class="form-control" placeholder="Chọn ngày..."
+                                   ng-flatpickr
+                                   fp-opts="vm.datepicker1.dateOpts"
+                                   fp-on-setup="vm.datepicker1.datePostSetup(fpItem)"
+                                   ng-model="vm.filterSelector.dispensingDateFrom"
+                                   data-enabletime="false" />
+                            <a ng-if="vm.filterSelector.dispensingDateFrom" class="clear-picker input-has-label" ng-click="vm.datepicker1.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                        </div>
+                        <div class="col-xs-6 form-controller-alt-2 with-label">
+                            <label>Đến ngày:</label>
+                            <input class="form-control" placeholder="Chọn ngày..."
+                                   ng-flatpickr
+                                   fp-opts="vm.datepicker2.dateOpts"
+                                   fp-on-setup="vm.datepicker2.datePostSetup(fpItem)"
+                                   ng-model="vm.filterSelector.dispensingDateTo"
+                                   data-enabletime="false" />
+                            <a ng-if="vm.filterSelector.dispensingDateTo" class="clear-picker input-has-label" ng-click="vm.datepicker2.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="$dismiss()" class="btn btn-default no-border" data-dismiss="modal"><i class="fa fa-close margin-right-5"></i>Đóng lại</button>
+            <button ng-click="vm.getEntries(true)" class="btn btn-primary jumping" data-dismiss="modal"><i class="fa fa-filter margin-right-5"></i>Tìm kiếm</button>
+        </div>
+    </div>
+</script>

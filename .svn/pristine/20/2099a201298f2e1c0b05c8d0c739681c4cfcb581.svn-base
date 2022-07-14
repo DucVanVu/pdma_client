@@ -1,0 +1,1516 @@
+<!-- BEGIN PAGE HEADER -->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="im im-icon-Chemical-4"></i> Chương trình dự phòng</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#">Trang chủ</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#/">Import</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body" id="stickey-container">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs ">
+                                <li class="uppercase">
+                                    <a href="#/prevention/dashboard" uib-tooltip="Tổng quan"><i class="fa fa-area-chart"></i> Tổng quan</a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/pe" uib-tooltip="Tiếp cận cộng đồng"><i class="im im-icon-Cube-Molecule2"></i><span class="hidden-xs hidden-sm hidden-md"> TCCĐ</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/hts" uib-tooltip="Tư vấn XN HIV"><i class="im im-icon-Drop"></i><span class="hidden-xs hidden-sm hidden-md"> TVXN HIV</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/pns" uib-tooltip="Thông báo XN BT/BC"><i class="im im-icon-Twister"></i><span class="hidden-xs hidden-sm hidden-md"> TB XN BT/BC</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/sns" uib-tooltip="Dữ liệu SNS"><i class="im im-icon-Chemical-5"></i><span class="hidden-xs hidden-sm hidden-md"> SNS</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/self_test" uib-tooltip="Tự xét nghiệm"><i class="im im-icon-Microscope"></i><span class="hidden-xs hidden-sm hidden-md"> Tự xét nghiệm</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/report" uib-tooltip="Báo cáo"><i class="fa fa-bar-chart"></i><span class="hidden-xs hidden-sm hidden-md"> Báo cáo</span></a>
+                                </li>
+                                <li class="uppercase active">
+                                    <a href="#/prevention/import" uib-tooltip="Import"><i class="fa fa-cloud-upload"></i><span class="hidden-xs hidden-sm hidden-md"> Import</span></a>
+                                </li>
+                            </ul>
+                            <div class="tab-content summary-panel" ng-if="!isAdministrator(currentUser)">
+                                <div class="tab-pane active padding-bottom-30">
+                                    <div class="display-block no-content1 margin-top-10 font-weight-600">
+                                        Bạn không có quyền xem nội dung này.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-content summary-panel" ng-if="isAdministrator(currentUser)">
+                                <div class="tab-pane active">
+                                    <div class="col-md-7 col-sm-12 col-xs-12">
+                                        <div class="row">
+                                            <div class="col-md-12 col-sm-12 col-xs-12 margin-top-10">
+                                                <div class="opc-toolbar margin-top-10 margin-bottom-10 sticky-panel">
+                                                    <button class="btn btn-default no-border" ng-click="vm.importPE()"><i class="fa fa-cloud-upload"></i>Import PE</button>
+                                                    <div class="vertical-seperator float-right"></div>
+                                                    <button class="btn btn-default no-border" ng-click="vm.importHTS()"><i class="fa fa-cloud-upload"></i>Import HTS</button>
+                                                    <div class="vertical-seperator float-left"></div>
+                                                    <button class="btn btn-default no-border" ng-click="vm.importHTSNew()"><i class="fa fa-cloud-upload"></i>Import HTS new</button>
+                                                    <div class="vertical-seperator float-left"></div>
+                                                    <button class="btn btn-default no-border" ng-click="vm.importPNS()"><i class="fa fa-cloud-upload"></i>Import pns</button>
+                                                    <div class="vertical-seperator float-right"></div>
+                                                    <button class="btn btn-default no-border" ng-click="vm.importPNSContact()"><i class="fa fa-cloud-upload"></i>Import pnsContact</button>
+                                                    <!-- <div class="form-group"></div> -->
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12 col-xs-12 margin-top-10">
+                                                <div class="opc-toolbar margin-top-10 margin-bottom-10 sticky-panel">
+                                                    <button class="btn btn-default no-border" ng-click="vm.importStaff()"><i class="fa fa-cloud-upload"></i>Import nhân viên</button>
+                                                    <div class="vertical-seperator float-right"></div>
+                                                    <button class="btn btn-default no-border" ng-click="vm.importOrg()"><i class="fa fa-cloud-upload"></i>Import cơ sở báo cáo</button>
+                                                    <div class="form-group"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/ng-template" id="import_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title bold font-yellow-gold"><i class="fa fa-cloud-upload"></i> Import</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-body box-profile">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a class="dash-box display-block link" ngf-select="uploadFiles($file, $invalidFiles)"
+                               accept="/*" ngf-max-size="{{MAX_FILE_SIZE}}"><i class="fa fa-cloud-upload"></i>Chọn tệp tin tải lên</a>
+                        </div>
+
+                        <div class="col-md-12 margin-top-20" ng-if="f != null">
+                            Tải tệp tin: {{f.name}}
+                        </div>
+
+                        <div class="col-md-12 margin-top-20" ng-if="errFile != null && errFile.$error != ''">
+                            Có lỗi: <span ng-if="errFile.$error == 'maxSize'"> Kích thước tệp phải nhỏ hơn {{errFile.$errorParam}}</span>
+                            <span ng-if="errFile.$error != null && errFile.$error != 'maxSize'"> Tệp tin {{errFile.name}} có lỗi. Xin mời chọn tệp tin khác.</span>
+                        </div>
+
+                        <div class="col-md-12 margin-top-20" ng-if="f.progress >= 0">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" ng-bind="f.progress + '%'" style="width:{{f.progress}}%">
+                                    {{f.progress}}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Hủy</button>
+            <button type="button" ng-click="$close('yes')" data-ng-disabled="errFile.$error == 'maxSize'" class="btn btn-primary" data-dismiss="modal">Tải lên</button>
+        </div>
+    </div>
+</script>
+<!-- importPE -->
+<script type="text/ng-template" id="listDataImportErrPE.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title bold font-yellow-gold"><i class="fa fa-cloud-upload"></i> Danh sách dòng import bị lỗi</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-body box-profile">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-bordered table-hover" style="overflow: scroll;">
+                                <thead>
+                                    <tr style="background-color: #344559; color: white;">
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">STT</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">Số dòng</th>
+                                        <th style="min-width: 170px; text-align: center; vertical-align: middle;">Nội dung lỗi</th>
+                                        <th style="min-width: 150px; text-align: center; vertical-align: middle;">C1</th>
+                                        <th style="min-width: 150px; text-align: center; vertical-align: middle;">C2</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C3</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C4</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C5</th>
+                                        <th style="min-width: 150px; text-align: center; vertical-align: middle;">C6</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C7</th>
+                                        <th style="min-width: 75px; text-align: center; vertical-align: middle;">C8</th>
+                                        <th style="min-width: 200px; text-align: center; vertical-align: middle;">C9</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C10</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C11</th>
+                                        <th style="min-width: 80px; text-align: center; vertical-align: middle;">C12</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C13</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C14</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C15</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C16</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C17</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C18</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C19</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C20</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C21</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C22</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C23</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C24</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C25</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C26</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C27</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C28</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C29</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C30</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C31</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C32</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C33</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C34</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C35</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C36</th>
+                                        <!-- <th style="width: 10px;">C37</th>
+                                        <th style="width: 10px;">C38</th>
+                                        <th style="width: 10px;">C39</th> -->
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C40</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C41</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">Đã lưu</th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-if="vm.listErrs != null && vm.listErrs.length > 0"
+                                    ng-repeat="err in vm.listErrs track by $index">
+                                    <tr>
+                                        <td style="text-align: center; line-height: 34px; font-weight: bold;">{{$index + 1}}</td>
+                                        <td style="text-align: center; line-height: 34px; font-weight: bold;">{{err.numberErrorContent}}</td>
+                                        <!-- Nội dung lỗi -->
+                                        <td>
+                                            <input data-ng-model="err.errorContent" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c1 -->
+                                        <td>
+                                            <input data-ng-model="err.uid" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c2 -->
+                                        <td>
+                                            <input data-ng-model="err.parent.uid" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c3 -->
+                                        <td>
+                                            <input data-ng-model="err.c1" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c4 -->
+                                        <td>
+                                            <input data-ng-model="err.c1Org.code" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c5 -->
+                                        <td>
+                                            <input data-ng-model="err.c1Staff.staffCode" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c6 -->
+                                        <td>
+                                            <input data-ng-model="err.c2" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c7 -->
+                                        <td>
+                                            <input data-ng-model="err.c3" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c8 -->
+                                        <td>
+                                            <input data-ng-model="err.c4" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c9 -->
+                                        <td>
+                                            <input data-ng-model="err.c5Ward" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c10 -->
+                                        <td>
+                                            <input data-ng-model="err.c5Province.codeGso" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c11 -->
+                                        <td>
+                                            <input data-ng-model="err.c5District.codeGso" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c12 -->
+                                        <td>
+                                            <input data-ng-model="err.c6" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c13 -->
+                                        <td>
+                                            <input data-ng-model="err.c7" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c14 -->
+                                        <td>
+                                            <input data-ng-model="err.c8" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c15 -->
+                                        <td>
+                                            <input data-ng-model="err.c8ARV" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c16 -->
+                                        <td>
+                                            <input data-ng-model="err.c9" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c17 -->
+                                        <td>
+                                            <input data-ng-model="err.c9Date" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c18 -->
+                                        <td>
+                                            <input data-ng-model="err.c10" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c19 -->
+                                        <td>
+                                            <input data-ng-model="err.c11" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c20 -->
+                                        <td>
+                                            <input data-ng-model="err.c11Date" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c21 -->
+                                        <td>
+                                            <!-- <input data-ng-model="err.c12" title={{err.errContent}} type="text" class="form-control" /> -->
+                                            <input data-ng-model="err.c12" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c22 -->
+                                        <td>
+                                            <!-- <input data-ng-model="err.c12Code" title={{err.errContent}} type="text" class="form-control" /> -->
+                                            <input data-ng-model="err.c12Code" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c23 -->
+                                        <td>
+                                            <!-- <input data-ng-model="err.c12Note" title={{err.errContent}} type="text" class="form-control" /> -->
+                                            <input data-ng-model="err.c12Note" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c24 -->
+                                        <td>
+                                            <input data-ng-model="err.c13" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c25 -->
+                                        <td>
+                                            <input data-ng-model="err.c131" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c26 -->
+                                        <td>
+                                            <input data-ng-model="err.c131Result" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c27 -->
+                                        <td>
+                                            <input data-ng-model="err.c131Code" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c28 -->
+                                        <td>
+                                            <input data-ng-model="err.c14" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c29 -->
+                                        <td>
+                                            <input data-ng-model="err.c14Date" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c30 -->
+                                        <td>
+                                            <input data-ng-model="err.c14Code" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c31 -->
+                                        <td>
+                                            <input data-ng-model="err.c14Name" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c32 -->
+                                        <td>
+                                            <input data-ng-model="err.c15" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c33 -->
+                                        <td>
+                                            <input data-ng-model="err.c15Date" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c34 -->
+                                        <td>
+                                            <input data-ng-model="err.c15Code" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c35 -->
+                                        <td>
+                                            <input data-ng-model="err.c15Name" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c36 -->
+                                        <td>
+                                            <input data-ng-model="err.c17" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c40 -->
+                                        <td>
+                                            <input data-ng-model="err.c16" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c41 -->
+                                        <td>
+                                            <input data-ng-model="err.c132" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- Trạng thái đã lưu hay chưa -->
+                                        <td>
+                                            <input type="checkbox" data-ng-if="err.saved" checked data-ng-disabled="true" style="margin-left: 45%; margin-top: 10px" />
+                                            <input type="checkbox" data-ng-if="!err.saved" data-ng-disabled="true" style="margin-left: 45%; padding-top: 15px" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng</button>
+        </div>
+    </div>
+</script>
+<!-- hts -->
+<script type="text/ng-template" id="listDataImportErrHTS.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title bold font-yellow-gold"><i class="fa fa-cloud-upload"></i> Danh sách dòng import bị lỗi</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-body box-profile">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-bordered table-hover" style="overflow: scroll">
+                                <thead>
+                                    <tr style="background-color: #344559; color: white;">
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">STT</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">Số dòng</th>
+                                        <th style="min-width: 170px; text-align: center; vertical-align: middle;">Nội dung lỗi</th>
+                                        <th style="min-width: 150px; text-align: center; vertical-align: middle;">C1</th>
+                                        <th style="min-width: 105px; text-align: center; vertical-align: middle;">C2</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C3</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C4</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C5</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C6</th>
+                                        <th style="min-width: 140px; text-align: center; vertical-align: middle;">C7</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C8</th>
+                                        <th style="min-width: 75px; text-align: center; vertical-align: middle;">C9</th>
+                                        <th style="min-width: 80px; text-align: center; vertical-align: middle;">C10</th>
+                                        <th style="min-width: 140px; text-align: center; vertical-align: middle;">C11</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C12</th>
+                                        <th style="min-width: 140px; text-align: center; vertical-align: middle;">C13</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C14</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C15</th>
+                                        <th style="min-width: 140px; text-align: center; vertical-align: middle;">C16</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C17</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C18</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C19</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C20</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C21</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C22</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C23</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C24</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C25</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C26</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C27</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C28</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C29</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C30</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C31</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C32</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C33</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C34</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C35</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C36</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C37</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C38</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C39</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C40</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C41</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C42</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C43</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C44</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C45</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C46</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C47</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C48</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C49</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C50</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C51</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C52</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C53</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C54</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C55</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C56</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C60</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C61</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C62</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">Đã lưu</th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-if="vm.listErrs != null && vm.listErrs.length > 0"
+                                    ng-repeat="err in vm.listErrs track by $index">
+                                    <tr>
+                                        <td style="text-align: center; line-height: 34px; font-weight: bold;">{{$index + 1}}</td>
+                                        <td style="text-align: center; line-height: 34px; font-weight: bold;">{{err.numberErrorContent}}</td>
+                                        <!-- Nội dung lỗi -->
+                                        <td>
+                                            <input data-ng-model="err.errorContent" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c1 -->
+                                        <td>
+                                            <input data-ng-model="err.uid" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c2 -->
+                                        <td>
+                                            <input data-ng-model="err.c2.code" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c3 -->
+                                        <td>
+                                            <input data-ng-model="err.c3.id" data-ng-disabled="true" type="text"  class="form-control" />
+                                        </td>
+                                        <!-- c4 -->
+                                        <td>
+                                            <input data-ng-model="err.c4" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c5 -->
+                                        <td>
+                                            <input data-ng-model="err.c5" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c6 -->
+                                        <td>
+                                            <input data-ng-model="err.c5Note" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c7 -->
+                                        <td>
+                                            <input data-ng-model="err.c6" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c8 -->
+                                        <td>
+                                            <input data-ng-model="err.c7" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c9 -->
+                                        <td>
+                                            <input data-ng-model="err.c8" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c10 -->
+                                        <td>
+                                            <input data-ng-model="err.c9" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c11 -->
+                                        <td>
+                                            <input data-ng-model="err.c9Note" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c12 -->
+                                        <td>
+                                            <input data-ng-model="err.c10" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c13 -->
+                                        <td>
+                                            <input data-ng-model="err.c10Note" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c14 -->
+                                        <td>
+                                            <input data-ng-model="err.c11" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c15 -->
+                                        <td>
+                                            <input data-ng-model="err.c11a" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c16 -->
+                                        <td>
+                                            <input data-ng-model="err.c11aNote" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c17 -->
+                                        <td>
+                                            <input data-ng-model="err.c11b" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c18 -->
+                                        <td>
+                                            <input data-ng-model="err.c11c" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c19 -->
+                                        <td>
+                                            <input data-ng-model="err.c11cNote" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c20 -->
+                                        <td>
+                                            <input data-ng-model="err.c12" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c21 -->
+                                        <td>
+                                            <input data-ng-model="err.c131" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c22 -->
+                                        <td>
+                                            <!-- <input data-ng-model="err.c12Code" title={{err.errContent}} type="text" class="form-control" /> -->
+                                            <input data-ng-model="err.c132" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c23 -->
+                                        <td>
+                                            <input data-ng-model="err.c14" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c24 -->
+                                        <td>
+                                            <input data-ng-model="err.c15" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c25 -->
+                                        <td>
+                                            <input data-ng-model="err.c15Date" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c26 -->
+                                        <td>
+                                            <input data-ng-model="err.c1627" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c27 -->
+                                        <td>
+                                            <input data-ng-model="err.c1627Note" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c28 -->
+                                        <td>
+                                            <input data-ng-model="err.c1627Date" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c29 -->
+                                        <td>
+                                            <input data-ng-model="err.c17" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c30 -->
+                                        <td>
+                                            <input data-ng-model="err.c18" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c31 -->
+                                        <td>
+                                            <input data-ng-model="err.c19" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c32 -->
+                                        <td>
+                                            <input data-ng-model="err.c19Date" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c33 -->
+                                        <td>
+                                            <input data-ng-model="err.c19Note" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c34 -->
+                                        <td>
+                                            <input data-ng-model="err.c20" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c35 -->
+                                        <td>
+                                            <input data-ng-model="err.c20Reason" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c36 -->
+                                        <td>
+                                            <input data-ng-model="err.c20Org" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c37 -->
+                                        <td>
+                                            <input data-ng-model="err.c20RegDate" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c38 -->
+                                        <td>
+                                            <input data-ng-model="err.c20Code" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c39 -->
+                                        <td>
+                                            <input data-ng-model="err.c21" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c40 -->
+                                        <td>
+                                            <input data-ng-model="err.c21Date" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c41 -->
+                                        <td>
+                                            <input data-ng-model="err.c22" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c42 -->
+                                        <td>
+                                            <input data-ng-model="err.c23FullName" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c43 -->
+                                        <td>
+                                            <input data-ng-model="err.c23Ethnic.id" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c44 -->
+                                        <td>
+                                            <input data-ng-model="err.c23Profession.id" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c45 -->
+                                        <td>
+                                            <input data-ng-model="err.c23IdNumber" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c46 -->
+                                        <td>
+                                            <input data-ng-model="err.c23PhoneNumber" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c47 -->
+                                        <td>
+                                            <input data-ng-model="err.c23Note" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c48 -->
+                                        <td>
+                                            <input data-ng-model="err.c23ResidentAddressProvince.id" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c49 -->
+                                        <td>
+                                            <input data-ng-model="err.c23ResidentAddressDistrict.id" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c50 -->
+                                        <td>
+                                            <input data-ng-model="err.c23ResidentAddressWard" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c51 -->
+                                        <td>
+                                            <input data-ng-model="err.c23ResidentAddressDetail" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c52 -->
+                                        <td>
+                                            <input data-ng-model="err.c23CurrentAddressProvince.id" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c53 -->
+                                        <td>
+                                            <input data-ng-model="err.c23CurrentAddressDistrict.id" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c54 -->
+                                        <td>
+                                            <input data-ng-model="err.c23CurrentAddressWard" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c55 -->
+                                        <td>
+                                            <input data-ng-model="err.c23CurrentAddressDetail" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c56 -->
+                                        <td>
+                                            <input data-ng-model="err.c24" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c60 -->
+                                        <td>
+                                            <input data-ng-model="err.c26" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c61 -->
+                                        <td>
+                                            <input data-ng-model="err.c25" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c62 -->
+                                        <td>
+                                            <input data-ng-model="err.c28" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" data-ng-if="err.saved" checked data-ng-disabled="true" style="margin-left: 45%; margin-top: 10px" />
+                                            <input type="checkbox" data-ng-if="!err.saved" data-ng-disabled="true" style="margin-left: 45%; padding-top: 15px" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng</button>
+        </div>
+    </div>
+</script>
+
+<!-- importHTS -->
+<script type="text/ng-template" id="listDataImportErrHTS.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title bold font-yellow-gold"><i class="fa fa-cloud-upload"></i> Danh sách dòng import bị lỗi</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-body box-profile">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-bordered table-hover" style="overflow: scroll">
+                                <thead>
+                                    <tr style="background-color: #344559; color: white;">
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">STT</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">Số dòng</th>
+                                        <th style="min-width: 170px; text-align: center; vertical-align: middle;">Nội dung lỗi</th>
+                                        <th style="min-width: 150px; text-align: center; vertical-align: middle;">C1</th>
+                                        <th style="min-width: 105px; text-align: center; vertical-align: middle;">C2</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C3</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C4</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C5</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C6</th>
+                                        <th style="min-width: 140px; text-align: center; vertical-align: middle;">C7</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C8</th>
+                                        <th style="min-width: 75px; text-align: center; vertical-align: middle;">C9</th>
+                                        <th style="min-width: 80px; text-align: center; vertical-align: middle;">C10</th>
+                                        <th style="min-width: 140px; text-align: center; vertical-align: middle;">C11</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C12</th>
+                                        <th style="min-width: 140px; text-align: center; vertical-align: middle;">C13</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C14</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C15</th>
+                                        <th style="min-width: 140px; text-align: center; vertical-align: middle;">C16</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C17</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C18</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C19</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C20</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C21</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C22</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C23</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C24</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C25</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C26</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C27</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C28</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C29</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C30</th>
+                                        <th style="min-width: 150px; text-align: center; vertical-align: middle;">C31</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C32</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C33</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C34</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C35</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C36</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C37</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C38</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C39</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C40</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C41</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C42</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C43</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C44</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C45</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C46</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C47</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C48</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C49</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C50</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C51</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C52</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C53</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C54</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">C55</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C56</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C60</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C61</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C62</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">Đã lưu</th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-if="vm.listErrs != null && vm.listErrs.length > 0"
+                                    ng-repeat="err in vm.listErrs track by $index">
+                                    <tr>
+                                        <td style="text-align: center; line-height: 34px; font-weight: bold;">{{$index + 1}}</td>
+                                        <td style="text-align: center; line-height: 34px; font-weight: bold;">{{err.numberErrorContent}}</td>
+                                        <!-- Nội dung lỗi -->
+                                        <td>
+                                            <input data-ng-model="err.errorContent" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c1 -->
+                                        <td>
+                                            <input data-ng-model="err.uid" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c2 -->
+                                        <td>
+                                            <input data-ng-model="err.c2.code" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c3 -->
+                                        <td>
+                                            <input data-ng-model="err.c3.id" data-ng-disabled="true" style="text-align: center;" type="text"  class="form-control" />
+                                        </td>
+                                        <!-- c4 -->
+                                        <td>
+                                            <input data-ng-model="err.c4" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c5 -->
+                                        <td>
+                                            <input data-ng-model="err.c5" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c6 -->
+                                        <td>
+                                            <input data-ng-model="err.c5Note" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c7 -->
+                                        <td>
+                                            <input data-ng-model="err.c6" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c8 -->
+                                        <td>
+                                            <input data-ng-model="err.c7" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c9 -->
+                                        <td>
+                                            <input data-ng-model="err.c8" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c10 -->
+                                        <td>
+                                            <input data-ng-model="err.c9" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c11 -->
+                                        <td>
+                                            <input data-ng-model="err.c9Note" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c12 -->
+                                        <td>
+                                            <input data-ng-model="err.c10" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c13 -->
+                                        <td>
+                                            <input data-ng-model="err.c10Note" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c14 -->
+                                        <td>
+                                            <input data-ng-model="err.c11" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c15 -->
+                                        <td>
+                                            <input data-ng-model="err.c11a" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c16 -->
+                                        <td>
+                                            <input data-ng-model="err.c11aNote" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c17 -->
+                                        <td>
+                                            <input data-ng-model="err.c11b" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c18 -->
+                                        <td>
+                                            <input data-ng-model="err.c11c" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c19 -->
+                                        <td>
+                                            <input data-ng-model="err.c11cNote" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c20 -->
+                                        <td>
+                                            <input data-ng-model="err.c12" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c21 -->
+                                        <td>
+                                            <input data-ng-model="err.c131" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c22 -->
+                                        <td>
+                                            <!-- <input data-ng-model="err.c12Code" title={{err.errContent}} type="text" class="form-control" /> -->
+                                            <input data-ng-model="err.c132" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c23 -->
+                                        <td>
+                                            <input data-ng-model="err.c14" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c24 -->
+                                        <td>
+                                            <input data-ng-model="err.c15" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c25 -->
+                                        <td>
+                                            <input data-ng-model="err.c15Date" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c26 -->
+                                        <td>
+                                            <input data-ng-model="err.c1627" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c27 -->
+                                        <td>
+                                            <input data-ng-model="err.c1627Note" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c28 -->
+                                        <td>
+                                            <input data-ng-model="err.c1627Date" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c29 -->
+                                        <td>
+                                            <input data-ng-model="err.c17" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c30 -->
+                                        <td>
+                                            <input data-ng-model="err.c18" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c31 -->
+                                        <td>
+                                            <input data-ng-model="err.c19" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c32 -->
+                                        <td>
+                                            <input data-ng-model="err.c19Date" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c33 -->
+                                        <td>
+                                            <input data-ng-model="err.c19Note" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c34 -->
+                                        <td>
+                                            <input data-ng-model="err.c20" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c35 -->
+                                        <td>
+                                            <input data-ng-model="err.c20Reason" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c36 -->
+                                        <td>
+                                            <input data-ng-model="err.c20Org" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c37 -->
+                                        <td>
+                                            <input data-ng-model="err.c20RegDate" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c38 -->
+                                        <td>
+                                            <input data-ng-model="err.c20Code" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c39 -->
+                                        <td>
+                                            <input data-ng-model="err.c21" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c40 -->
+                                        <td>
+                                            <input data-ng-model="err.c21Date" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c41 -->
+                                        <td>
+                                            <input data-ng-model="err.c22" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c42 -->
+                                        <td>
+                                            <input data-ng-model="err.c23FullName" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c43 -->
+                                        <td>
+                                            <input data-ng-model="err.c23Ethnic.id" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c44 -->
+                                        <td>
+                                            <input data-ng-model="err.c23Profession.id" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c45 -->
+                                        <td>
+                                            <input data-ng-model="err.c23IdNumber" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c46 -->
+                                        <td>
+                                            <input data-ng-model="err.c23PhoneNumber" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c47 -->
+                                        <td>
+                                            <input data-ng-model="err.c23Note" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c48 -->
+                                        <td>
+                                            <input data-ng-model="err.c23ResidentAddressProvince.codeGso"  data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c49 -->
+                                        <td>
+                                            <input data-ng-model="err.c23ResidentAddressDistrict.codeGso" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c50 -->
+                                        <td>
+                                            <input data-ng-model="err.c23ResidentAddressWard" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c51 -->
+                                        <td>
+                                            <input data-ng-model="err.c23ResidentAddressDetail" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c52 -->
+                                        <td>
+                                            <input data-ng-model="err.c23CurrentAddressProvince.codeGso" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c53 -->
+                                        <td>
+                                            <input data-ng-model="err.c23CurrentAddressDistrict.codeGso" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c54 -->
+                                        <td>
+                                            <input data-ng-model="err.c23CurrentAddressWard" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c55 -->
+                                        <td>
+                                            <input data-ng-model="err.c23CurrentAddressDetail" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c56 -->
+                                        <td>
+                                            <input data-ng-model="err.c24" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c60 -->
+                                        <td>
+                                            <input data-ng-model="err.c26" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c61 -->
+                                        <td>
+                                            <input data-ng-model="err.c25" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c62 -->
+                                        <td>
+                                            <input data-ng-model="err.c28" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- Đã lưu -->
+                                        <td>
+                                            <input type="checkbox" data-ng-if="err.saved" checked data-ng-disabled="true" style="margin-left: 45%; margin-top: 10px" />
+                                            <input type="checkbox" data-ng-if="!err.saved" data-ng-disabled="true" style="margin-left: 45%; padding-top: 15px" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng</button>
+        </div>
+    </div>
+</script>
+
+<!-- importPNS -->
+<script type="text/ng-template" id="listDataImportErrPNS.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title bold font-yellow-gold"><i class="fa fa-cloud-upload"></i> Danh sách dòng import bị lỗi</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-body box-profile">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-bordered table-hover" style="overflow: scroll">
+                                <thead>
+                                    <tr style="background-color: #344559; color: white;">
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">STT</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">Số dòng</th>
+                                        <th style="min-width: 170px; text-align: center; vertical-align: middle;">Nội dung lỗi</th>
+                                        <th style="min-width: 150px; text-align: center; vertical-align: middle;">C1</th>
+                                        <th style="min-width: 80px; text-align: center; vertical-align: middle;">C2</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C3</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C4</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C5</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C6</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C7</th>
+                                        <th style="min-width: 150px; text-align: center; vertical-align: middle;">C8</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C9</th>
+                                        <th style="min-width: 75px; text-align: center; vertical-align: middle;">C10</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C11</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C12</th>
+                                        <th style="min-width: 80px; text-align: center; vertical-align: middle;">C13</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">Đã lưu</th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-if="vm.listErrs != null && vm.listErrs.length > 0"
+                                    ng-repeat="err in vm.listErrs track by $index">
+                                    <tr>
+                                        <td style="text-align: center; line-height: 34px; font-weight: bold;">{{$index + 1}}</td>
+                                        <td style="text-align: center; line-height: 34px; font-weight: bold;">{{err.numberErrorContent}}</td>
+                                        <!-- Nội dung lỗi -->
+                                        <td>
+                                            <input data-ng-model="err.errorContent" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c1 -->
+                                        <td>
+                                            <input data-ng-model="err.hivCase.uid" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c2 -->
+                                        <td>
+                                            <input data-ng-model="err.c2.code" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c3 -->
+                                        <td>
+                                            <input data-ng-model="err.c3.staffCode" data-ng-disabled="true" style="text-align: center;" type="text"  class="form-control" />
+                                        </td>
+                                        <!-- c4 -->
+                                        <td>
+                                            <input data-ng-model="err.c4" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c5 -->
+                                        <td>
+                                            <input data-ng-model="err.c5" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c6 -->
+                                        <td>
+                                            <input data-ng-model="err.c6" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c7 -->
+                                        <td>
+                                            <input data-ng-model="err.c6Date" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c8 -->
+                                        <td>
+                                            <input data-ng-model="err.c7" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c9 -->
+                                        <td>
+                                            <input data-ng-model="err.c8" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c10 -->
+                                        <td>
+                                            <input data-ng-model="err.c9" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c11 -->
+                                        <td>
+                                            <input data-ng-model="err.c10" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c12 -->
+                                        <td>
+                                            <input data-ng-model="err.c11" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c13 -->
+                                        <td>
+                                            <input data-ng-model="err.c12" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- Đã lưu -->
+                                        <td>
+                                            <input type="checkbox" data-ng-if="err.saved" checked data-ng-disabled="true" style="margin-left: 45%; margin-top: 10px" />
+                                            <input type="checkbox" data-ng-if="!err.saved" data-ng-disabled="true" style="margin-left: 45%; padding-top: 15px" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng</button>
+        </div>
+    </div>
+</script>
+
+<!-- importPNSContact -->
+<script type="text/ng-template" id="listDataImportErrPNSContact.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title bold font-yellow-gold"><i class="fa fa-cloud-upload"></i> Danh sách dòng import bị lỗi</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-body box-profile">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-bordered table-hover" style="overflow: scroll">
+                                <thead>
+                                    <tr style="background-color: #344559; color: white;">
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">STT</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">Số dòng</th>
+                                        <th style="min-width: 170px; text-align: center; vertical-align: middle;">Nội dung lỗi</th>
+                                        <th style="min-width: 150px; text-align: center; vertical-align: middle;">C1</th>
+                                        <th style="min-width: 150px; text-align: center; vertical-align: middle;">C2</th>
+                                        <!-- <th style="min-width: 70px; text-align: center; vertical-align: middle;">C3</th> -->
+                                        <th style="min-width: 150px; text-align: center; vertical-align: middle;">C4</th>
+                                        <th style="min-width: 75px; text-align: center; vertical-align: middle;">C5</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C6</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C7</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C8</th>
+                                        <th style="min-width: 150px; text-align: center; vertical-align: middle;">C9</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C10</th>
+                                        <th style="min-width: 80px; text-align: center; vertical-align: middle;">C11</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C12</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C13</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">c14</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C15</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C16</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C17</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C18</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C19</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C20</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C21</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C22</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">C23</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C25</th>
+                                        <th style="min-width: 60px; text-align: center; vertical-align: middle;">C26</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C27</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C28</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">C29</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C30</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">C34</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">Đã lưu</th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-if="vm.listErrs != null && vm.listErrs.length > 0"
+                                    ng-repeat="err in vm.listErrs track by $index">
+                                    <tr>
+                                        <td style="text-align: center; line-height: 34px; font-weight: bold;">{{$index + 1}}</td>
+                                        <td style="text-align: center; line-height: 34px; font-weight: bold;">{{err.numberErrorContent}}</td>
+                                        <!-- Nội dung lỗi -->
+                                        <td>
+                                            <input data-ng-model="err.errorContent" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c1 -->
+                                        <td>
+                                            <input data-ng-model="err.person.uid" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c2 -->
+                                        <td>
+                                            <input data-ng-model="err.pnsCase.uid" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c3 -->
+                                        <!-- <td>
+                                            <input data-ng-model="err.c3.staffCode" data-ng-disabled="true"  type="text"  class="form-control" />
+                                        </td> -->
+                                        <!-- c4 -->
+                                        <td>
+                                            <input data-ng-model="err.fullName" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c5 -->
+                                        <td>
+                                            <input data-ng-model="err.yearOfBirth" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c6 -->
+                                        <td>
+                                            <input data-ng-model="err.gender" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c7 -->
+                                        <td>
+                                            <input data-ng-model="err.province.id" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c8 -->
+                                        <td>
+                                            <input data-ng-model="err.district.id" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c9 -->
+                                        <td>
+                                            <input data-ng-model="err.addressDetail" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c10 -->
+                                        <td>
+                                            <input data-ng-model="err.phoneNumber" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c11 -->
+                                        <td>
+                                            <input data-ng-model="err.c1" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c12 -->
+                                        <td>
+                                            <input data-ng-model="err.c2" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c13 -->
+                                        <td>
+                                            <input data-ng-model="err.c3" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c14 -->
+                                        <td>
+                                            <input data-ng-model="err.c4First" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c15 -->
+                                        <td>
+                                            <input data-ng-model="err.c4Second" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c16 -->
+                                        <td>
+                                            <input data-ng-model="err.c4Third" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c17 -->
+                                        <td>
+                                            <input data-ng-model="err.c5" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c18 -->
+                                        <td>
+                                            <input data-ng-model="err.c5Reason" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c19 -->
+                                        <td>
+                                            <input data-ng-model="err.c6" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c20 -->
+                                        <td>
+                                            <input data-ng-model="err.c7" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c21 -->
+                                        <td>
+                                            <input data-ng-model="err.c7Note" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c22 -->
+                                        <td>
+                                            <input data-ng-model="err.c8" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c23 -->
+                                        <td>
+                                            <input data-ng-model="err.c8LabtestCode" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c25 -->
+                                        <td>
+                                            <input data-ng-model="err.c8LabtestDate" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c26 -->
+                                        <td>
+                                            <input data-ng-model="err.c9" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c27 -->
+                                        <td>
+                                            <input data-ng-model="err.c9JoinedPrEP" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c28 -->
+                                        <td>
+                                            <input data-ng-model="err.c9PrEPDate" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c29 -->
+                                        <td>
+                                            <input data-ng-model="err.c9JoinedARV" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c30 -->
+                                        <td>
+                                            <input data-ng-model="err.c9ARVDate" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- c34 -->
+                                        <td>
+                                            <input data-ng-model="err.c1receivedInfoDate" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- Đã lưu -->
+                                        <td>
+                                            <input type="checkbox" data-ng-if="err.saved" checked data-ng-disabled="true" style="margin-left: 45%; margin-top: 10px" />
+                                            <input type="checkbox" data-ng-if="!err.saved" data-ng-disabled="true" style="margin-left: 45%; padding-top: 15px" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng</button>
+        </div>
+    </div>
+</script>
+
+<!-- importStaff -->
+<script type="text/ng-template" id="listDataImportErrStaff.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title bold font-yellow-gold"><i class="fa fa-cloud-upload"></i> Danh sách dòng import bị lỗi</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-body box-profile">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-bordered table-hover" style="overflow: scroll">
+                                <thead>
+                                    <tr style="background-color: #344559; color: white;">
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">STT</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">Số dòng</th>
+                                        <th style="min-width: 300px; text-align: center; vertical-align: middle;">Nội dung lỗi</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">Mã số</th>
+                                        <th style="min-width: 150px; text-align: center; vertical-align: middle;">Mã cơ sở báo cáo</th>
+                                        <th style="min-width: 200px; text-align: center; vertical-align: middle;">Tên người báo cáo/CBO</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">Đã lưu</th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-if="vm.listErrs != null && vm.listErrs.length > 0"
+                                    ng-repeat="err in vm.listErrs track by $index">
+                                    <tr>
+                                        <td style="text-align: center; line-height: 34px; font-weight: bold;">{{$index + 1}}</td>
+                                        <td style="text-align: center; line-height: 34px; font-weight: bold;">{{err.numberErrorContent}}</td>
+                                        <!-- Nội dung lỗi -->
+                                        <td>
+                                            <input data-ng-model="err.errorContent" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- Mã số -->
+                                        <td>
+                                            <input data-ng-model="err.staffCode" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- Mã cơ sở báo cáo -->
+                                        <td>
+                                            <input data-ng-model="err.organization.code" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- Tên người báo cáo/CBO -->
+                                        <td>
+                                            <input data-ng-model="err.person.fullname" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- Đã lưu -->
+                                        <td>
+                                            <input type="checkbox" data-ng-if="err.saved" checked data-ng-disabled="true" style="margin-left: 45%; margin-top: 10px" />
+                                            <input type="checkbox" data-ng-if="!err.saved" data-ng-disabled="true" style="margin-left: 45%; padding-top: 15px" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng</button>
+        </div>
+    </div>
+</script>
+
+<!-- importOrg -->
+<script type="text/ng-template" id="listDataImportErrOrg.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title bold font-yellow-gold"><i class="fa fa-cloud-upload"></i> Danh sách dòng import bị lỗi</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-body box-profile">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-bordered table-hover" style="overflow: scroll">
+                                <thead>
+                                    <tr style="background-color: #344559; color: white;">
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">STT</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">Số dòng</th>
+                                        <th style="min-width: 170px; text-align: center; vertical-align: middle;">Nội dung lỗi</th>
+                                        <th style="min-width: 125px; text-align: center; vertical-align: middle;">Mã số</th>
+                                        <th style="min-width: 200px; text-align: center; vertical-align: middle;">Tên</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">Mã Quận/huyện</th>
+                                        <th style="min-width: 50px; text-align: center; vertical-align: middle;">Tình trạng</th>
+                                        <th style="min-width: 70px; text-align: center; vertical-align: middle;">Mã tỉnh</th>
+                                        <th style="min-width: 100px; text-align: center; vertical-align: middle;">Đã lưu</th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-if="vm.listErrs != null && vm.listErrs.length > 0"
+                                    ng-repeat="err in vm.listErrs track by $index">
+                                    <tr>
+                                        <td style="text-align: center; line-height: 34px; font-weight: bold;">{{$index + 1}}</td>
+                                        <td style="text-align: center; line-height: 34px; font-weight: bold;">{{err.numberErrorContent}}</td>
+                                        <!-- Nội dung lỗi -->
+                                        <td>
+                                            <input data-ng-model="err.errorContent" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- Mã số -->
+                                        <td>
+                                            <input data-ng-model="err.code" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- Tên -->
+                                        <td>
+                                            <input data-ng-model="err.name" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- Mã Quận/huyện -->
+                                        <td>
+                                            <input data-ng-model="err.address.district.codeGso" style="text-align: center;" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- Tình trạng -->
+                                        <td>
+                                            <input data-ng-model="err.active" data-ng-disabled="true" style="text-align: center;" type="text" class="form-control" />
+                                        </td>
+                                        <!-- Mã tỉnh -->
+                                        <td>
+                                            <input data-ng-model="err.address.province.codeGso" style="text-align: center;" data-ng-disabled="true" type="text" class="form-control" />
+                                        </td>
+                                        <!-- Đã lưu -->
+                                        <td>
+                                            <input type="checkbox" data-ng-if="err.saved" checked data-ng-disabled="true" style="margin-left: 45%; margin-top: 10px" />
+                                            <input type="checkbox" data-ng-if="!err.saved" data-ng-disabled="true" style="margin-left: 45%; padding-top: 15px" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng</button>
+        </div>
+    </div>
+</script>

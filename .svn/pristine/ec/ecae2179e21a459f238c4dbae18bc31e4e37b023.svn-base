@@ -1,0 +1,425 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="im im-icon-Chemical-4"></i> Chương trình dự phòng</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+       <li>
+          <a href="#/">Trang chủ</a>
+          <i class="fa fa-circle"></i>
+       </li>
+       <li>
+          <a href="#">Thống kê chung</a>
+       </li>
+    </ul>
+ </div>
+ <!-- END PAGE HEADER-->
+ <!-- BEGIN MAIN CONTENT -->
+ <div class="row margin-top-10">
+    <div class="col-md-12">
+       <div class="portlet light bordered">
+          <div class="portlet-body" id="stickey-container">
+             <div class="row">
+                <div class="col-xs-12">
+                   <div class="tabbable-line">
+                      <ul class="nav nav-tabs ">
+                         <li class="uppercase active">
+                            <a href="#" uib-tooltip="Tổng quan"><i class="fa fa-area-chart"></i> Tổng quan</a>
+                         </li>
+                         <li class="uppercase">
+                            <a href="#/prevention/pe" uib-tooltip="Tiếp cận cộng đồng"><i class="im im-icon-Cube-Molecule2"></i><span class="hidden-xs hidden-sm hidden-md"> TCCĐ</span></a>
+                         </li>
+                         <li class="uppercase">
+                            <a href="#/prevention/hts" uib-tooltip="Tư vấn XN HIV"><i class="im im-icon-Drop"></i><span class="hidden-xs hidden-sm hidden-md"> TVXN HIV</span></a>
+                         </li>
+                         <li class="uppercase">
+                            <a href="#/prevention/pns" uib-tooltip="Thông báo XN BT/BC"><i class="im im-icon-Twister"></i><span class="hidden-xs hidden-sm hidden-md"> TB XN BT/BC</span></a>
+                         </li>
+                         <li class="uppercase">
+                            <a href="#/prevention/sns" uib-tooltip="Dữ liệu SNS"><i class="im im-icon-Chemical-5"></i><span class="hidden-xs hidden-sm hidden-md"> SNS</span></a>
+                         </li>
+                         <li class="uppercase">
+                            <a href="#/prevention/self_test" uib-tooltip="Tự xét nghiệm"><i class="im im-icon-Microscope"></i><span class="hidden-xs hidden-sm hidden-md"> Tự xét nghiệm</span></a>
+                         </li>
+                         <li class="uppercase">
+                            <a href="#/prevention/report" uib-tooltip="Báo cáo"><i class="fa fa-bar-chart"></i><span class="hidden-xs hidden-sm hidden-md"> Báo cáo</span></a>
+                         </li>
+                         <li ng-if="isAdministrator(currentUser)" class="uppercase">
+                            <a href="#/prevention/import" uib-tooltip="Import"><i
+                                    class="fa fa-cloud-upload"></i><span class="hidden-xs hidden-sm hidden-md"> Import</span></a>
+                        </li>
+                      </ul>
+                      <div class="tab-content summary-panel" ng-if="!vm.isRole">
+                         <div class="tab-pane active padding-bottom-30">
+                            <div class="display-block no-content1 margin-top-10 font-weight-600">
+                               Bạn không có quyền xem nội dung này.
+                            </div>
+                         </div>
+                      </div>
+                      <div class="tab-content summary-panel" ng-if="vm.isRole">
+                         <div class="tab-pane active opc-dashboard-tasks for-pdma-filter">
+                            <div class="heading"><i class="fa fa-filter margin-right-10"></i>BỘ LỌC</div>
+                            <!-- Shared filters -->
+                            <div class="row">
+                               <div class="col-lg-3 col-md-6 col-sm-6 margin-top-10 fixed-height-58px">
+                                  <ui-select multiple="true" id="vm.filter.reportTypes"
+                                     ng-model="vm.filter.reportTypes" on-select="vm.changeOrg()"
+                                     sortable="true" close-on-select="true"
+                                     style="width: 100%!important;">
+                                     <ui-select-match allow-clear="false"
+                                        placeholder="Loại báo cáo">{{$item.name}}
+                                     </ui-select-match>
+                                     <ui-select-choices
+                                        repeat="c.id as c in vm.reportTypes1 | propsFilter: {name: $select.search}">
+                                        <div class="bold"
+                                           ng-bind-html="c.name | highlight: $select.search">
+                                        </div>
+                                     </ui-select-choices>
+                                  </ui-select>
+                               </div>
+                               <div class="col-lg-3 col-md-6 col-sm-6 form-controller-alt-2 margin-top-10 fixed-height-58px">
+                                  <input id="vm.filter.fromDate" class="form-control" placeholder="Từ ngày..."
+                                     ng-flatpickr
+                                     fp-opts="vm.datepicker1.dateOpts"
+                                     fp-on-setup="vm.datepicker1.datePostSetup(fpItem)"
+                                     ng-model="vm.filter.fromDate"
+                                     data-enabletime="false" />
+                                  <a ng-if="vm.filter.fromDate" style="top: 4px;" 
+                                     class="clear-picker input-has-label" ng-click="vm.datepicker1.clear()" 
+                                     href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                               </div>
+                               <div class="col-lg-3 col-md-6 col-sm-6 form-controller-alt-2 margin-top-10 fixed-height-58px">
+                                  <input id="vm.filter.toDate" class="form-control" placeholder="Đến ngày..."
+                                     ng-flatpickr
+                                     fp-opts="vm.datepicker2.dateOpts"
+                                     fp-on-setup="vm.datepicker2.datePostSetup(fpItem)"
+                                     ng-model="vm.filter.toDate"
+                                     data-enabletime="false" />
+                                  <a ng-if="vm.filter.toDate" style="top: 4px;" 
+                                     class="clear-picker input-has-label" ng-click="vm.datepicker2.clear()" 
+                                     href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                               </div>
+                               <div class="col-lg-3 col-md-6 col-sm-6 margin-top-10 fixed-height-58px">
+                                  <ui-select multiple="true" id="vm.filter.modality"
+                                     ng-model="vm.filter.modality" on-select="vm.changeOrg()"
+                                     sortable="true" close-on-select="true"
+                                     style="width: 100%!important;">
+                                     <ui-select-match allow-clear="false"
+                                        placeholder="Mô hình">{{$item.name}}
+                                     </ui-select-match>
+                                     <ui-select-choices
+                                        repeat="c.id as c in vm.modalities | propsFilter: {name: $select.search}">
+                                        <div class="bold"
+                                           ng-bind-html="c.name | highlight: $select.search">
+                                        </div>
+                                     </ui-select-choices>
+                                  </ui-select>
+                               </div>
+                               <div class="col-lg-3 col-md-6 col-sm-6 margin-top-10 fixed-height-58px">
+                                  <ui-select id="vm.filter.province" ng-change="vm.changeMap()" ng-model="vm.filter.province" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                     <ui-select-match allow-clear="false" placeholder="Tỉnh/thành phố">{{$select.selected.name}}</ui-select-match>
+                                     <ui-select-choices repeat="pr in vm.provinces | propsFilter: {name: $select.search}">
+                                        <div class="bold" ng-bind-html="pr.name | highlight: $select.search"></div>
+                                     </ui-select-choices>
+                                  </ui-select>
+                               </div>
+                               <div class="col-lg-3 col-md-6 col-sm-6 margin-top-10 fixed-height-58px">
+                                  <ui-select id="vm.filter.district" ng-model="vm.filter.district" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                     <ui-select-match allow-clear="false" placeholder="Quận/huyện">{{$select.selected.name}}</ui-select-match>
+                                     <ui-select-choices repeat="dt in vm.districts | propsFilter: {name: $select.search}">
+                                        <div class="bold" ng-bind-html="dt.name | highlight: $select.search"></div>
+                                     </ui-select-choices>
+                                  </ui-select>
+                               </div>
+                               <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 margin-top-10 fixed-height-58px">
+                                  <ui-select multiple="true" id="vm.filter.facility"
+                                     ng-model="vm.filter.facility" on-select="vm.changeOrg()"
+                                     sortable="true" close-on-select="true"
+                                     style="width: 100%!important;">
+                                     <ui-select-match allow-clear="false"
+                                        placeholder="Cơ sở báo cáo">{{$item.name}}
+                                     </ui-select-match>
+                                     <ui-select-choices
+                                        repeat="c.id as c in vm.facilities | propsFilter: {name: $select.search}">
+                                        <div class="bold "
+                                           ng-bind-html="c.name | highlight: $select.search">
+                                        </div>
+                                     </ui-select-choices>
+                                  </ui-select>
+                               </div>
+                            </div>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
+ </div>
+ </div>
+ <div  ng-if="vm.isRole">
+   <div class="row">
+      <div class="col-sm-12 summary-panel">
+         <div class="portlet light bordered">
+            <div class="portlet-body">
+               <div class="section-head dark-blue-border font-weight-500"><i class="im im-icon-Bar-Chart5 color-7"></i>Bản đồ tổng hợp số ca  khẳng định HIV+ và nhiễm mới<button collapse-button="" class="btn btn-sm btn-default no-border float-right">Thu nhỏ<i class="fa fa-angle-double-down margin-left-10"></i></button></div>
+               <div>
+                  <div class="row">
+                     <div class="col-lg-6 margin-top-20">
+                        <div ng-if="!vm.data.chart14DataAvailable" class="chart_loading_indicator" style="height: 500px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                        <div ng-if="vm.data.chart14DataAvailable" id="chart_14" style="height: 500px;"></div>
+                     </div>
+                     <div class="col-lg-6 margin-top-20">
+                        <div ng-if="!vm.data.chart13DataAvailable" class="chart_loading_indicator" style="height: 500px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                        <div ng-if="vm.data.chart13DataAvailable" id="chart_13" style="height: 500px;"></div>
+                     </div>
+                  </div>
+                  
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+    <!-- Section 1: Tiếp cận - Tìm ca - Chuyển gửi điều trị ARV - Dự phòng PrEP -->
+    <div class="row">
+       <div class="col-sm-12 summary-panel">
+          <div class="portlet light bordered">
+             <div class="portlet-body">
+                <div class="section-head green-border font-weight-500"><i class="im im-icon-Bar-Chart5 color-7"></i> Tiếp cận - Tìm ca - Chuyển gửi điều trị ARV - Dự phòng PrEP<button collapse-button class="btn btn-sm btn-default no-border float-right">Thu nhỏ<i class="fa fa-angle-double-down margin-left-10"></i></button></div>
+                <div class="row">
+                   <div class="col-xs-12">
+                      <div class="pdma-dashboard-summary">
+                         <div class="pdma-col pdma-col-5">
+                            <span>Tiếp cận tại cộng đồng</span>
+                            <div><span>{{vm.totalsPE | number}}</span><span></span></div>
+                         </div>
+                         <div class="pdma-col pdma-col-5">
+                            <span>Tư vấn xét nghiệm HIV</span>
+                            <div><span>{{vm.totalsHTS | number}}</span><span></span></div>
+                         </div>
+                         <div class="pdma-col pdma-col-5">
+                            <span>XNKĐ HIV dương tính</span>
+                            <div><span class="blue">{{vm.totalsHIV | number}}</span><span>{{vm.percentHIV | number : 0}}%</span></div>
+                         </div>
+                         <div class="pdma-col pdma-col-5">
+                            <span>Chuyển thành công đến CSĐT ARV</span>
+                            <div><span class="green">{{vm.totalsARV | number}}</span><span>{{vm.percentARV | number : 0}}%</span></div>
+                         </div>
+                         <div class="pdma-col pdma-col-5">
+                            <span>Chuyển thành công đến CSĐT PrEP</span>
+                            <div><span class="purple">{{vm.totalsPrEP | number}}</span><span></span></div>
+                         </div>
+                      </div>
+                   </div>
+                   <div class="row">
+                     <div class="col-lg-6 margin-top-20">
+                        <div class="margin-bottom-10 text-align-reverse" ng-if="vm.data.chart1DataAvailable">
+                           <button class="btn btn-sm btn-default" ng-click="vm.chart1(0)" ng-class="{'btn-selected-alt' : vm.filter.chart1==0 || !vm.filter.chart1,'no-border margin-left-5': vm.filter.chart1 && vm.filter.chart1!=0 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart1==0 || !vm.filter.chart1"></i>tháng</button>
+                           <button class="btn btn-sm btn-default" ng-click="vm.chart1(1)" ng-class="{'btn-selected-alt' : vm.filter.chart1==1,'no-border margin-left-5': vm.filter.chart1!=1 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart1==1"></i>quý</button>
+                           <button class="btn btn-sm btn-default" ng-click="vm.chart1(2)" ng-class="{'btn-selected-alt' : vm.filter.chart1==2,'no-border margin-left-5': vm.filter.chart1!=2 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart1==2"></i>năm</button>
+                        </div>
+                        <div ng-if="!vm.data.chart1DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                        <div ng-if="vm.data.chart1DataAvailable" id="chart_1" style="height: 400px;"></div>
+                     </div>
+                     <div class="col-lg-6 margin-top-20">
+                        <div class="margin-bottom-10 text-align-reverse" ng-if="vm.data.chart2DataAvailable">
+                           <button class="btn btn-sm btn-default" ng-click="vm.chart2(0)" ng-class="{'btn-selected-alt' : vm.filter.chart2==0 || !vm.filter.chart2,'no-border margin-left-5': vm.filter.chart2 && vm.filter.chart2!=0 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart2==0 || !vm.filter.chart2"></i>tỉnh</button>
+                           <button class="btn btn-sm btn-default" ng-click="vm.chart2(1)" ng-class="{'btn-selected-alt' : vm.filter.chart2==1,'no-border margin-left-5': vm.filter.chart2!=1 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart2==1"></i>huyện</button>
+                           <button class="btn btn-sm btn-default" ng-click="vm.chart2(2)" ng-class="{'btn-selected-alt' : vm.filter.chart2==2,'no-border margin-left-5': vm.filter.chart2!=2 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart2==2"></i>cơ sở</button>
+                        </div>
+                        <div ng-if="!vm.data.chart2DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                        <div ng-if="vm.data.chart2DataAvailable" id="chart_2" style="height: 400px;"></div>
+                     </div>
+                   </div>
+                   <div class="row">
+                     <div class="col-lg-6 margin-top-20">
+                        <div class="margin-bottom-10 text-align-reverse chart-heading with-border-top" ng-if="vm.data.chart3DataAvailable">
+                           <button class="btn btn-sm btn-default" ng-click="vm.chart3(0)" ng-class="{'btn-selected-alt' : vm.filter.chart3==0 || !vm.filter.chart3,'no-border margin-left-5': vm.filter.chart3 && vm.filter.chart3!=0 }"><i class="fa fa-check margin-right-5" ng-if="true"></i>mô hình xét nghiệm</button>
+                           <button class="btn btn-sm btn-default" ng-click="vm.chart3(1)" ng-class="{'btn-selected-alt' : vm.filter.chart3==1,'no-border margin-left-5': vm.filter.chart3!=1 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart3==1"></i>mô hình dịch vụ</button>
+                        </div>
+                        <div ng-if="!vm.data.chart3DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                        <div ng-if="vm.data.chart3DataAvailable" id="chart_3" style="height: 400px;"></div>
+                     </div>
+                     <div class="col-lg-6 margin-top-20">
+                        <div class="margin-bottom-10 text-align-reverse chart-heading with-border-top" ng-if="vm.data.chart4DataAvailable">
+                           <button class="btn btn-sm btn-default" ng-click="vm.chart4(0)"  ng-class="{'btn-selected-alt' : vm.filter.chart4==0 || !vm.filter.chart4,'no-border margin-left-5': vm.filter.chart4 && vm.filter.chart4!=0 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart4==0 || !vm.filter.chart4"></i>nhóm khách hàng</button>
+                           <button class="btn btn-sm btn-default" ng-click="vm.chart4(1)"  ng-class="{'btn-selected-alt' : vm.filter.chart4==1,'no-border margin-left-5': vm.filter.chart4!=1 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart4==1"></i>giới tính</button>
+                        </div>
+                        <div ng-if="!vm.data.chart4DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                        <div ng-if="vm.data.chart4DataAvailable" id="chart_4" style="height: 400px;"></div>
+                     </div>
+                   </div>
+                   <div class="row">
+                     <div class="col-lg-6 margin-top-20">
+                        <div class="margin-bottom-10 text-align-reverse chart-heading with-border-top" ng-if="vm.data.chart5DataAvailable">
+                           <button class="btn btn-sm btn-default" ng-click="vm.chart5(0)" ng-class="{'btn-selected-alt' : vm.filter.chart5==0 || !vm.filter.chart5,'no-border margin-left-5': vm.filter.chart5 && vm.filter.chart5!=0 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart5==0 || !vm.filter.chart5"></i>tháng</button>
+                           <button ng-click="vm.chart5(1)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart5==1,'no-border margin-left-5': vm.filter.chart5!=1 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart5==1"></i>quý</button>
+                           <button ng-click="vm.chart5(2)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart5==2,'no-border margin-left-5': vm.filter.chart5!=2 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart5==2"></i>năm</button>
+                        </div>
+                        <div ng-if="!vm.data.chart5DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                        <div ng-if="vm.data.chart5DataAvailable" id="chart_5" style="height: 400px;"></div>
+                     </div>
+                     <div class="col-lg-6 margin-top-20">
+                        <div class="margin-bottom-10 text-align-reverse chart-heading with-border-top" ng-if="vm.data.chart6DataAvailable">
+                           <button class="btn btn-sm btn-default" ng-click="vm.chart6(0)" ng-class="{'btn-selected-alt' : vm.filter.chart6==0 || !vm.filter.chart6,'no-border margin-left-5': vm.filter.chart6 && vm.filter.chart6!=0 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart6==0 || !vm.filter.chart6"></i>tỉnh</button>
+                           <button ng-click="vm.chart6(1)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart6==1,'no-border margin-left-5': vm.filter.chart6!=1 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart6==1"></i>huyện</button>
+                           <button ng-click="vm.chart6(2)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart6==2,'no-border margin-left-5': vm.filter.chart6!=2 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart6==2"></i>cơ sở</button>
+                        </div>
+                        <div ng-if="!vm.data.chart6DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                        <div ng-if="vm.data.chart6DataAvailable" id="chart_6" style="height: 400px;"></div>
+                     </div>
+                   </div>
+                   <div class="row">
+                     <div class="col-lg-6 margin-top-20">
+                        <div class="margin-bottom-10 text-align-reverse chart-heading with-border-top" ng-if="vm.data.chart7DataAvailable">
+                           <button class="btn btn-sm btn-default" ng-click="vm.chart7(0)" ng-class="{'btn-selected-alt' : vm.filter.chart7==0 || !vm.filter.chart7,'no-border margin-left-5': vm.filter.chart7 && vm.filter.chart7!=0 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart7==0 || !vm.filter.chart7"></i>tháng</button>
+                           <button ng-click="vm.chart7(1)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart7==1,'no-border margin-left-5': vm.filter.chart7!=1 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart7==1"></i>quý</button>
+                           <button ng-click="vm.chart7(2)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart7==2,'no-border margin-left-5': vm.filter.chart7!=2 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart7==2"></i>năm</button>
+                        </div>
+                        <div ng-if="!vm.data.chart7DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                        <div ng-if="vm.data.chart7DataAvailable" id="chart_7" style="height: 400px;"></div>
+                     </div>
+                     <div class="col-lg-6 margin-top-20">
+                        <div class="margin-bottom-10 text-align-reverse chart-heading with-border-top" ng-if="vm.data.chart8DataAvailable">
+                           <button ng-click="vm.chart8(0)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart8==0 || !vm.filter.chart8,'no-border margin-left-5': vm.filter.chart8 && vm.filter.chart8!=0 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart8==0 || !vm.filter.chart8"></i>tỉnh</button>
+                           <button ng-click="vm.chart8(1)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart8==1,'no-border margin-left-5': vm.filter.chart8!=1 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart8==1"></i>huyện</button>
+                           <button ng-click="vm.chart8(2)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart8==2,'no-border margin-left-5': vm.filter.chart8!=2 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart8==2"></i>cơ sở</button>
+                        </div>
+                        <div ng-if="!vm.data.chart8DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                        <div ng-if="vm.data.chart8DataAvailable" id="chart_8" style="height: 400px;"></div>
+                     </div>
+                   </div>
+                   
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
+ </div>
+ <!-- Section 2: Xét nghiệm phát hiện mới nhiễm HIV -->
+ <div class="row" ng-if="!isAdministrator(currentUser)">
+    <div class="col-sm-12 summary-panel">
+       <div class="portlet light bordered">
+          <div class="portlet-body">
+             <div class="section-head light-blue-border font-weight-500"><i class="im im-icon-Bar-Chart5 color-7"></i> Xét nghiệm phát hiện mới nhiễm HIV<button collapse-button="" class="btn btn-sm btn-default no-border float-right">Thu nhỏ<i class="fa fa-angle-double-down margin-left-10"></i></button></div>
+             <div>
+                <div class="row">
+                   <div class="col-xs-12">
+                      <div class="pdma-dashboard-summary">
+                         <div class="pdma-col pdma-col-5">
+                            <span>XN khẳng định HIV+</span>
+                            <div><span>{{vm.toltalsSection21 | number}}</span><span></span></div>
+                         </div>
+                         <div class="pdma-col pdma-col-5">
+                            <span>XN phát hiện mới nhiễm HIV</span>
+                            <div><span>{{vm.toltalsSection22 | number}}</span><span></span></div>
+                         </div>
+                         <div class="pdma-col pdma-col-5">
+                            <span>Nhiễm mới HIV - XN nhanh</span>
+                            <div><span>{{vm.toltalsSection23 | number}}</span><span></span></div>
+                         </div>
+                         <div class="pdma-col pdma-col-5">
+                            <span>XN tải lượng virus HIV</span>
+                            <div><span>{{vm.toltalsSection24 | number}}</span><span></span></div>
+                         </div>
+                         <div class="pdma-col pdma-col-5">
+                            <span>TLVR HIV &gt; 1000 cps/ml</span>
+                            <div><span>{{vm.toltalsSection25 | number}}</span><span></span></div>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+                <div class="row">
+                   <div class="col-xs-12 margin-top-20">
+                      <div class="margin-bottom-10 text-align-reverse chart-heading" ng-if="vm.data.chart9DataAvailable">
+                        <button class="btn btn-sm btn-default" ng-click="vm.chart9(0)" ng-class="{'btn-selected-alt' : vm.filter.chart9==0 || !vm.filter.chart9,'no-border margin-left-5': vm.filter.chart9 && vm.filter.chart9!=0 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart9==0 || !vm.filter.chart9"></i>tháng</button>
+                        <button ng-click="vm.chart9(1)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart9==1,'no-border margin-left-5': vm.filter.chart9!=1 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart9==1"></i>quý</button>
+                        <button ng-click="vm.chart9(2)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart9==2,'no-border margin-left-5': vm.filter.chart9!=2 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart9==2"></i>năm</button>
+                      </div>
+                      <div ng-if="!vm.data.chart9DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                      <div ng-if="vm.data.chart9DataAvailable" id="chart_9" style="height: 400px;"></div>
+                   </div>
+                </div>
+                <div class="row">
+                   <div class="col-xs-12 margin-top-20">
+                      <div class="margin-bottom-10 text-align-reverse chart-heading with-border-top" ng-if="vm.data.chart10DataAvailable">
+                        <button ng-click="vm.chart10(0)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart10==0 || !vm.filter.chart10,'no-border margin-left-5': vm.filter.chart10 && vm.filter.chart10!=0 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart10==0 || !vm.filter.chart10"></i>tỉnh</button>
+                        <button ng-click="vm.chart10(1)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart10==1,'no-border margin-left-5': vm.filter.chart10!=1 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart10==1"></i>huyện</button>
+                        <button ng-click="vm.chart10(2)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart10==2,'no-border margin-left-5': vm.filter.chart10!=2 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart10==2"></i>cơ sở</button>
+                      </div>
+                      <div ng-if="!vm.data.chart10DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                      <div ng-if="vm.data.chart10DataAvailable" id="chart_10" style="height: 400px;"></div>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
+ </div>
+ <!-- Section 3: Thông báo xét nghiệm bạn tình, bạn chích chung của người có HIV -->
+ <div class="row" ng-if="vm.isRole">
+    <div class="col-sm-12 summary-panel">
+       <div class="portlet light bordered">
+          <div class="portlet-body">
+             <div class="section-head dark-blue-border font-weight-500"><i class="im im-icon-Bar-Chart5 color-7"></i> Thông báo xét nghiệm bạn tình, bạn chích chung của người có HIV<button collapse-button="" class="btn btn-sm btn-default no-border float-right">Thu nhỏ<i class="fa fa-angle-double-down margin-left-10"></i></button></div>
+             <div>
+                <div class="row">
+                   <div class="col-xs-12">
+                      <div class="pdma-dashboard-summary">
+                         <div class="pdma-col pdma-col-7">
+                            <span>NCH được tư vấn dịch vụ</span>
+                            <div><span>{{vm.toltalsSection31 | number}}</span><span></span></div>
+                         </div>
+                         <div class="pdma-col pdma-col-7">
+                            <span>NCH đồng ý nhận dịch vụ</span>
+                            <div><span>{{vm.toltalsSection32 | number}}</span><span></span></div>
+                         </div>
+                         <div class="pdma-col pdma-col-7">
+                            <span>BT/BCC khai thác được t.tin</span>
+                            <div><span>{{vm.toltalsSection33 | number}}</span><span></span></div>
+                         </div>
+                         <div class="pdma-col pdma-col-7">
+                            <span>BT/BCC đã biết HIV+</span>
+                            <div><span>{{vm.toltalsSection37 | number}}</span><span></span></div>
+                         </div>
+                         <div class="pdma-col pdma-col-7">
+                            <span>BT/BCC được làm XN HIV</span>
+                            <div><span>{{vm.toltalsSection34 | number}}</span><span></span></div>
+                         </div>
+                         <div class="pdma-col pdma-col-7">
+                            <span>BT/BCC XNKĐ HIV+</span>
+                            <div><span>{{vm.toltalsSection35 | number}}</span><span></span></div>
+                         </div>
+                         <div class="pdma-col pdma-col-7">
+                            <span>BT/BCC chuyển gửi ARV</span>
+                            <div><span>{{vm.toltalsSection36 | number}}</span><span></span></div>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+                <div class="row">
+                   <div class="col-xs-12 margin-top-20">
+                      <div class="margin-bottom-10 text-align-reverse chart-heading" ng-if="vm.data.chart11DataAvailable">
+                        <button class="btn btn-sm btn-default" ng-click="vm.chart11(0)" ng-class="{'btn-selected-alt' : vm.filter.chart11==0 || !vm.filter.chart11,'no-border margin-left-5': vm.filter.chart11 && vm.filter.chart11!=0 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart11==0 || !vm.filter.chart11"></i>tháng</button>
+                        <button ng-click="vm.chart11(1)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart11==1,'no-border margin-left-5': vm.filter.chart11!=1 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart11==1"></i>quý</button>
+                        <button ng-click="vm.chart11(2)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart11==2,'no-border margin-left-5': vm.filter.chart11!=2 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart11==2"></i>năm</button>
+                      </div>
+                      <div ng-if="!vm.data.chart11DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                      <div ng-if="vm.data.chart11DataAvailable" id="chart_11" style="height: 400px;"></div>
+                   </div>
+                </div>
+                <div class="row">
+                   <div class="col-xs-12 margin-top-20">
+                      <div class="margin-bottom-10 text-align-reverse chart-heading with-border-top" ng-if="vm.data.chart12DataAvailable">
+                        <button ng-click="vm.chart12(0)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart12==0 || !vm.filter.chart12,'no-border margin-left-5': vm.filter.chart12 && vm.filter.chart12!=0 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart12==0 || !vm.filter.chart12"></i>tỉnh</button>
+                        <button ng-click="vm.chart12(1)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart12==1,'no-border margin-left-5': vm.filter.chart12!=1 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart12==1"></i>huyện</button>
+                        <button ng-click="vm.chart12(2)" class="btn btn-sm btn-default" ng-class="{'btn-selected-alt' : vm.filter.chart12==2,'no-border margin-left-5': vm.filter.chart12!=2 }"><i class="fa fa-check margin-right-5" ng-if="vm.filter.chart12==2"></i>cơ sở</button>
+                      </div>
+                      <div ng-if="!vm.data.chart12DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                      <div ng-if="vm.data.chart12DataAvailable" id="chart_12" style="height: 400px;"></div>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
+ </div>

@@ -1,0 +1,30 @@
+<div class="section-head bold margin-top-30">
+    <i class="fa fa-envira icon-muted"></i> Tóm tắt kết quả đánh giá
+</div>
+
+<div class="grid-2-col">
+    <div class="grid-body">
+        <div class="first-child">
+            <div>Số đạt trong tổng số 33 tiêu chuẩn tối thiểu</div>
+            <div>
+                <input readOnly="readonly" class="form-control" ng-model="vm.entry.finalScore" />
+            </div>
+        </div>
+        <div ng-if="vm.entry.finalScore < 33">
+            <div>Nếu &lt;33, cơ sở đã không đáp ứng được các yêu cầu tối thiểu. Hãy mô tả ngắn gọn kế hoạch hành động, người chịu trách nhiệm và khung thời gian cần thực hiện cải thiện và thay đổi để đạt được tất cả 33 tiêu chuẩn tối thiểu về dịch vụ TBXNBT/BC.</div>
+            <div>
+                <textarea ng-disabled="vm.entry.locked" class="form-control" rows="4" data-ng-model="vm.entry.correctionPlan" placeholder="Nhập nội dung mô tả..."></textarea>
+            </div>
+        </div>
+        <div>
+            <div>Hãy mô tả những nội dung cần bổ sung khác cần giải quyết liên quan đến TBXNBT/BC.</div>
+            <div>
+                <textarea ng-disabled="vm.entry.locked" class="form-control" rows="4" data-ng-model="vm.entry.additionalGaps" placeholder="Nhập nội dung mô tả..."></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-1-col">
+   Cảm ơn bạn đã thực hiện và ghi nhận kết quả đánh giá. <a href="#" ng-click="vm.page.change(1)">Trang kế tiếp</a> là danh sách các tiêu chuẩn tối thiểu chưa đạt.
+</div>

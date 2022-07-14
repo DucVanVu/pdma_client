@@ -1,0 +1,79 @@
+<script type="text/ng-template" id="hep_edit_entry_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" data-ng-disabled="true" aria-hidden="true"></button>
+            <h4 class="modal-title" ng-if="vm.hepEntry.isNew == true"><i class="icon-plus"></i> Thêm thông tin xét nghiệm - điều trị</h4>
+            <h4 class="modal-title" ng-if="vm.hepEntry.isNew == false"><i class="icon-pencil"></i> Sửa thông tin xét nghiệm - điều trị</h4>
+        </div>
+        <div class="modal-body summary-panel">
+            <div class="row">
+                <div class="col-xs-6">
+                    <label class="bold">Loại xét nghiệm</label>
+                    <ui-select id="vm.hepEntry.testType" ng-model="vm.hepEntry.testType" sortable="true" close-on-select="true" style="width: 100%!important;" autofocus="true">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="t.id as t in vm.hepTypes | filter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="t.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-xs-6 form-controller-alt-2">
+                    <label class="font-weight-500">Ngày xét nghiệm</label>
+                    <input id="vm.hepEntry.testDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.hepTestDatepicker.dateOpts"
+                           fp-on-setup="vm.hepTestDatepicker.datePostSetup(fpItem)"
+                           ng-model="vm.hepEntry.testDate"
+                           data-enabletime="false" />
+                    <a ng-if="vm.hepEntry.testDate" class="clear-picker input-has-label" ng-click="vm.hepTestDatepicker.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                </div>
+            </div>
+            <div class="row margin-top-30">
+                <div class="col-xs-6">
+                    <label class="bold">Kết quả xét nghiệm</label>
+                    <ui-select id="vm.hepEntry.testPositive" ng-model="vm.hepEntry.testPositive" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="t.id as t in vm.hepTestResults | filter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="t.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-xs-6 padding-top-30" ng-if="vm.hepEntry.testPositive">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_on_treatment" ng-model="vm.hepEntry.onTreatment" class="md-check">
+                        <label class="font-weight-500" for="chk_on_treatment">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Đã được điều trị {{vm.testTypeString}}?
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row margin-top-20" ng-if="vm.hepEntry.onTreatment">
+                <div class="col-xs-6 form-controller-alt-2">
+                    <label class="font-weight-500">Ngày bắt đầu điều trị</label>
+                    <input id="vm.hepEntry.txStartDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.hepTxStartDatepicker.dateOpts"
+                           fp-on-setup="vm.hepTxStartDatepicker.datePostSetup(fpItem)"
+                           ng-model="vm.hepEntry.txStartDate"
+                           data-enabletime="false" />
+                    <a ng-if="vm.hepEntry.txStartDate" class="clear-picker input-has-label" ng-click="vm.hepTxStartDatepicker.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                </div>
+                <div class="col-xs-6 form-controller-alt-2">
+                    <label class="font-weight-500">Ngày kết thúc điều trị</label>
+                    <input id="vm.hepEntry.txEndDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.hepTxEndDatepicker.dateOpts"
+                           fp-on-setup="vm.hepTxEndDatepicker.datePostSetup(fpItem)"
+                           ng-model="vm.hepEntry.txEndDate"
+                           data-enabletime="false" />
+                    <a ng-if="vm.hepEntry.txEndDate" class="clear-picker input-has-label" ng-click="vm.hepTxEndDatepicker.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default no-border" data-dismiss="modal">Bỏ qua</button>
+            <button type="button" ng-click="vm.saveHepEntry()" class="btn btn-primary jumping" data-ng-disabled="vm.hepSubmitDisabled" data-dismiss="modal">Lưu lại</button>
+        </div>
+    </div>
+</script>

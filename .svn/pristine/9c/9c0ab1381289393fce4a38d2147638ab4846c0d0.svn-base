@@ -1,0 +1,217 @@
+<script type="text/ng-template" id="tb_treatment2_entry_edit_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title" ng-if="vm.tb2Entry.isNew == true"><i class="icon-plus"></i> Thêm mới</h4>
+            <h4 class="modal-title" ng-if="vm.tb2Entry.isNew == false && !vm.tb2Entry.readOnly && vm.patient.editable"><i class="icon-pencil"></i> Sửa</h4>
+            <h4 class="modal-title" ng-if="vm.tb2Entry.isNew == false && (vm.tb2Entry.readOnly || !vm.patient.editable)"><i class="icon-frame"></i> Xem</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <span class="bold title-row">Sàng lọc, khám phát hiện lao</span>	
+                </div>	
+            </div>	
+            <div class ="contain-row">
+                <div class="row">
+                    <div class="col-xs-12 margin-bottom-4">
+                        <span class="bold fs-16">Sàng lọc lao dương tính</span>		
+                        <div class="with-border-top darker solid-border"></div>
+                    </div>				
+                    <div class="col-xs-6">
+                        <label class="bold">Tình huống sàng lọc lao dương tính</label>
+                        <ui-select id="vm.tb2Entry.screeningType" ng-model="vm.tb2Entry.screeningType" sortable="true" close-on-select="true" style="width: 100%!important;">
+                            <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="r.id as r in vm.tb2ScreeningTypes | filter: {name: $select.search}">
+                                <div class="bold" ng-bind-html="r.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <div class="col-xs-6 form-controller-alt-2">
+                        <label class="bold">Thời điểm sàng lọc lao dương tính</label>
+                        <input id="vm.tb2Entry.screeningDate" class="form-control" placeholder="Chọn ngày..."
+                            ng-flatpickr
+                            fp-opts="vm.tb2DatepickerScreeningDate.dateOpts"
+                            fp-on-setup="vm.tb2DatepickerScreeningDate.datePostSetup(fpItem)"
+                            ng-model="vm.tb2Entry.screeningDate"
+                            data-enabletime="false" />
+                        <a ng-if="vm.tb2Entry.screeningDate" class="clear-picker input-has-label" ng-click="vm.tb2DatepickerScreeningDate.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                    </div>
+                    <div class="col-xs-12 margin-bottom-4 margin-top-5">
+                        <span class="bold fs-16">Xét nghiệm được thực hiện để chuẩn đoán mắc lao</span>		
+                        <div class="with-border-top darker solid-border"></div>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="bold">Xét nghiệm soi đờm</label>
+                        <ui-select id="vm.tb2Entry.sputumSmear" ng-model="vm.tb2Entry.sputumSmear" sortable="true" close-on-select="true" style="width: 100%!important;">
+                            <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="r.id as r in vm.tb2YesNoNones | filter: {name: $select.search}">
+                                <div class="bold" ng-bind-html="r.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <div class="col-xs-6 form-controller-alt-2">
+                        <label class="bold">Xét nghiệm Xpert</label>
+                        <ui-select id="vm.tb2Entry.xpert" ng-model="vm.tb2Entry.xpert" sortable="true" close-on-select="true" style="width: 100%!important;">
+                            <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="r.id as r in vm.tb2YesNoNones | filter: {name: $select.search}">
+                                <div class="bold" ng-bind-html="r.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <div class="col-xs-6 margin-top-2">
+                        <label class="bold">Chụp phổi</label>
+                        <ui-select id="vm.tb2Entry.xray" ng-model="vm.tb2Entry.xray" sortable="true" close-on-select="true" style="width: 100%!important;">
+                            <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="r.id as r in vm.tb2YesNoNones | filter: {name: $select.search}">
+                                <div class="bold" ng-bind-html="r.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <div class="col-xs-6 margin-top-2 form-controller-alt-2">
+                        <label class="bold">Xét nghiệm chuẩn đoán lao khác</label>
+                        <ui-select id="vm.tb2Entry.otherTest" ng-model="vm.tb2Entry.otherTest" sortable="true" close-on-select="true" style="width: 100%!important;">
+                            <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="r.id as r in vm.tb2ExtraDiagnosis | filter: {name: $select.search}">
+                                <div class="bold" ng-bind-html="r.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    
+                    <div class="col-xs-12 margin-bottom-4 margin-top-5">
+                        <span class="bold fs-16">Kết luận chuẩn đoán mắc lao</span>		
+                        <div class="with-border-top darker solid-border"></div>
+                        <div class="d-f justify-content">
+                            <div class="d-f bold fs-16">
+                                <input class="" type="radio" ng-model="vm.tb2Entry.tbDiagnosed" value="YES"><p class="margin-checkbox-p">Có mắc lao</p>
+                            </div> 
+                            <div class="d-f bold fs-16">
+                                <input class="" type="radio" ng-model="vm.tb2Entry.tbDiagnosed" value="NO"><p class="margin-checkbox-p">Không mắc lao</p>
+                            </div> 
+                            <div class="d-f bold fs-16">
+                                <input class="" type="radio" ng-model="vm.tb2Entry.tbDiagnosed" value="NO_INFORMATION"><p class="margin-checkbox-p">Không có thông tin</p>
+                            </div> 
+                        </div>
+                        <!-- <input class="" type="radio" ng-model="vm.tb2Entry.tbDiagnosed" value="YES"><span class="margin-left-5">Có mắc lao</span>
+                        <input class="margin-right-5" type="radio" ng-model="vm.tb2Entry.tbDiagnosed" value="NO"><label>Không mắc lao</label>
+                        <input class="margin-right-5" type="radio" ng-model="vm.tb2Entry.tbDiagnosed" value="NO_INFORMATION"><label>Không có thông tin</label> -->
+                    </div>
+                    
+                    <!-- radiobutton-->
+                </div>
+            </div>
+			<!-- Chuẩn đoán bệnh lao-->
+            <div class="row margin-top-10">
+                <div class="col-xs-12 margin-bottom-4">
+                    <span class="bold title-row">Chuẩn đoán bệnh lao</span>	
+                </div>	
+            </div>	
+            <div class ="contain-row">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <label class="bold">Tên cơ sở</label>
+                        <input id="vm.tb2Entry.tbDiagnosisFacility" type="text" ng-model="vm.tb2Entry.tbDiagnosisFacility" class="form-control" placeholder="Nhập tên cơ sở" />
+                    </div>
+                    <div class="col-xs-6 form-controller-alt-2">
+                        <label class="bold">Thời điểm chuẩn đoán lao</label>
+                        <input id="vm.tb2Entry.tbDiagnosisDate" class="form-control" placeholder="Chọn ngày..."
+                            ng-flatpickr
+                            fp-opts="vm.tb2DatepickerDiagnosisDate.dateOpts"
+                            fp-on-setup="vm.tb2DatepickerDiagnosisDate.datePostSetup(fpItem)"
+                            ng-model="vm.tb2Entry.tbDiagnosisDate"
+                            data-enabletime="false" />
+                        <a ng-if="vm.tb2Entry.tbDiagnosisDate" class="clear-picker input-has-label" ng-click="vm.tb2DatepickerDiagnosisDate.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                    </div>
+                    <div class="col-xs-12 margin-top-5">
+                        <span class="bold fs-16">Phân loại bệnh lao</span>		
+                        <div class="with-border-top darker solid-border"></div>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="bold">Theo vị trí giải phẫu</label>
+                        <ui-select id="vm.tb2Entry.classification1" ng-model="vm.tb2Entry.classification1" sortable="true" close-on-select="true" style="width: 100%!important;">
+                            <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="r.id as r in vm.tb2Classification1 | filter: {name: $select.search}">
+                                <div class="bold" ng-bind-html="r.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <div class="col-xs-6 form-controller-alt-2">
+                        <label class="bold">Chi tiết theo vị trí giải phẫu</label>
+                        <ui-select id="vm.tb2Entry.classification2" ng-model="vm.tb2Entry.classification2" sortable="true" close-on-select="true" style="width: 100%!important;">
+                            <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="r.id as r in vm.tb2Classification2s | filter: {name: $select.search}">
+                                <div class="bold" ng-bind-html="r.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <div class="col-xs-6 margin-top-2">
+                        <label class="bold">Chi tiết theo tiền sử bệnh</label>
+                        <ui-select id="vm.tb2Entry.classification3" ng-model="vm.tb2Entry.classification3" sortable="true" close-on-select="true" style="width: 100%!important;">
+                            <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="r.id as r in vm.tb2Classification3s | filter: {name: $select.search}">
+                                <div class="bold" ng-bind-html="r.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <div class="col-xs-6 margin-top-2 form-controller-alt-2">
+                        <label class="bold">Chi tiết theo kết quả XN vi khuẩn</label>
+                        <ui-select id="vm.tb2Entry.classification4" ng-model="vm.tb2Entry.classification4" sortable="true" close-on-select="true" style="width: 100%!important;">
+                            <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="r.id as r in vm.tb2Classification4s | filter: {name: $select.search}">
+                                <div class="bold" ng-bind-html="r.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    
+                </div>
+            </div>	
+            <!-- Điều trị bệnh lao-->
+            <div class="row margin-top-10" ng-if = "vm.tb2Entry.tbDiagnosed == 'YES'">
+                <div class="col-xs-12">
+                    <span class="bold title-row">Điều trị bệnh lao</span>	
+                </div>	
+            </div>	
+            <div class ="contain-row" ng-if = "vm.tb2Entry.tbDiagnosed == 'YES'">
+                <div class="row">
+                                    
+                    <div class="col-xs-12">
+                        <label class="bold">Tên cơ sở đăng ký điều trị lao</label>
+                        <input id="vm.tb2Entry.tbTxFacility" type="text" ng-model="vm.tb2Entry.tbTxFacility" class="form-control" placeholder="Nhập tên cơ sở" />
+                    </div>
+                    <div class="col-xs-6 margin-top-2">
+                        <label class="bold">Mã số bệnh nhân đăng ký điều trị lao</label>
+                        <input id="vm.tb2Entry.tbTxPatientCode" type="text" ng-model="vm.tb2Entry.tbTxPatientCode" class="form-control" placeholder="Nhập mã số bệnh nhân" />
+                    </div>
+                    <div class="col-xs-6 margin-top-2 form-controller-alt-2">
+                        <label class="bold">Thời điểm bắt đầu điều trị lao</label>
+                        <input id="vm.tb2Entry.tbTxStartDate" class="form-control" placeholder="Chọn ngày..."
+                            ng-flatpickr
+                            fp-opts="vm.tb2DatepickerTxStartDate.dateOpts"
+                            fp-on-setup="vm.tb2DatepickerTxStartDate.datePostSetup(fpItem)"
+                            ng-model="vm.tb2Entry.tbTxStartDate"
+                            data-enabletime="false" />
+                        <a ng-if="vm.tb2Entry.tbTxStartDate" class="clear-picker input-has-label" ng-click="vm.tb2DatepickerTxStartDate.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- Các lần điều trị khác -->
+            <div class ="contain-row margin-top-10">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <label class="bold margin-bottom-4">Các lần ghi nhận thông tin sàng lọc, chuẩn đoán, điều trị khác</label>	
+                        <div class="dragon" drag-on> <!-- horizontal-scroll-->
+                            <table ng-disabled="vm.tb2Entry.isNew == true" id="bsSubTableTBTreatment2Control" bs-table-control="vm.bsSubTableTBTreatment2Control"></table>
+                        </div>
+                    </div>
+                </div>	
+            </div>	
+           
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default no-border" data-dismiss="modal">Đóng lại</button>
+            <button type="button" ng-click="vm.saveTBTreatment2Entry()" ng-if="!vm.tb2Entry.readOnly && vm.patient.editable" class="btn btn-primary jumping" data-dismiss="modal">Lưu lại</button>
+        </div>
+    </div>
+</script>

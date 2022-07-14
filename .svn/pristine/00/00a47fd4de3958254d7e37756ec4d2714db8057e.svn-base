@@ -1,0 +1,124 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="icon-calendar margin-right-5"></i> Đặt lịch khám bệnh - cấp thuốc</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#">Trang chủ</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#/opc/patients">Phòng khám ngoại trú</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body" id="stickey-container">
+                <div class="display-block no-content1 margin-top-10" ng-if="isAdministrator(currentUser)">
+                    Bạn không có quyền xem nội dung này.
+                </div>
+                <div class="row" ng-if="!isAdministrator(currentUser)">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs ">
+                                <li class="uppercase">
+                                    <a href="#/opc-dashboard" uib-tooltip="Tổng quan"><i class="fa fa-area-chart"></i><span class="hidden-xs" ng-class="{'hidden-sm' : isSiteManager(currentUser) || (vm.selectedEntry && vm.selectedEntry.theCase.person)}"> Tổng quan</span></a>
+                                </li>
+                                <li class="uppercase" ng-if="isSiteManager(currentUser) || isProvincialManager(currentUser)">
+                                    <a href="#/opc/patients" uib-tooltip="{{opcNotification.patientListTooltip}}" tooltip-placement="auto"><i class="fa fa-wheelchair-alt"></i><span class="hidden-xs hidden-sm hidden-md margin-right-5"> Bệnh nhân</span><span ng-if="opcNotification.pendingEnrollmentCount > 0" class="badge badge-danger">{{opcNotification.pendingEnrollmentCount}}</span></a>
+                                </li>
+                                <li class="active uppercase" ng-if="isSiteManager(currentUser)">
+                                    <a href="#" class="font-weight-600" tooltip-placement="auto" uib-tooltip="{{opcNotification.calendarTooltip}}"><i class="icon-calendar"></i><span class="hidden-xs margin-right-5"> Lịch khám</span></a>
+                                    <!--<span class="tab-new-function"><i class="fa fa-flash"></i> mới</span>-->
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/report" uib-tooltip="Báo&nbsp;cáo" tooltip-placement="auto"><i class="fa fa-bar-chart"></i><span class="hidden-xs hidden-sm"> Báo cáo</span></a>
+                                    <!--<span class="tab-new-function"><i class="fa fa-flash"></i> mới</span>-->
+                                </li>
+                                <li class="uppercase" ng-if="vm.selectedEntry && vm.selectedEntry.theCase.person && vm.selectedEntry.theCase.person.id">
+                                    <a uib-tooltip="Thông&nbsp;tin&nbsp;bệnh&nbsp;nhân" tooltip-placement="auto" href="#/opc/view-patient/{{vm.selectedEntry.id}}"><i class="fa {{vm.selectedEntry.theCase.person.genderIcon}}"></i> {{vm.selectedEntry.theCase.person.fullname}} ({{vm.selectedEntry.theCase.person.age}} tuổi)</a>
+                                </li>
+                                <li class="uppercase" ng-if="vm.editingEntry">
+                                    <a uib-tooltip="Cập&nbsp;nhật&nbsp;hồ&nbsp;sơ" tooltip-placement="auto" href="#/opc/edit-patient/{{vm.editingEntry.id ? vm.editingEntry.id : 0}}"><i class="icon-pencil"></i><span class="hidden-xs">  {{vm.editingEntry.theCase.person && vm.editingEntry.theCase.person.fullname ? vm.editingEntry.theCase.person.fullname : 'Bệnh nhân mới'}}</span></a>
+                                </li>
+                            </ul>
+                            <div class="tab-content summary-panel">
+                                <div class="tab-pane active">
+                                    <div class="opc-toolbar margin-top-10 margin-bottom-20 sticky-panel" hl-sticky="" container="sticky-container" sticky-class="is-sticky custom-alt-2 padding-left-20 padding-right-20">
+                                        <div class="margin-right-10 toolbar-org-selector">
+                                            <ui-select uib-tooltip="Chọn cơ sở khám bệnh" tooltip-placement="auto" id="vm.eventFilter.organization" ng-change="vm.onClinicChange()" ng-model="vm.eventFilter.organization" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                <ui-select-match allow-clear="false" placeholder="Chọn cơ sở...">{{$select.selected.name}}</ui-select-match>
+                                                <ui-select-choices repeat="opc in vm.grantedOPCs | filter: {name: $select.search}">
+                                                    <div class="bold" ng-bind-html="opc.name | highlight: $select.search"></div>
+                                                    <div class="small">&mdash; {{opc.province}}</div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                        <div class="vertical-seperator float-right"></div>
+                                        <button uib-tooltip="Tháng&nbsp;trước" tooltip-placement="auto" ng-click="vm.getCalendarData(-1);" class="btn btn-default no-border"><i class="fa fa-caret-left"></i><span class="hidden-xs"> Trước</span></button>
+                                        <div class="vertical-seperator float-right"></div>
+                                        <a href="#" ng-click="vm.quickMonthSelection();" uib-tooltip="{{(vm.currentDay.toDate() | monthString) + ' -- Nhấn để chọn tháng'}}" class="btn btn-primary jumping"><span class="hidden-xs">CHỌN THÁNG</span><i class="fa fa-external-link icon-muted"></i></a>
+                                        <div class="vertical-seperator float-right"></div>
+                                        <button uib-tooltip="Tháng&nbsp;sau" tooltip-placement="auto" ng-click="vm.getCalendarData(1);" class="btn btn-default no-border"><span class="hidden-xs">Sau </span><i class="fa fa-caret-right"></i></button>
+                                        <div class="vertical-seperator float-right"></div>
+                                        <button uib-tooltip="Xuất danh sách ra Excel" tooltip-placement="auto"  ng-click="vm.exportDailyAppointments();" class="btn btn-default no-border"><i class="fa fa-download margin-right-5"></i><span class="hidden-xs"> Tải lịch hẹn tháng</span></button>
+                                    </div>
+                                    <div class="tabbable-line">
+                                        <ul class="nav nav-tabs special-tab">
+                                            <li>
+                                                <a href="#/opc/appointment-cal/edit" uib-tooltip="Lịch&nbsp;hẹn&nbsp;theo&nbsp;ngày" tooltip-placement="auto"><i class="fa fa-th-list"></i><span class="hidden-xs"> Lịch ngày</span></a>
+                                            </li>
+                                            <li class="active">
+                                                <a href="#" uib-tooltip="{{'Có ' + vm.calendarItems.length + ' lần hẹn khám trong&nbsp;tháng'}}" tooltip-placement="auto"><i class="icon-calendar icon-muted margin-right-5"></i><span class="font-weight-600">{{vm.currentDay.toDate() | monthString}}</span><span class="badge badge-primary margin-left-5">{{vm.countAppointments}} lần hẹn</span></a>
+                                            </li>
+                                            <li>
+                                                <a href="#/opc/appointment-cal/late" uib-tooltip="Bệnh&nbsp;nhân&nbsp;muộn&nbsp;khám" tooltip-placement="auto"><i class="fa fa-clock-o"></i><span class="hidden-xs"> Muộn khám</span><span class="badge badge-danger margin-left-5">{{vm.bsTableControl.options.lateCount}}</span></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="tab-content summary-panel margin-top-15">
+                                        <div class="tab-pane active margin-bottom-30">
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    <div fc fc-options="vm.fullCalendarOptions" control="vm.fcControl" ng-model="vm.eventSources"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+
+<script type="text/ng-template" id="select_month_modal.html">
+    <div modal-movable auto-height="yes" calendar-inline="yes" max-width="335px">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Chuyển nhanh đến tháng</h4>
+        </div>
+        <div class="modal-body" style="max-width: 376px !important;">
+            <input class="form-control" placeholder="Xin mời chọn..."
+                   ng-flatpickr
+                   fp-opts="vm.datepicker1.dateOpts"
+                   fp-on-setup="vm.datepicker1.datePostSetup(fpItem)"
+                   ng-model="vm.tmpSelection"
+                   data-enabletime="false" />
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default no-border" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Không chọn</button>
+            <button type="button" ng-click="vm.datepicker1.selectMonth()" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>Chọn</button>
+        </div>
+    </div>
+</script>
+
+<div ng-include="'_treatment/views/fragments/_appointments.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_information.html?v=' + settings.versionNumber"></div>

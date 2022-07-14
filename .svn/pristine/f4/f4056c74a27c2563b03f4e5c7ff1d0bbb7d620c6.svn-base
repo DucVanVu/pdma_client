@@ -1,0 +1,21 @@
+/**
+ * Created by bizic on 30/8/2016.
+ */
+(function () {
+    'use strict';
+
+    angular.module('PDMA.PREV_REPORT').service('PrevDashboardService', PrevDashboardService);
+
+    PrevDashboardService.$inject = [
+        '$http',
+        '$q',
+        'settings',
+        'Utilities'
+    ];
+
+    function PrevDashboardService($http, $q, settings, utils) {
+        let self = this;
+        let baseUrl = settings.api.baseUrl + settings.api.apiV1Url;
+
+    }
+})();

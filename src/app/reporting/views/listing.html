@@ -1,0 +1,318 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="icon-plus"></i> Create a listing report</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#">Reporting tools</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#/reporting/listing">Listing report</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="btn-group margin-top-15">
+                    <a class="btn btn-default" href="#/reporting">&#x21B6; Cancel</a>
+                    <button class="btn green-jungle margin-left-10" ng-click="vm.downloadReport()"><i class="icon-cloud-download"></i> Download the report</button>
+                </div>
+                <div class="margin-top-20 instruction"><b>&mdash; Instruction:</b> Use the filters below to sort out the list of technical assistance events you need. Save the report for use in the future.</div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="data-filter-container">
+                            <div class="filter-caption"><p>FILTER BY</p><a uib-tooltip="Click to clear all filters" ng-if="vm.filter.hasAnyFilters()" ng-click="vm.filter.clear()">clear</a></div>
+                            <div class="filter-content">
+                                <a uib-tooltip="Click to change reporting period" ng-click="vm.filterByPeriod()" class="filter-item padding-right" ng-class="{'filtered': vm.filter.fromDate || vm.filter.toDate}" href="#"><i class="fa fa-circle-thin"></i> Reporting period<span ng-if="vm.filter.fromDate || vm.filter.toDate" class="remove"><i class="fa fa-close"></i></span></a>
+                                <a uib-tooltip="Click to change TA providers" ng-click="vm.filterByProviders()" class="filter-item" ng-class="{'filtered': vm.filter.providers && vm.filter.providers.length > 0}" href="#"><i class="fa fa-circle-thin"></i> TA providers <span ng-if="vm.filter.providers && vm.filter.providers.length > 0" class="badge">{{vm.filter.providers.length}}</span><span ng-if="vm.filter.providers && vm.filter.providers.length > 0" class="remove"><i class="fa fa-close"></i></span></a>
+                                <a uib-tooltip="Click to change TA recipients" ng-click="vm.filterByRecipients()" class="filter-item" ng-class="{'filtered': vm.filter.recipients && vm.filter.recipients.length > 0}" href="#"><i class="fa fa-circle-thin"></i> TA recipients <span ng-if="vm.filter.recipients && vm.filter.recipients.length > 0" class="badge">{{vm.filter.recipients.length}}</span><span ng-if="vm.filter.recipients && vm.filter.recipients.length > 0" class="remove"><i class="fa fa-close"></i></span></a>
+                                <a uib-tooltip="Click to change provinces" ng-click="vm.filterByProvinces()" class="filter-item" ng-class="{'filtered': vm.filter.locations && vm.filter.locations.length > 0}" href="#"><i class="fa fa-circle-thin"></i> In provinces <span ng-if="vm.filter.locations && vm.filter.locations.length > 0" class="badge">{{vm.filter.locations.length}}</span><span ng-if="vm.filter.locations && vm.filter.locations.length > 0" class="remove"><i class="fa fa-close"></i></span></a>
+                                <a uib-tooltip="Click to change focus levels" ng-click="vm.filterByFocusLevels()" class="filter-item" ng-class="{'filtered': vm.filter.focusLevels && vm.filter.focusLevels.length > 0}" href="#"><i class="fa fa-circle-thin"></i> Focus levels <span ng-if="vm.filter.focusLevels && vm.filter.focusLevels.length > 0" class="badge">{{vm.filter.focusLevels.length}}</span><span ng-if="vm.filter.focusLevels && vm.filter.focusLevels.length > 0" class="remove"><i class="fa fa-close"></i></span></a>
+                                <a uib-tooltip="Click to change TA initiators" ng-click="vm.filterByInitiators()" class="filter-item" ng-class="{'filtered': vm.filter.initiatorObjs && vm.filter.initiatorObjs.length > 0}" href="#"><i class="fa fa-circle-thin"></i> Initiated by <span ng-if="vm.filter.initiatorObjs && vm.filter.initiatorObjs.length > 0" class="badge">{{vm.filter.initiatorObjs.length}}</span><span ng-if="vm.filter.initiatorObjs && vm.filter.initiatorObjs.length > 0" class="remove"><i class="fa fa-close"></i></span></a>
+                                <a uib-tooltip="Click to change TA methods" ng-click="vm.filterByMethods()" class="filter-item" ng-class="{'filtered': vm.filter.methods && vm.filter.methods.length > 0}" href="#"><i class="fa fa-circle-thin"></i> TA methods <span ng-if="vm.filter.methods && vm.filter.methods.length > 0" class="badge">{{vm.filter.methods.length}}</span><span ng-if="vm.filter.methods && vm.filter.methods.length > 0" class="remove"><i class="fa fa-close"></i></span></a>
+                                <a uib-tooltip="Click to change methods of delivery" ng-click="vm.filterByDeliveryMethods()" ng-class="{'filtered': vm.filter.deliveryMethods && vm.filter.deliveryMethods.length > 0}" class="filter-item" href="#"><i class="fa fa-circle-thin"></i> Methods of delivery <span ng-if="vm.filter.deliveryMethods && vm.filter.deliveryMethods.length > 0" class="badge">{{vm.filter.deliveryMethods.length}}</span><span ng-if="vm.filter.deliveryMethods && vm.filter.deliverMethods.length > 0" class="remove"><i class="fa fa-close"></i></span></a>
+                                <a uib-tooltip="Click to change event statuses" ng-click="vm.filterByStatuses()" class="filter-item" ng-class="{'filtered': vm.filter.statusObjs && vm.filter.statusObjs.length > 0}" href="#"><i class="fa fa-circle-thin"></i> Statuses <span ng-if="vm.filter.statusObjs && vm.filter.statusObjs.length > 0" class="badge">{{vm.filter.statusObjs.length}}</span><span ng-if="vm.filter.statusObjs && vm.filter.statusObjs.length > 0" class="remove"><i class="fa fa-close"></i></span></a>
+                                <a uib-tooltip="Click to change strategic objectives" ng-click="vm.filterByPriorities()" class="filter-item" ng-class="{'filtered': vm.filter.priorities && vm.filter.priorities.length > 0}" href="#"><i class="fa fa-circle-thin"></i> COP strategic objectives <span ng-if="vm.filter.priorities && vm.filter.priorities.length > 0" class="badge">{{vm.filter.priorities.length}}</span><span ng-if="vm.filter.priorities && vm.filter.priorities.length > 0" class="remove"><i class="fa fa-close"></i></span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row margin-top-10">
+                    <div class="col-md-12">
+                        <table id="bsTableControl" ng-if="vm.events && vm.events.length > 0" bs-table-control="vm.bsTableControl"></table>
+                        <div class="no-content1" ng-if="vm.events && vm.events.length <= 0 && vm.filter.hasAnyFilters()">
+                            <i class="icon-frame"></i> No records found. Please try changing the filters.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+
+<!-- DOWNLOAD ERROR MODAL -->
+<script type="text/ng-template" id="download_report_error_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-cloud-download"></i> Download report</h4>
+        </div>
+        <div class="modal-body">
+            <p>No records found!</p>
+            <p class="instruction">&mdash;<b>Tips:</b> Please use the filters to sort out the list of technical assistance events before you can download them.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</script>
+
+<!-- DOWNLOAD MODAL -->
+<script type="text/ng-template" id="download_report_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-cloud-download"></i> Download report</h4>
+        </div>
+        <div class="modal-body">
+            <div class="instruction margin-top-10">
+                &mdash; Please save the report because you or others may need it later on.
+            </div>
+            <div class="row">
+                <div class="col-xs-12 margin-top-20">
+                    <label class="margin-right-20 bold" style="min-width: 150px">Name your report</label>
+                    <input type="text" class="form-control special-input1 margin-top-10" ng-model="vm.report.title" placeholder="Report name" autofocus />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-primary" data-dismiss="modal">Save & download</button>
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Just download it</button>
+        </div>
+    </div>
+</script>
+
+<!-- PERIODS SELECTION MODAL -->
+<script type="text/ng-template" id="filter_period_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-calendar"></i> Set reporting period</h4>
+        </div>
+        <div class="modal-body">
+            <div class="instruction margin-top-10">
+                &mdash; Please select the reporting period.
+            </div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-20">
+                    <label class="bold">From date</label>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" id="dropdown_starttime" role="button" data-toggle="dropdown" data-target="#" href="#">
+                            <input type="text" class="form-control special-input1 cursor-pointer margin-top-10" datetime-format custom-format="dd - MM - yyyy" placeholder="DD - MM - YYYY" data-ng-model="vm.filter.fromDate">
+                        </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                            <datetimepicker data-ng-model="vm.filter.fromDate" data-datetimepicker-config="vm.datetimeStart.options"></datetimepicker>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <label class="bold">To date</label>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" id="dropdown_endtime" role="button" data-toggle="dropdown" data-target="#" href="#">
+                            <input type="text" class="form-control special-input1 cursor-pointer margin-top-10" datetime-format custom-format="dd - MM - yyyy" placeholder="DD - MM - YYYY" data-ng-model="vm.filter.toDate">
+                        </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                            <datetimepicker data-ng-model="vm.filter.toDate" data-datetimepicker-config="vm.datetimeEnd.options"></datetimepicker>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" ng-click="vm.setReportingPeriod()" class="btn btn-primary" data-dismiss="modal">Select</button>
+        </div>
+    </div>
+</script>
+
+<!-- PROVIDERS SELECTION MODAL -->
+<script type="text/ng-template" id="filter_providers_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-equalizer"></i> Filter by TA providers</h4>
+        </div>
+        <div class="modal-body">
+            [Content...]
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-primary" data-dismiss="modal">Select</button>
+        </div>
+    </div>
+</script>
+
+<!-- RECIPIENTS SELECTION MODAL -->
+<script type="text/ng-template" id="filter_recipients_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-equalizer"></i> Filter by TA recipients</h4>
+        </div>
+        <div class="modal-body">
+            [Content...]
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-primary" data-dismiss="modal">Select</button>
+        </div>
+    </div>
+</script>
+
+<!-- PROVINCES SELECTION MODAL -->
+<script type="text/ng-template" id="filter_provinces_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-equalizer"></i> Filter by provinces</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <label>Provinces</label>
+                </div>
+                <div class="col-xs-12">
+                    <ui-select multiple ng-model="vm.selectedItems" sortable="true"  close-on-select="false" search-enabled="true" style="width: 100%;">
+                        <ui-select-match allow-clear="true" placeholder="Select provinces...">{{$item.name}}</ui-select-match>
+                        <ui-select-choices repeat="province in vm.provinces | propsFilter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="province.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" ng-click="vm.selectProvinces()" class="btn btn-primary" data-dismiss="modal">Select</button>
+        </div>
+    </div>
+</script>
+
+<!-- FOCUS LEVELS SELECTION MODAL -->
+<script type="text/ng-template" id="filter_focus_levels_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-equalizer"></i> Filter by focus levels</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <label>Focus levels</label>
+                </div>
+                <div class="col-xs-12">
+                    <ui-select multiple ng-model="vm.selectedItems" sortable="true"  close-on-select="false" search-enabled="true" style="width: 100%;">
+                        <ui-select-match allow-clear="true" placeholder="Select focus levels...">{{$item.name}}</ui-select-match>
+                        <ui-select-choices repeat="focusLevel in vm.focusLevels | propsFilter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="focusLevel.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" ng-click="vm.selectFocusLevels()" class="btn btn-primary" data-dismiss="modal">Select</button>
+        </div>
+    </div>
+</script>
+
+<!-- INITIATED BY SELECTION MODAL -->
+<script type="text/ng-template" id="filter_initiators_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-equalizer"></i> Filter by TA initiators</h4>
+        </div>
+        <div class="modal-body">
+            [Content...]
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-primary" data-dismiss="modal">Select</button>
+        </div>
+    </div>
+</script>
+
+<!-- METHODS SELECTION MODAL -->
+<script type="text/ng-template" id="filter_methods_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-equalizer"></i> Filter by TA methods</h4>
+        </div>
+        <div class="modal-body">
+            [Content...]
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-primary" data-dismiss="modal">Select</button>
+        </div>
+    </div>
+</script>
+
+<!-- METHODS OF DELIVERY SELECTION MODAL -->
+<script type="text/ng-template" id="filter_delivery_methods_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-equalizer"></i> Filter by methods of TA delivery</h4>
+        </div>
+        <div class="modal-body">
+            [Content...]
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-primary" data-dismiss="modal">Select</button>
+        </div>
+    </div>
+</script>
+
+<!-- EVENT STATUSES SELECTION MODAL -->
+<script type="text/ng-template" id="filter_statuses_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-equalizer"></i> Filter by TA event statuses</h4>
+        </div>
+        <div class="modal-body">
+            [Content...]
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-primary" data-dismiss="modal">Select</button>
+        </div>
+    </div>
+</script>
+
+<!-- COP SO SELECTION MODAL -->
+<script type="text/ng-template" id="filter_priorities_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-equalizer"></i> Filter by COP strategic objectives</h4>
+        </div>
+        <div class="modal-body">
+            [Content...]
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-primary" data-dismiss="modal">Select</button>
+        </div>
+    </div>
+</script>

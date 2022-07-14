@@ -1,0 +1,83 @@
+<script type="text/ng-template" id="tb_prophylaxis2_dispense_entry_edit_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" ng-click="$dismiss()" class="close" aria-hidden="true"></button>
+            <h4 class="modal-title" ng-if="vm.tbProphylaxisDispense2Entry.isNew == true" ><i class="icon-plus"></i> Cấp phát thuốc</h4>
+            <h4 class="modal-title" ng-if="vm.tbProphylaxisDispense2Entry.isNew == false "><i class="icon-pencil"></i> Sửa cấp phát thuốc</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+				<div class="col-xs-12">
+					<span class="bold">Cấp phát thuốc dự phòng lao</span>		
+					<div class="with-border-top darker solid-border"></div>
+				</div>
+				<div class="col-xs-12">
+					<h4 class="bold title-row">Phác đồ: {{vm.tbProphylaxisDispense2Entry.round.regimen}}</h4>
+				</div>
+				<div class="col-xs-6 form-controller-alt-2">
+                    <label class="bold">Ngày cấp phát</label>
+                    <input id="vm.tbProphylaxisDispense2Entry.recordDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.tbProphylaxisDispense2DatepickerRecordDate.dateOpts"
+                           fp-on-setup="vm.tbProphylaxisDispense2DatepickerRecordDate.datePostSetup(fpItem)"
+                           ng-model="vm.tbProphylaxisDispense2Entry.recordDate"
+                           data-enabletime="false" />
+                    <a ng-if="vm.tbProphylaxisDispense2Entry.recordDate" class="clear-picker input-has-label" ng-click="vm.tbProphylaxisDispense2DatepickerRecordDate.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                </div>
+                <div class="col-xs-6">
+                    <label class="bold">Số liều</label>
+					<div class="dispensed-doses">
+                        <input id="vm.tbProphylaxisDispense2Entry.dispensedDoses" type="number" id="intLimitTextBox" ng-model="vm.tbProphylaxisDispense2Entry.dispensedDoses" ng-change="vm.onDispensedDosesChange()" class="form-control" />                       
+                    </div>					
+                </div>
+				<div class="col-xs-12 margin-top-10">
+					<span class="bold">Tổng số liều sau khi cấp phát: {{vm.afterTotalDose}} </span>
+				</div>
+            </div>
+         
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default no-border" data-dismiss="modal">Đóng lại</button>
+            <button type="button" ng-click="vm.saveTBProphylaxisDispense2Entry()" ng-if="!vm.tbProphylaxis2Entry.addDispense && (!vm.tbProphylaxisDispense2Entry.readOnly && vm.patient.editable)" class="btn btn-primary jumping" data-dismiss="modal">Cấp thuốc</button>
+            <button type="button" ng-click="vm.getDataTBProphylaxisDispense2Entry()" ng-if="vm.tbProphylaxis2Entry.addDispense && (!vm.tbProphylaxisDispense2Entry.readOnly && vm.patient.editable)" class="btn btn-primary jumping" data-dismiss="modal">Cấp thuốc</button>
+        </div>
+		<div class="modal-body">
+            <div class="row">
+				<div class="col-xs-12">
+					<span class="bold">Các lần cấp phát thuốc trước đây</span>		
+					<div class="with-border-top darker solid-border"></div>
+					
+					<div class="dragon" drag-on> <!-- horizontal-scroll-->
+						<table class="table table-bordered">
+                            <tr>
+                                <th>STT</th>
+                                <th>Ngày</th>
+                                <th>Số liều thuốc</th>
+                                <th>Thao tác</th>
+                            </tr>
+							
+                            <tr ng-repeat="e in vm.tbProphylaxisDispense2Entries" ng-if = "e.dispensedDoses>0">
+                                <th>{{$index + 1}}</th>
+                                <th>{{e.recordDate | date:'dd/MM/yyyy'}}</th>
+                                <th class="text-center">{{e.dispensedDoses}}</th>
+                                <th class="text-center">
+                                    <a ng-click="$parent.editTBProphylaxisDispense2Entry(e.id)"><i class="icon-pencil"></i></a>
+                                    <a ng-click="$parent.deleteTBProphylaxisDispense2Entry(e.id)"><i class="fa fa-times"></i></a>
+                                </th>
+                            </tr>
+							<tr>
+								<th colspan="2">Tổng số liều đã cấp phát</th>
+								<th class="text-center">{{vm.totalDose}}</th>
+								<th></th>
+							</tr>
+                        </table>
+						<!--<table id="bsTableTBProphylaxisDispense2Control" bs-table-control="vm.bsTableTBProphylaxisDispense2Control"></table>
+						<span class="bold">Tổng số liều đã cấp phát: {{vm.totalDose}}</span>	-->
+					</div>
+				</div>
+				
+            </div>
+         
+        </div>
+    </div>
+</script>

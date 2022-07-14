@@ -1,0 +1,232 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="fa fa-stethoscope margin-right-5"></i> Lao - HIV</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#/opc/patients"><i class="fa fa-th-large"></i> Danh sách</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#/opc/view-patient/{{vm.patient.id}}">{{vm.patient.theCase.person.fullname}}</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#">Lao - HIV</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs curved-right sticky-panel" hl-sticky="" sticky-class="is-sticky custom-alt">
+                                <li class="uppercase">
+                                    <a href="#/opc-dashboard" uib-tooltip="Tổng quan"><i class="fa fa-area-chart"></i><span class="hidden-xs" ng-class="{'hidden-sm' : isSiteManager(currentUser) || (vm.selectedEntry && vm.selectedEntry.theCase.person)}"> Tổng quan</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/patients" uib-tooltip="Quản&nbsp;lý bệnh&nbsp;nhân"><i class="fa fa-wheelchair-alt"></i><span class="hidden-xs hidden-sm hidden-md"> Bệnh nhân</span></a>
+                                </li>
+                                <li class="uppercase" ng-if="isSiteManager(currentUser)">
+                                    <a href="#/opc/appointment-cal/edit" uib-tooltip="Khám&nbsp;bệnh&nbsp;-&nbsp;Cấp&nbsp;thuốc"><i class="icon-calendar"></i><span class="hidden-xs"> Lịch khám </span></a>
+                                    <!--<span class="tab-new-function"><i class="fa fa-flash"></i> mới</span>-->
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/report" uib-tooltip="Báo&nbsp;cáo"><i class="fa fa-bar-chart"></i><span class="hidden-xs"> Báo cáo</span></a>
+                                </li>
+                                <li class="active uppercase">
+                                    <a href="#"><i class="icon-pencil"></i> <span class="bold">Lao/HIV:</span> {{vm.patient.theCase.person.fullname}}</a>
+                                </li>
+                                <li class="uppercase" ng-if="vm.editingEntry">
+                                    <a uib-tooltip="Cập&nbsp;nhật&nbsp;hồ&nbsp;sơ" href="#/opc/edit-patient/{{vm.editingEntry.id ? vm.editingEntry.id : 0}}"><i class="icon-pencil"></i> {{vm.editingEntry.theCase.person && vm.editingEntry.theCase.person.fullname ? vm.editingEntry.theCase.person.fullname : 'Bệnh nhân mới'}}</a>
+                                </li>
+                            </ul>
+                            <a class="btn-close" href="#/opc/view-patient/{{vm.patient.id}}" uib-tooltip="Quay&nbsp;trở&nbsp;lại"><i class="fa fa-long-arrow-left"></i> Trở lại</a>
+                            <div class="tab-content no-border-top summary-panel">
+                                <div class="tab-pane active margin-bottom-30">
+                                    <div class="info-box-alt"><span class="bold"><i class="fa fa-lightbulb-o"></i> Chỉ dẫn:</span> Mục này giúp ghi nhận các lần điều trị dự phòng lao, chẩn đoán và điều trị lao của bệnh nhân {{vm.patient.theCase.person.fullname}}.</div>
+                                    <div class="section-head margin-top-30">
+                                        <i class="im im-icon-Piramids color-7"></i> Danh sách các lần điều trị dự phòng lao</span>
+                                    </div>
+                                    <div class="opc-toolbar margin-top-10 margin-bottom-10">
+                                        <button href="#" data-ng-disabled="vm.orgsWritable.length <= 0 || !isSiteManager(currentUser)" ng-click="vm.openAddTBProphylaxis();" class="btn btn-default no-border" uib-tooltip="Thêm&nbsp;yêu&nbsp;cầu&nbsp;XN&nbsp;TLVR"><i class="fa fa-plus"></i><span class="hidden-xs">Thêm thông tin dự phòng lao</span></button>
+                                    </div>
+                                    <div class="dragon custom-table-header-1" drag-on>
+                                        <table id="bsTBProphylaxisTableControl" bs-table-control="vm.bsTBProphylaxisTableControl"></table>
+                                    </div>
+                                    <div class="section-head margin-top-30">
+                                        <i class="im im-icon-Piramids color-7"></i> Danh sách các lần chẩn đoán - điều trị lao</span>
+                                    </div>
+                                    <div class="opc-toolbar margin-top-10 margin-bottom-10">
+                                        <button href="#" data-ng-disabled="vm.orgsWritable.length <= 0 || !isSiteManager(currentUser)" ng-click="vm.openAddTBTreatment();" class="btn btn-default no-border" uib-tooltip="Thêm&nbsp;yêu&nbsp;cầu&nbsp;XN&nbsp;TLVR"><i class="fa fa-plus"></i><span class="hidden-xs">Thêm thông tin chẩn đoán - điều trị lao</span></button>
+                                    </div>
+                                    <div class="dragon custom-table-header-1" drag-on>
+                                        <table id="bsTBTreatmentTableControl" bs-table-control="vm.bsTBTreatmentTableControl"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+
+<script type="text/ng-template" id="edit_pro_entry_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" data-ng-disabled="true" aria-hidden="true"></button>
+            <h4 class="modal-title" ng-if="vm.proEntry.isNew == true"><i class="icon-plus"></i> Thêm lần điều trị dự phòng lao</h4>
+            <h4 class="modal-title" ng-if="vm.proEntry.isNew == false"><i class="icon-pencil"></i> Sửa lần điều trị dự phòng lao</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-6">
+                    <label class="bold">Phác đồ thuốc</label>
+                    <ui-select id="vm.proEntry.regimen" ng-model="vm.proEntry.regimen" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="r.id as r in vm.prophylaxisRegimens | filter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="r.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-xs-6 form-controller-alt-2">
+                    <label class="bold">Ngày bắt đầu</label>
+                    <input id="vm.proEntry.startDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker1.dateOpts"
+                           fp-on-setup="vm.datepicker1.datePostSetup(fpItem)"
+                           ng-model="vm.proEntry.startDate"
+                           data-enabletime="false" />
+                    <a ng-if="vm.proEntry.startDate" class="clear-picker input-has-label" ng-click="vm.datepicker1.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 form-controller-alt-2 margin-top-20">
+                    <label>Ngày kết thúc</label>
+                    <input id="vm.proEntry.endDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker2.dateOpts"
+                           fp-on-setup="vm.datepicker2.datePostSetup(fpItem)"
+                           ng-model="vm.proEntry.endDate"
+                           data-enabletime="false" />
+                    <a ng-if="vm.proEntry.endDate" class="clear-picker input-has-label" ng-click="vm.datepicker2.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <label>Tình trạng điều trị dự phòng</label>
+                    <ui-select ng-model="vm.proEntry.result" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="r.id as r in vm.prophylaxisResults | filter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="r.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 margin-top-20">
+                    <label>Ghi chú</label>
+                    <textarea ng-model="vm.proEntry.note" class="form-control textarea-noresize" rows="3"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Bỏ qua</button>
+            <button type="button" ng-click="vm.saveProEntry()" class="btn btn-primary" data-dismiss="modal">Lưu lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="edit_tx_entry_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" data-ng-disabled="true" aria-hidden="true"></button>
+            <h4 class="modal-title" ng-if="vm.txEntry.isNew == true"><i class="icon-plus"></i> Thêm lần chẩn đoán - điều trị lao</h4>
+            <h4 class="modal-title" ng-if="vm.txEntry.isNew == false"><i class="icon-plus"></i> Sửa lần chẩn đoán - điều trị lao</h4>
+        </div>
+        <div class="modal-body">
+            <!--<div class="row">-->
+                <!--<div class="col-xs-6 form-controller-alt-2">-->
+                    <!--<label class="bold">Ngày xét nghiệm lao</label>-->
+                    <!--<input id="vm.txEntry.testDate" class="form-control" placeholder="Chọn ngày..."-->
+                           <!--ng-flatpickr-->
+                           <!--fp-opts="vm.datepicker6.dateOpts"-->
+                           <!--fp-on-setup="vm.datepicker6.datePostSetup(fpItem)"-->
+                           <!--ng-model="vm.txEntry.testDate"-->
+                           <!--data-enabletime="false" />-->
+                    <!--<a ng-if="vm.txEntry.testDate" class="clear-picker input-has-label" ng-click="vm.datepicker6.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>-->
+                <!--</div>-->
+                <!--<div class="col-xs-6">-->
+                    <!--<label class="bold">Cơ sở lấy mẫu xét nghiệm</label>-->
+                    <!--<input ng-model="vm.txEntry.labName" class="form-control" />-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="row">
+                <div class="col-xs-6 margin-top-20 form-controller-alt-2">
+                    <label class="bold">Ngày chẩn đoán mắc lao</label>
+                    <input id="vm.txEntry.diagnoseDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker3.dateOpts"
+                           fp-on-setup="vm.datepicker3.datePostSetup(fpItem)"
+                           ng-model="vm.txEntry.diagnoseDate"
+                           data-enabletime="false" />
+                    <a ng-if="vm.txEntry.diagnoseDate" class="clear-picker input-has-label" ng-click="vm.datepicker3.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                </div>
+                <div class="col-xs-6 margin-top-20 form-controller-alt-2">
+                    <label>Ngày bắt đầu điều trị lao</label>
+                    <input id="vm.txEntry.txStartDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker4.dateOpts"
+                           fp-on-setup="vm.datepicker4.datePostSetup(fpItem)"
+                           ng-model="vm.txEntry.txStartDate"
+                           data-enabletime="false" />
+                    <a ng-if="vm.txEntry.txStartDate" class="clear-picker input-has-label" ng-click="vm.datepicker4.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 form-controller-alt-2 margin-top-20">
+                    <label>Ngày kết thúc điều trị lao</label>
+                    <input id="vm.txEntry.txEndDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker5.dateOpts"
+                           fp-on-setup="vm.datepicker5.datePostSetup(fpItem)"
+                           ng-model="vm.txEntry.txEndDate"
+                           data-enabletime="false" />
+                    <a ng-if="vm.txEntry.txEndDate" class="clear-picker input-has-label" ng-click="vm.datepicker5.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <label>Tên cơ sở điều trị lao</label>
+                    <input ng-model="vm.txEntry.facilityName" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Bỏ qua</button>
+            <button type="button" ng-click="vm.saveTreatmentEntry()" class="btn btn-primary" data-dismiss="modal">Lưu lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="delete_entry_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Xoá bản ghi</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="icon-exclamation"></i></div>
+            <div><span>Bạn có chắc chắn muốn xoá bản ghi đã chọn không?</span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Không</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-danger no-border" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>Có</button>
+        </div>
+    </div>
+</script>
+
+<div ng-include="'_treatment/views/fragments/_noneditable_alert.html?v=' + settings.versionNumber"></div>

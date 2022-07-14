@@ -1,0 +1,203 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="im im-icon-Bar-Chart margin-right-5"></i> Báo cáo tuần</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#/reporting/weekly-dashboard">Trang chủ</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#">Tổng quan chung</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="display-block no-content1 margin-top-10" ng-if="!isSiteManager(currentUser) && !isDistrictManager(currentUser) && !isProvincialManager(currentUser) && !isNationalManager(currentUser) && !isDonor(currentUser)">
+                    Bạn không có quyền xem nội dung này.
+                </div>
+                <div class="row" ng-if="isSiteManager(currentUser) || isDistrictManager(currentUser) || isProvincialManager(currentUser) || isNationalManager(currentUser) || isDonor(currentUser)">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs ">
+                                <li class="active">
+                                    <a href="#"><i class="fa fa-area-chart"></i> TỔNG QUAN</a>
+                                </li>
+                                <li>
+                                    <a uib-tooltip="Quản&nbsp;lý&nbsp;báo&nbsp;cáo" href="#/reporting/weekly/"><i class="icon-magic-wand"></i> QUẢN LÝ<span class="hidden-sm hidden-xs"> BÁO CÁO</span></a>
+                                </li>
+                                <li>
+                                    <a uib-tooltip="Tiến&nbsp;độ&nbsp;báo&nbsp;cáo" href="#/reporting/weekly-progress/"><i class="fa fa-spin fa-spinner"></i><span class="hidden-xs"> TIẾN ĐỘ<span class="hidden-sm"> BÁO CÁO</span></span></a>
+                                </li>
+                                <li ng-if="isNationalManager(currentUser) || isDonor(currentUser)">
+                                    <a uib-tooltip="Chỉ&nbsp;tiêu&nbsp;năm" href="#/site-level-targets"><i class="fa fa-bullseye"></i><span class="hidden-xs"> CHỈ TIÊU<span class="hidden-sm"> NĂM</span></span></a>
+                                </li>
+                            </ul>
+                            <div class="tab-content summary-panel">
+                                <div class="tab-pane active">
+                                    <div class="row margin-bottom-5 relative-pos stat-gradient">
+                                        <!--<div class="stat-gradient"></div>-->
+                                        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 margin-top-10 margin-bottom-10">
+                                            <a class="dashboard-stat dashboard-stat-v2 status-0" href="#" ng-click="vm.viewProgressDetails(0)">
+                                                <div class="visual">
+                                                    <i class="fa fa-edit"></i>
+                                                </div>
+                                                <div class="details">
+                                                    <div class="number"><span ng-if="vm.loading"><i class="fa fa-spin fa-spinner"></i></span><span ng-if="!vm.loading">{{vm.data.summary[0]}}</span></div>
+                                                    <div class="desc"> Đang soạn thảo </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 margin-top-10 margin-bottom-10">
+                                            <a class="dashboard-stat dashboard-stat-v2 status-1" href="#" ng-click="vm.viewProgressDetails(1)">
+                                                <div class="visual">
+                                                    <i class="fa fa-hourglass-2"></i>
+                                                </div>
+                                                <div class="details">
+                                                    <div class="number"><span ng-if="vm.loading"><i class="fa fa-spin fa-spinner"></i></span><span ng-if="!vm.loading">{{vm.data.summary[1]}}</span></div>
+                                                    <div class="desc"> Chờ phê duyệt </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 margin-top-10 margin-bottom-10">
+                                            <a class="dashboard-stat dashboard-stat-v2 status-2" href="#" ng-click="vm.viewProgressDetails(2)">
+                                                <div class="visual">
+                                                    <i class="icon-magic-wand"></i>
+                                                </div>
+                                                <div class="details">
+                                                    <div class="number"><span ng-if="vm.loading"><i class="fa fa-spin fa-spinner"></i></span><span ng-if="!vm.loading">{{vm.data.summary[2]}}</span></div>
+                                                    <div class="desc"> Chờ xuất bản </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 margin-top-10 margin-bottom-10">
+                                            <a class="dashboard-stat dashboard-stat-v2 status-3" href="#" ng-click="vm.viewProgressDetails(3)">
+                                                <div class="visual">
+                                                    <i class="fa fa-globe"></i>
+                                                </div>
+                                                <div class="details">
+                                                    <div class="number"><span ng-if="vm.loading"><i class="fa fa-spin fa-spinner"></i></span><span ng-if="!vm.loading">{{vm.data.summary[3]}}</span></div>
+                                                    <div class="desc"> Đã xuất bản </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="row sticky-panel" hl-sticky="" sticky-class="is-sticky custom-alt" container="sticky-header-container">
+                                        <div class="col-lg-2 col-md-2 margin-top-10 hidden-sm hidden-xs">
+                                            <div class="vertical-seperator float-right"></div>
+                                            <div style="float: right; padding: 10px 0 0 0" class="uppercase"><label class="bold">Xem theo</label></div>
+                                        </div>
+                                        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 margin-top-10">
+                                            <!--<label class="bold">Tỉnh/thành phố</label>-->
+                                            <ui-select ng-model="vm.filter.province" data-ng-disabled="vm.loading" sortable="true" close-on-select="true" on-select="vm.onProvinceChange();" style="width: 100%!important;">
+                                                <ui-select-match allow-clear="true" placeholder="Tất cả tỉnh...">{{$select.selected.name}}</ui-select-match>
+                                                <ui-select-choices repeat="province in vm.provinces | filter: {name: $select.search}">
+                                                    <div class="bold" ng-bind-html="province.name | highlight: $select.search"></div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-5 col-xs-12 margin-top-10">
+                                            <!--<label class="bold">Cơ sở báo cáo</label>-->
+                                            <ui-select ng-model="vm.filter.org" data-ng-disabled="vm.loading" sortable="true" close-on-select="true" on-select="vm.onOrganizationChange();" style="width: 100%!important;">
+                                                <ui-select-match allow-clear="true" placeholder="Tất cả cơ sở...">{{$select.selected.name}}</ui-select-match>
+                                                <ui-select-choices repeat="organization in vm.organizations | filter: {name: $select.search}">
+                                                    <div class="bold" ng-bind-html="organization.name | highlight: $select.search"></div>
+                                                    <div ng-if="organization.address && organization.address.province && organization.address.province.name" class="small" ng-bind-html="'&mdash;' + organization.address.province.name"></div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 margin-top-10">
+                                            <!--<label class="bold">Tuần chốt báo cáo</label>-->
+                                            <span ng-if="vm.loading" class="read-only-bg form-control">{{vm.filter.toDate | weekString2}}</span>
+                                            <input class="form-control" ng-class="{'datepicker-hidden' : vm.loading}" placeholder="CHỌN TUẦN..."
+                                                   ng-flatpickr
+                                                   fp-opts="vm.datepicker.dateOpts"
+                                                   ng-model="vm.filter.tempDate"
+                                                   data-enabletime="false" />
+                                        </div>
+                                        <input style="width: 0; height: 0; float: right" id="fixed_element" />
+                                    </div>
+                                    <div class="row" ng-if="vm.data.lastUpdate">
+                                        <div class="col-xs-12">
+                                            <div class="no-content margin-top-10 font-weight-500"><i class="fa fa-lightbulb-o"></i> Ghi chú: Số liệu báo cáo được tổng hợp lần cuối vào <span class="underline-alt">{{vm.data.lastUpdate}}</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12" id="dashboardChartArea">
+                                            <div class="section-head">
+                                                <i class="im im-icon-Line-Chart4 color-7"></i> Tình hình thực hiện chương trình trong các tuần gần đây
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-xs-12 margin-top-40">
+                                                    <div ng-if="vm.loading" class="text-center font-weight-600"><i class="fa fa-spin fa-spinner"></i> Đang tải dữ liệu...</div>
+                                                    <div id="chart_0" class="vis-chart" ng-class="{'chart-hidden' : vm.loading}"></div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-12 margin-top-40">
+                                                    <div ng-if="vm.loading" class="text-center font-weight-600"><i class="fa fa-spin fa-spinner"></i> Đang tải dữ liệu...</div>
+                                                    <div id="chart_1" class="vis-chart" ng-class="{'chart-hidden' : vm.loading}"></div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-xs-12 margin-top-40">
+                                                    <div ng-if="vm.loading" class="text-center font-weight-600"><i class="fa fa-spin fa-spinner"></i> Đang tải dữ liệu...</div>
+                                                    <div id="chart_2" class="vis-chart" ng-class="{'chart-hidden' : vm.loading}"></div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-12 margin-top-40">
+                                                    <div ng-if="vm.loading" class="text-center font-weight-600"><i class="fa fa-spin fa-spinner"></i> Đang tải dữ liệu...</div>
+                                                    <div id="chart_2_1" class="vis-chart" ng-class="{'chart-hidden' : vm.loading}"></div>
+                                                </div>
+                                            </div>
+                                            <div class="section-head">
+                                                <i class="im im-icon-Line-Chart3 color-7"></i> Tiến độ thực hiện chương trình
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-xs-12 margin-top-40">
+                                                    <div ng-if="vm.loading" class="text-center font-weight-600"><i class="fa fa-spin fa-spinner"></i> Đang tải dữ liệu...</div>
+                                                    <div id="chart_3" class="vis-chart" ng-class="{'chart-hidden' : vm.loading}"></div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-12 margin-top-40">
+                                                    <div ng-if="vm.loading" class="text-center font-weight-600"><i class="fa fa-spin fa-spinner"></i> Đang tải dữ liệu...</div>
+                                                    <div id="chart_4" class="vis-chart" ng-class="{'chart-hidden' : vm.loading}"></div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-xs-12 margin-top-40 margin-bottom-40">
+                                                    <div ng-if="vm.loading" class="text-center font-weight-600"><i class="fa fa-spin fa-spinner"></i> Đang tải dữ liệu...</div>
+                                                    <div id="chart_5" class="vis-chart" ng-class="{'chart-hidden' : vm.loading}"></div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-12 margin-top-40 margin-bottom-40">
+                                                    <div ng-if="vm.loading" class="text-center font-weight-600"><i class="fa fa-spin fa-spinner"></i> Đang tải dữ liệu...</div>
+                                                    <div id="chart_6" class="vis-chart" ng-class="{'chart-hidden' : vm.loading}"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/ng-template" id="not_available.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-info"></i> Thông báo</h4>
+        </div>
+        <div class="modal-body">
+            <p>Chức năng xem chi tiết tiến độ báo cáo đang được xây dựng. Chúng tôi sẽ cập nhật sớm nhất có thể.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">OK</button>
+        </div>
+    </div>
+</script>
+<!-- END MAIN CONTENT -->

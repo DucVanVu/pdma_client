@@ -1,0 +1,94 @@
+<div class="section-head bold margin-top-30">
+    <i class="fa fa-envira icon-muted"></i> Phần 2. Ghi nhận việc đào tạo và đánh giá sau đào tạo TBXNBT/BC
+</div>
+
+<div class="grid-2-col">
+    <div class="grid-body">
+        <div class="first-child">
+            <div>2.1. Số nhân viên/tư vấn viên hiện nay của cơ sở đã được tập huấn chính thức về TBXNBT/BC</div>
+            <div>
+                <input ng-disabled="vm.entry.locked" type="number" data-ng-model="vm.entry.q2_1" class="form-control" />
+            </div>
+        </div>
+        <div>
+            <div>2.2. Loại giáo trình TBXNBT/BC đã được sử dụng cho tập huấn</div>
+            <div>
+                <textarea ng-disabled="vm.entry.locked" class="form-control" rows="4" data-ng-model="vm.entry.q2_2" placeholder="Nhập tên/mô tả ngắn gọn giáo trình..."></textarea>
+            </div>
+        </div>
+        <div>
+            <div>Hãy tải tài liệu tập huấn TBXNBT/BC (gồm chương trình tập huấn, các bài trình bày slides. v.v.). <span class="bold">Lưu ý:</span> không tải tài liệu có thông tin định danh cá nhân của khách hàng.</div>
+            <div>
+                <span ng-if="!vm.entry.q2_2_file_name && vm.entry.locked">&mdash;</span>
+                <a href="#" class="no-content1" ng-if="!vm.entry.q2_2_file_name && !vm.entry.locked" ng-click="vm.uploader.showUploadModal('q2_2_file');"><i class="fa fa-upload"></i> Tải tệp tin lên</a>
+                <div ng-if="vm.entry.q2_2_file_name">
+                    <p>Tệp tin: <span class="bold">{{vm.entry.q2_2_file_name}}</span></p>
+                    <a href="#" ng-click="vm.downloadAttachment(vm.entry.id, 'q2_2_file')"><i class="fa fa-download margin-right-10"></i>Tải xuống</a>
+                    <a href="#" class="margin-left-20" ng-if="!vm.entry.locked" ng-click="vm.uploader.showUploadModal('q2_2_file');"><i class="fa fa-refresh margin-right-10"></i>Tải tệp tin mới hơn</a>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div>{{vm.questions.q2_3.name}}</div>
+            <div>
+                <div class="md-checkbox margin-top-20" ng-repeat="opt in vm.questions.q2_3.options">
+                    <input ng-disabled="vm.entry.locked" type="checkbox" id="checkbox_q2_3_{{opt.id}}" class="md-check" ng-change="vm.updateDelimitedProps('q2_3')" ng-model="vm.entry.q2_3_tmp[$index]">
+                    <label for="checkbox_q2_3_{{opt.id}}">
+                        <span></span>
+                        <span class="check"></span>
+                        <span class="box"></span> {{opt.name}}
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div ng-if="vm.entry.q2_3 && vm.entry.q2_3.includes('5')">
+            <div>Bạn đã chọn "Khác" ở câu hỏi trên, xin vui lòng mô tả ngắn gọn hình thức khóa đào tạo đã được cung cấp</div>
+            <div>
+                <textarea ng-disabled="vm.entry.locked" class="form-control" rows="4" data-ng-model="vm.entry.q2_3_text" placeholder="Nhập mô tả ngắn gọn..."></textarea>
+            </div>
+        </div>
+        <div>
+            <div>2.4. Số giờ của lớp tập huấn đầu tiên về TBXNBT/BC</div>
+            <div>
+                <input ng-disabled="vm.entry.locked" type="number" data-ng-model="vm.entry.q2_4" class="form-control" />
+            </div>
+        </div>
+        <div>
+            <div>2.5. Số giờ của lớp tập huấn lại hoặc nâng cao về TBXNBT/BC</div>
+            <div>
+                <input ng-disabled="vm.entry.locked" type="number" data-ng-model="vm.entry.q2_5" class="form-control" />
+            </div>
+        </div>
+        <div>
+            <div>{{vm.questions.q2_6.name}}</div>
+            <div>
+                <div class="md-checkbox margin-top-20" ng-repeat="opt in vm.questions.q2_6.options">
+                    <input ng-disabled="vm.entry.locked" type="checkbox" id="checkbox_q2_6_{{opt.id}}" class="md-check" ng-change="vm.updateDelimitedProps('q2_6')" ng-model="vm.entry.q2_6_tmp[$index]">
+                    <label for="checkbox_q2_6_{{opt.id}}">
+                        <span></span>
+                        <span class="check"></span>
+                        <span class="box"></span> {{opt.name}}
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div ng-if="vm.entry.q2_6 && vm.entry.q2_6.includes('5')">
+            <div>Bạn đã chọn "Khác" ở câu hỏi trên, xin vui lòng mô tả ngắn gọn</div>
+            <div>
+                <textarea ng-disabled="vm.entry.locked" class="form-control" rows="4" data-ng-model="vm.entry.q2_6_text" placeholder="Nhập mô tả ngắn gọn..."></textarea>
+            </div>
+        </div>
+        <div>
+            <div>Hãy tải bảng kiểm hoặc các công cụ được sử dụng cho giám sát đảm bảo chất lượng TBXNBT/BC. <span class="bold">Lưu ý:</span> không tải tài liệu có thông tin định danh cá nhân của khách hàng</div>
+            <div>
+                <span ng-if="!vm.entry.q2_6_file_name && vm.entry.locked">&mdash;</span>
+                <a href="#" class="no-content1" ng-if="!vm.entry.q2_6_file_name && !vm.entry.locked" ng-click="vm.uploader.showUploadModal('q2_6_file')"><i class="fa fa-upload"></i> Tải tệp tin lên</a>
+                <div ng-if="vm.entry.q2_6_file_name">
+                    <p>Tệp tin: <span class="bold">{{vm.entry.q2_6_file_name}}</span></p>
+                    <a href="#" ng-click="vm.downloadAttachment(vm.entry.id, 'q2_6_file')"><i class="fa fa-download margin-right-10"></i>Tải xuống</a>
+                    <a href="#" class="margin-left-20" ng-if="!vm.entry.locked" ng-click="vm.uploader.showUploadModal('q2_6_file');"><i class="fa fa-refresh margin-right-10"></i>Tải tệp tin mới hơn</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

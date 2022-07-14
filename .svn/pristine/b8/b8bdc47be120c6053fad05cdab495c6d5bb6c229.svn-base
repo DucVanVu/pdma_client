@@ -1,0 +1,99 @@
+<div class="section-head bold margin-top-30">
+    <i class="fa fa-envira icon-muted"></i> Phần 1: Bảng kiểm các tiêu chuẩn tối thiểu
+</div>
+<div class="info-box-alt">
+    <p>Tất cả các dịch vụ TVXN HIV phải đáp ứng các tiêu chuẩn tối thiểu 5C của WHO. Đối với TBXNBT/BC, các khách hàng là NCH đã có KQXN HIV chính xác khẳng định dương tính, do đó phải đáp ứng 4C khác. Ngoài 5C, các tiêu chuẩn tối thiểu khác đối với TBXNBT/BC bao gồm thực hiện đánh giá nguy cơ bạo lực từ bạn tình/bạn chích (IPV), tổ chức đào tạo và giám sát hỗ trợ, theo dõi và đáp ứng với sự kiện bất lợi. Phần sau đây đánh giá liệu một cơ sở cung cấp dịch vụ có đáp ứng các tiêu chuẩn tối thiểu cho TBXNBT/BC hay không.</p>
+</div>
+<!-- Question #1.2 -->
+<div class="pns-question-header margin-top-20">{{vm.questions.q1_6.name}}</div>
+<div class="pns-question-description">{{vm.questions.q1_6.description}}</div>
+<div class="grid-3-col">
+    <div class="grid-header">
+        <div></div>
+        <div>Có/Tất cả/Luôn luôn</div>
+        <div>Một số/Đôi khi</div>
+        <div>Không/Không hề/Không bao giờ</div>
+    </div>
+    <div class="grid-body">
+        <div ng-repeat="opt in vm.questions.q1_6.questions">
+            <div><span ng-bind-html="opt.name"></span></div>
+            <div>
+                <div class="md-radio-inline">
+                    <div class="md-radio margin-top-20">
+                        <input ng-disabled="vm.entry.locked" type="radio" id="checkbox_q1_{{opt.id}}_ans1" ng-change="vm.updateCriteria('q1_6')" name="radio_q1_{{opt.id}}_ans1" ng-model="vm.entry.q1_6[$index]" value="1" class="md-radiobtn">
+                        <label for="checkbox_q1_{{opt.id}}_ans1">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="md-radio-inline">
+                    <div class="md-radio margin-top-20">
+                        <input ng-disabled="vm.entry.locked" type="radio" id="checkbox_q1_{{opt.id}}_ans2" ng-change="vm.updateCriteria('q1_6')" name="radio_q1_{{opt.id}}_ans2" ng-model="vm.entry.q1_6[$index]" value="2" class="md-radiobtn">
+                        <label for="checkbox_q1_{{opt.id}}_ans2">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="md-radio-inline">
+                    <div class="md-radio margin-top-20">
+                        <input ng-disabled="vm.entry.locked" type="radio" id="checkbox_q1_{{opt.id}}_ans3" ng-change="vm.updateCriteria('q1_6')" name="radio_q1_{{opt.id}}_ans3" ng-model="vm.entry.q1_6[$index]" value="3" class="md-radiobtn">
+                        <label for="checkbox_q1_{{opt.id}}_ans3">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-2-col margin-top-20">
+    <div class="grid-body">
+        <div ng-if="vm.entry.q1_6a && vm.entry.q1_6a != 1">
+            <div>Nếu ở câu hỏi 1.6.a câu trả lời không phải là "Có/Tất cả/Luôn luôn" vui lòng giải thích ngắn gọn</div>
+            <div>
+                <textarea ng-disabled="vm.entry.locked" class="form-control" rows="4" data-ng-model="vm.entry.q1_6a_text" placeholder="Nhập nội dung..."></textarea>
+            </div>
+        </div>
+        <div ng-if="vm.entry.q1_6b && vm.entry.q1_6b != 1">
+            <div>Nếu ở câu hỏi 1.6.b câu trả lời không phải là "Có/Tất cả/Luôn luôn" vui lòng giải thích ngắn gọn</div>
+            <div>
+                <textarea ng-disabled="vm.entry.locked" class="form-control" rows="4" data-ng-model="vm.entry.q1_6b_text" placeholder="Nhập nội dung..."></textarea>
+            </div>
+        </div>
+        <div ng-if="vm.entry.q1_6b && vm.entry.q1_6b == 1">
+            <div>Nếu ở câu hỏi 1.6.b câu trả lời là "Có/Tất cả/Luôn luôn", vui lòng tải tài liệu đào tạo</div>
+            <div>
+                <span ng-if="!vm.entry.q1_6b_file_name && vm.entry.locked">&mdash;</span>
+                <a href="#" class="no-content1" ng-if="!vm.entry.q1_6b_file_name && !vm.entry.locked" ng-click="vm.uploader.showUploadModal('q1_6b_file')"><i class="fa fa-upload"></i> Tải tệp tin lên</a>
+                <div ng-if="vm.entry.q1_6b_file_name">
+                    <p>Tệp tin: <span class="bold">{{vm.entry.q1_6b_file_name}}</span></p>
+                    <a href="#" ng-click="vm.downloadAttachment(vm.entry.id, 'q1_6b_file')"><i class="fa fa-download margin-right-10"></i>Tải xuống</a>
+                    <a href="#" ng-if="!vm.entry.locked" class="margin-left-20" ng-click="vm.uploader.showUploadModal('q1_6b_file');"><i class="fa fa-refresh margin-right-10"></i>Tải tệp tin mới hơn</a>
+                </div>
+            </div>
+        </div>
+        <div ng-if="vm.entry.q1_6c && vm.entry.q1_6c != 1">
+            <div>Nếu ở câu hỏi 1.6.c câu trả lời không phải là "Có/Tất cả/Luôn luôn" vui lòng giải thích ngắn gọn</div>
+            <div>
+                <textarea ng-disabled="vm.entry.locked" class="form-control" rows="4" data-ng-model="vm.entry.q1_6c_text" placeholder="Nhập nội dung..."></textarea>
+            </div>
+        </div>
+        <div ng-if="vm.entry.q1_6d && vm.entry.q1_6d != 1">
+            <div>Nếu ở câu hỏi 1.6.d câu trả lời không phải là "Có/Tất cả/Luôn luôn" vui lòng giải thích ngắn gọn</div>
+            <div>
+                <textarea ng-disabled="vm.entry.locked" class="form-control" rows="4" data-ng-model="vm.entry.q1_6d_text" placeholder="Nhập nội dung..."></textarea>
+            </div>
+        </div>
+    </div>
+</div>

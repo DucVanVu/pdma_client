@@ -1,0 +1,89 @@
+<script type="text/ng-template" id="clinical_stages_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="fa fa-line-chart"></i> Lịch sử thay đổi giai đoạn lâm sàng của bệnh nhân</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-12 opc-toolbar">
+                    <button ng-click="vm.addClinicalStage();" data-ng-disabled="vm.orgsWritable.length <= 0 || !vm.entry.editable" class="btn btn-primary no-border"><i class="fa fa-plus margin-right-10"></i>Giai đoạn lâm sàng mới</button>
+                    <div class="vertical-seperator float-right"></div>
+                    <button ng-click="vm.deleteClinicalStage();" class="btn btn-danger no-border" data-ng-disabled="vm.orgsWritable.length <= 0 || !vm.entry.editable || !vm.selClinicalStage || !vm.selClinicalStage.id"><i class="icon-trash margin-right-10"></i>Xóa</button>
+                </div>
+                <div class="col-xs-12 margin-top-10">
+                    <table id="bsTableControl4ClinicalStages" bs-table-control="vm.bsTableControl4ClinicalStages"></table>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="edit_clinical_stage_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-plus"></i> Ghi nhận giai đoạn lâm sàng mới của bệnh nhân</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-12">
+                </div>
+                <div class="col-xs-12">
+                    <div class="row">
+                        <div class="col-xs-6 margin-top-20">
+                            <label class="bold">Giai đoạn lâm sàng</label>
+                            <ui-select id="vm.clinicalStage.stage" ng-model="vm.clinicalStage.stage" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="f.id as f in vm.clinicalStages | filter: {name: $select.search}">
+                                    <div class="bold" ng-bind-html="f.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <div class="col-lg-6 col-sm-8 margin-top-20 form-controller-alt-2">
+                            <label class="bold">Ngày đánh giá</label>
+                            <input id="vm.clinicalStage.evalDate" class="form-control" placeholder="Chọn ngày..."
+                                   ng-flatpickr
+                                   fp-opts="vm.datepicker2.dateOpts"
+                                   fp-on-setup="vm.datepicker2.datePostSetup(fpItem)"
+                                   ng-model="vm.clinicalStage.evalDate"
+                                   data-enabletime="false" />
+                            <a ng-if="vm.clinicalStage.evalDate" class="clear-picker input-has-label" ng-click="vm.datepicker2.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 margin-top-20">
+                            <label>Ghi chú</label>
+                            <textarea class="form-control" rows="4" data-ng-model="vm.clinicalStage.note"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="$dismiss()" data-dismiss="modal" class="btn btn-default no-border margin-right-10"><i class="fa fa-close margin-right-10"></i>Hủy bỏ</button>
+            <button class="btn btn-primary" data-ng-disabled="vm.orgsWritable.length <= 0 || !vm.entry.editable" ng-click="vm.saveClinicalStage();"><i class="fa fa-check margin-right-10"></i>Lưu lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="delete_clinical_stage_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Xoá bản ghi</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="icon-exclamation"></i></div>
+            <div><span>Bạn có chắc chắn muốn xoá thông tin giai đoạn lâm sàng đã chọn của bệnh nhân <strong>{{vm.entry.person.fullname}}</strong> không?
+            </span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Không</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-danger no-border" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>Có</button>
+        </div>
+    </div>
+</script>

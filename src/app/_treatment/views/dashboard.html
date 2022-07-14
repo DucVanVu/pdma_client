@@ -1,0 +1,276 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="fa fa-area-chart margin-right-5"></i> Thông tin tổng quan</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#">Trang chủ</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#/opc/patients">Phòng khám ngoại trú</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="display-block no-content1 margin-top-10" ng-if="isAdministrator(currentUser)">
+                    Bạn không có quyền xem nội dung này.
+                </div>
+                <div class="row" ng-if="!isAdministrator(currentUser)">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs ">
+                                <li class="active uppercase">
+                                    <a href="#" class="font-weight-600" uib-tooltip="Tổng quan"><i class="fa fa-area-chart"></i><span class="hidden-xs" ng-class="{'hidden-sm' : isSiteManager(currentUser) || (vm.selectedEntry && vm.selectedEntry.theCase.person)}"> Tổng quan</span></a>
+                                </li>
+                                <li class="uppercase" ng-if="isSiteManager(currentUser) || isProvincialManager(currentUser)">
+                                    <a href="#/opc/patients" uib-tooltip="{{opcNotification.patientListTooltip}}"><i class="fa fa-wheelchair-alt"></i><span ng-class="{'hidden-sm hidden-md hidden-xs margin-right-5' : isSiteManager(currentUser) || (vm.selectedEntry && vm.selectedEntry.theCase.person)}"> Bệnh nhân</span><span ng-if="opcNotification.pendingEnrollmentCount > 0" class="badge badge-danger">{{opcNotification.pendingEnrollmentCount}}</span></a>
+                                </li>
+                                <li class="uppercase" ng-if="isSiteManager(currentUser)">
+                                    <a href="#/opc/appointment-cal/edit" uib-tooltip="Khám&nbsp;bệnh&nbsp;-&nbsp;Cấp&nbsp;thuốc"><i class="icon-calendar"></i><span class="hidden-xs"> Lịch khám </span></a>
+                                    <!--<span class="tab-new-function"><i class="fa fa-flash"></i> mới</span>-->
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/report" uib-tooltip="Báo&nbsp;cáo"><i class="fa fa-bar-chart"></i><span ng-class="{'hidden-xs' : isSiteManager(currentUser)}"> Báo cáo</span></a>
+                                    <!--<span class="tab-new-function"><i class="fa fa-flash"></i> mới</span>-->
+                                </li>
+                            </ul>
+                            <div class="tab-content summary-panel">
+                                <div class="tab-pane active">
+                                    <div class="row sticky-panel" hl-sticky="" sticky-class="is-sticky custom-alt" container="sticky-header-container">
+                                        <div class="col-lg-2 col-md-2 col-sm-3 margin-top-10 hidden-xs">
+                                            <div class="vertical-seperator float-right"></div>
+                                            <div style="float: right; padding: 10px 0 0 0" class="uppercase"><label class="bold">Xem theo</label></div>
+                                        </div>
+                                        <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 margin-top-10">
+                                            <!--<label class="bold">Tỉnh/thành phố</label>-->
+                                            <ui-select ng-model="vm.filter.province" sortable="true" on-select="vm.onProvinceChange()" close-on-select="true" style="width: 100%!important;">
+                                                <ui-select-match allow-clear="false" placeholder="Chọn tỉnh...">{{$select.selected.name}}</ui-select-match>
+                                                <ui-select-choices repeat="province in vm.provinces | filter: {name: $select.search}">
+                                                    <div class="bold" ng-bind-html="province.name | highlight: $select.search"></div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                        <div class="col-lg-4 col-md-5 col-sm-5 col-xs-12 margin-top-10">
+                                            <!--<label class="bold">Cơ sở báo cáo</label>-->
+                                            <ui-select ng-model="vm.filter.organization" sortable="true" on-select="vm.onOrganizationChange()" close-on-select="true" style="width: 100%!important;">
+                                                <ui-select-match allow-clear="false" placeholder="Chọn cơ sở...">{{$select.selected.name}}</ui-select-match>
+                                                <ui-select-choices repeat="organization in vm.opcs | filter: {name: $select.search}">
+                                                    <div class="bold" ng-if="organization.id > -1" ng-bind-html="organization.name | highlight: $select.search"></div>
+                                                    <hr class="small-margin" ng-if="organization.id == -1" />
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div  ng-if="!isAdministrator(currentUser)">
+    <div class="row">
+        <div class="col-xs-12 summary-panel">
+            <div class="portlet light bordered">
+                <div class="portlet-body opc-dashboard-tasks"> <!-- opc-assist-bulletin -->
+                    <div class="heading"><i class="fa fa-get-pocket margin-right-10"></i>BẢNG TIN</div>
+                    <!--<div class="vertical-seperator"></div>-->
+                    <div class="row">
+                        <div ng-if="!vm.data.summaryDataAvailable" class="col-xs-12 chart_loading_indicator for-summary"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-if="vm.data.summaryDataAvailable">
+                            <div class="task-item first-child" ng-click="vm.redirect(1)" uib-tooltip="{{isSiteManager(currentUser) || isProvincialManager(currentUser) ? 'Nhấn để xem danh sách' : ''}}" tooltip-placement="auto"><i class="fa fa-circle icon-muted"></i><span class="emphasized-number">{{vm.data.summaryData.todayAppointments}}</span> bệnh nhân <span class="underline-alt">được hẹn</span> khám hôm nay.</div>
+                            <div class="task-item" ng-click="vm.redirect(2)" uib-tooltip="{{isSiteManager(currentUser) || isProvincialManager(currentUser) ? 'Nhấn để xem danh sách' : ''}}" tooltip-placement="auto"><i class="fa fa-circle icon-muted"></i><span class="emphasized-number">{{vm.data.summaryData.gt84LateDays}}</span> bệnh nhân <span class="underline-alt">muộn khám</span> trên 84 ngày.</div>
+                            <div class="task-item" ng-click="vm.redirect(3)" uib-tooltip="{{isSiteManager(currentUser) || isProvincialManager(currentUser) ? 'Nhấn để xem danh sách' : ''}}" tooltip-placement="auto"><i class="fa fa-circle icon-muted"></i><span class="emphasized-number">{{vm.data.summaryData.pendingEnrollments}}</span> bệnh nhân được chuyển tới, đang <span class="underline-alt">chờ tiếp nhận</span>.</div>
+                            <div class="task-item" ng-click="vm.exportChartData(3);" uib-tooltip="Nhấn để tải danh sách" tooltip-placement="auto"><i class="fa fa-circle icon-muted"></i><span class="emphasized-number">{{vm.data.chart3Data.onMMDCount}}</span> bệnh nhân đang nhận <span class="underline-alt">ARV nhiều tháng</span> <i class="im im-icon-Download margin-left-10"></i></div>
+                            <div class="task-item" ng-click="vm.exportChartData(4);" uib-tooltip="Nhấn để tải danh sách" tooltip-placement="auto"><i class="fa fa-circle icon-muted"></i><span class="emphasized-number">{{vm.data.chart4Data.tldCount}}</span> bệnh nhân đang dùng <span class="underline-alt">phác đồ TLD</span> <i class="im im-icon-Download margin-left-10"></i></div>
+                            <div class="task-item last-child mind-margin-bottom" ng-click="vm.exportChartData(7);" uib-tooltip="Nhấn để tải danh sách" tooltip-placement="auto"><i class="fa fa-circle icon-muted"></i>Bệnh nhân đến lịch làm <span class="underline-alt">xét nghiệm TLVR</span> <i class="im im-icon-Download margin-left-10"></i></div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-if="vm.data.summaryDataAvailable">
+                            <div class="task-item first-child width-border-top" ng-click="vm.exportChartData(6);" uib-tooltip="Nhấn để tải danh sách" tooltip-placement="auto"><i class="fa fa-circle icon-muted"></i><span class="emphasized-number">{{vm.data.summaryData2.tbScreenPosCount}}</span> BN <span class="underline-alt">sàng lọc lao dương tính</span> 5 tháng qua <i class="im im-icon-Download margin-left-10"></i></div>
+                            <div class="task-item" ng-click="vm.exportChartData(5);" uib-tooltip="Nhấn để tải danh sách" tooltip-placement="auto"><i class="fa fa-circle icon-muted"></i><span class="emphasized-number">{{vm.data.summaryData.riskAssessmentNeeded}}</span> BN đang quản lý cần đánh giá <span class="underline-alt">nhóm nguy cơ</span> <i class="im im-icon-Download margin-left-10"></i></div>
+                            <div class="task-item" ng-click="vm.exportChartData(2);" uib-tooltip="Nhấn để tải danh sách" tooltip-placement="auto"><i class="fa fa-circle icon-muted"></i><span class="emphasized-number">{{vm.data.summaryData2.totalVlTestCount}}</span> <span class="underline-alt">XN TLVR</span> 4 quý gần đây <i class="im im-icon-Download margin-left-10"></i></div>
+                            <div class="task-item" ng-click="vm.redirect(4);" uib-tooltip="{{isSiteManager(currentUser) || isProvincialManager(currentUser) ? 'Nhấn để xem danh sách' : ''}}" tooltip-placement="auto"><i class="fa fa-circle icon-muted"></i><span class="emphasized-number">{{vm.data.summaryData.vlMissingResults}}</span> xét nghiệm <span class="underline-alt">TLVR</span> chưa nhập kết quả.</div>
+                            <div class="task-item last-child" ng-click="vm.redirect(5);" uib-tooltip="{{isSiteManager(currentUser) || isProvincialManager(currentUser) ? 'Nhấn để xem danh sách' : ''}}" tooltip-placement="auto"><i class="fa fa-circle icon-muted"></i><span class="emphasized-number">{{vm.data.summaryData.cd4MissingResults}}</span> xét nghiệm <span class="underline-alt">CD4</span> chưa nhập kết quả.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 summary-panel">
+            <div class="portlet light bordered jumping-box">
+                <div class="portlet-body">
+                    <div class="section-head green-border"><i class="im im-icon-Business-ManWoman color-7"></i> Tình hình quản lý <span class="font-weight-500 reverted-color-text green-bg">bệnh nhân</span></div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div ng-if="!vm.data.chart1DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                            <div ng-if="vm.data.chart1DataAvailable" id="chart_1" style="height: 400px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 summary-panel">
+            <div class="portlet light bordered jumping-box">
+                <div class="portlet-body">
+                    <div class="section-head dark-blue-border"><i class="fa fa-flask color-7"></i> Hoạt động <span class="font-weight-500 reverted-color-text dark-blue-bg">xét nghiệm tải lượng</span> HIV</div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div ng-if="!vm.data.chart2DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                            <div ng-if="vm.data.chart2DataAvailable" id="chart_2" style="height: 400px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 summary-panel">
+            <div class="portlet light bordered jumping-box">
+                <div class="portlet-body">
+                    <div class="section-head light-blue-border"><i class="fa fa-flask color-7"></i> Tình hình cấp <span class="font-weight-500 reverted-color-text light-blue-bg">ARV nhiều tháng</span></div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div ng-if="!vm.data.chart3DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                            <div ng-if="vm.data.chart3DataAvailable" id="chart_3" style="height: 400px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 summary-panel">
+            <div class="portlet light bordered jumping-box">
+                <div class="portlet-body">
+                    <div class="section-head light-blue-border"><i class="fa fa-flask color-7"></i> Tình hình cấp <span class="font-weight-500 reverted-color-text blue-bg-2">ARV phác đồ TLD</span></div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div ng-if="!vm.data.chart4DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                            <div ng-if="vm.data.chart4DataAvailable" id="chart_4" style="height: 400px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 summary-panel">
+            <div class="portlet light bordered jumping-box">
+                <div class="portlet-body">
+                    <div class="section-head red-border"><i class="im im-icon-Business-ManWoman color-7"></i> Đánh giá <span class="font-weight-500 reverted-color-text">nhóm nguy cơ</span></div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div ng-if="!vm.data.chart5DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                            <div ng-if="vm.data.chart5DataAvailable" id="chart_5" style="height: 400px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 summary-panel">
+            <div class="portlet light bordered jumping-box">
+                <div class="portlet-body">
+                    <div class="section-head red-border"><i class="im im-icon-Business-ManWoman color-7"></i> Hoạt động <span class="font-weight-500 reverted-color-text red-bg">sàng lọc lao</span></div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div ng-if="!vm.data.chart6DataAvailable" class="chart_loading_indicator" style="height: 400px"><span><i class="fa fa-spin fa-spinner"></i> {{vm.waitingLabel}}</span></div>
+                            <div ng-if="vm.data.chart6DataAvailable" id="chart_6" style="height: 400px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+    <div class="row">
+        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 margin-top-10 summary-panel">
+            <div class="portlet light bordered">
+                <div class="portlet-body patient-info">
+                    <div class="section-head green-border"><i class="im im-icon-Business-ManWoman color-7"></i> Tình hình quản lý <span class="font-weight-500 reverted-color-text green-bg">bệnh nhân</span></div>
+                    <div class="opc-dashlet">
+                        <div><span class="green-text bounce-on-hover" ng-class="{'smaller' : vm.data.totalActivePatients >= 999}">{{vm.data.totalActivePatients}}</span><span>bệnh nhân đang quản lý</span></div>
+                        <div>
+                            <div>Thống kê tháng trước</div>
+                            <div>
+                                <span><span>{{vm.data.lastMonthNew}}</span><span>đ/trị mới</span></span>
+                                <span><span>{{vm.data.lastMonthLTFU}}</span><span>bỏ trị</span></span>
+                                <span><span>{{vm.data.lastMonthDead}}</span><span>tử vong</span></span>
+                                <span><span>{{vm.data.lastMonthTransOut}}</span><span>chuyển đi</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 margin-top-10 summary-panel">
+            <div class="portlet light bordered">
+                <div class="portlet-body patient-info">
+                    <div class="section-head light-blue-border"><i class="icon-calendar color-7"></i> Hẹn khám - cấp thuốc <span class="font-weight-500 reverted-color-text light-blue-bg">hôm nay</span></div>
+                    <div class="opc-dashlet">
+                        <div><span class="light-blue-text bounce-on-hover" ng-class="{'smaller' : vm.data.totalAppmtToday >= 999}">{{vm.data.totalAppmtToday}}</span><span>lượt hẹn khám</span></div>
+                        <div>
+                            <div>Đến {{vm.data.lastUpdatedLabel}} hôm nay</div>
+                            <div>
+                                <span><span>{{vm.data.arrivedToday}}</span><span>đã tới</span></span>
+                                <span><span>{{vm.data.vlTestedToday}}</span><span>được XN TLVR</span></span>
+                                <span><span>{{vm.data.totalAppmtToday - vm.data.arrivedToday}}</span><span>chưa tới</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row margin-bottom-30">
+        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 margin-top-10 summary-panel">
+            <div class="portlet light bordered">
+                <div class="portlet-body patient-info">
+                    <div class="section-head red-border"><i class="icon-shuffle color-7"></i> Bệnh nhân <span class="font-weight-500 reverted-color-text red-bg">trễ hẹn</span> tái khám</div>
+                    <div class="opc-dashlet">
+                        <div><span class="red-text bounce-on-hover" ng-class="{'smaller' : vm.data.totalLate >= 999}">{{vm.data.totalLate}}</span><span>bệnh nhân trễ hẹn</span></div>
+                        <div>
+                            <div>Bệnh nhân trễ hẹn tính đến hôm nay</div>
+                            <div>
+                                <span><span>{{vm.data.lateLt30}}</span><span>&lt; 28 ngày</span></span>
+                                <span><span>{{vm.data.late30to60}}</span><span>28 - 84 ngày</span></span>
+                                <span><span>{{vm.data.lategt60}}</span><span>&gt; 84 ngày</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 margin-top-10 summary-panel">
+            <div class="portlet light bordered">
+                <div class="portlet-body patient-info">
+                    <div class="section-head dark-blue-border"><i class="fa fa-flask color-7"></i> Hoạt động <span class="font-weight-500 reverted-color-text dark-blue-bg">xét nghiệm tải lượng</span> HIV</div>
+                    <div class="opc-dashlet">
+                        <div><span class="dark-blue-text bounce-on-hover" ng-class="{'smaller' : vm.data.totalVl3Months >= 999}">{{vm.data.totalVl3Months}}</span><span>bệnh nhân được làm TLVR 3 tháng qua</span></div>
+                        <div>
+                            <div><i class="margin-right-10 fa fa-spin fa-refresh"></i> Tóm tắt kết quả</div>
+                            <div custom-slider>
+                                <span><span>{{vm.data.vlLt20copies}}</span><span>&lt; 20 bản sao</span></span>
+                                <span><span>{{vm.data.vl20to200copies}}</span><span>20 - &lt; 200 bản sao</span></span>
+                                <span><span>{{vm.data.vl200to1000copies}}</span><span>200 - &lt; 1000 bản sao</span></span>
+                                <span><span>{{vm.data.vlgt1000copies}}</span><span>&ge; 1000 bản sao</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+-->
+</div>
+<!-- END MAIN CONTENT -->

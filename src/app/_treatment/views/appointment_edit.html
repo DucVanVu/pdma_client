@@ -1,0 +1,121 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="icon-calendar margin-right-5"></i> Lịch khám - cấp thuốc</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#/opc/appointment-cal"><i class="fa fa-th-large"></i> Lịch khám</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#">Lịch khám theo ngày</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body" id="stickey-container">
+                <div class="display-block no-content1 margin-top-10" ng-if="isAdministrator(currentUser)">
+                    Bạn không có quyền xem nội dung này.
+                </div>
+                <div class="row" ng-if="!isAdministrator(currentUser)">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs">
+                                <li class="uppercase">
+                                    <a href="#/opc-dashboard" uib-tooltip="Tổng quan"><i class="fa fa-area-chart"></i><span class="hidden-xs" ng-class="{'hidden-sm' : isSiteManager(currentUser) || (vm.selectedEntry && vm.selectedEntry.theCase.person)}"> Tổng quan</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/patients" uib-tooltip="Quản&nbsp;lý bệnh&nbsp;nhân"><i class="fa fa-wheelchair-alt"></i><span class="hidden-xs hidden-sm hidden-md"> Bệnh nhân</span></a>
+                                </li>
+                                <li class="active uppercase" ng-if="isSiteManager(currentUser)">
+                                    <a href="#" uib-tooltip="Khám&nbsp;bệnh&nbsp;-&nbsp;Cấp&nbsp;thuốc"><i class="icon-calendar"></i><span class="hidden-xs"> Lịch khám </span></a>
+                                    <!--<span class="tab-new-function"><i class="fa fa-flash"></i> mới</span>-->
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/report" uib-tooltip="Báo&nbsp;cáo"><i class="fa fa-bar-chart"></i><span class="hidden-xs"> Báo cáo</span></a>
+                                </li>
+                                <li class="uppercase" ng-if="vm.selectedEntry && vm.selectedEntry.theCase.person && vm.selectedEntry.theCase.person.id">
+                                    <a uib-tooltip="Thông&nbsp;tin&nbsp;bệnh&nbsp;nhân" href="#/opc/view-patient/{{vm.selectedEntry.id}}"><i class="fa {{vm.selectedEntry.theCase.person.genderIcon}}"></i> {{vm.selectedEntry.theCase.person.fullname}} ({{vm.selectedEntry.theCase.person.age}} tuổi)</a>
+                                </li>
+                                <li class="uppercase" ng-if="vm.editingEntry">
+                                    <a uib-tooltip="Cập&nbsp;nhật&nbsp;hồ&nbsp;sơ" href="#/opc/edit-patient/{{vm.editingEntry.id ? vm.editingEntry.id : 0}}"><i class="icon-pencil"></i> {{vm.editingEntry.theCase.person && vm.editingEntry.theCase.person.fullname ? vm.editingEntry.theCase.person.fullname : 'Bệnh nhân mới'}}</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content summary-panel">
+                                <div class="tab-pane active margin-bottom-30">
+                                    <!--<div class="info-box-alt"><span class="bold"><i class="fa fa-lightbulb-o"></i> Chỉ dẫn:</span> Mục này giúp ghi nhận các lần xét nghiệm CD4 của bệnh nhân {{vm.patient.person.fullname}}.</div>-->
+                                    <div class="opc-toolbar margin-top-10 margin-bottom-10 sticky-panel" hl-sticky="" container="sticky-container" sticky-class="is-sticky custom-alt-2 padding-right-20 padding-left-20">
+                                        <div expandable-control="" class="input-group search col-lg-2 col-md-3 col-sm-4 col-xs-6 hidden-xs">
+                                            <input type="text" class="form-control border-bottom-only" ng-model="vm.filter.keyword" ng-enter="vm.getEntries()" placeholder="Tìm trong lịch..." />
+                                            <span class="indicator icon-magnifier"></span>
+                                        </div>
+                                        <span class="expandable-placeholder">nhấn ENTER để tìm...</span>
+                                        <div class="margin-left-5 margin-right-10 toolbar-org-selector">
+                                            <ui-select uib-tooltip="Chọn cơ sở khám bệnh" tooltip-placement="auto" id="vm.filter.organization" ng-change="vm.onClinicChange()" ng-model="vm.filter.organization" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                <ui-select-match allow-clear="false" placeholder="Chọn cơ sở...">{{$select.selected.name}}</ui-select-match>
+                                                <ui-select-choices repeat="opc in vm.grantedOPCs | filter: {name: $select.search}">
+                                                    <div class="bold" ng-bind-html="opc.name | highlight: $select.search"></div>
+                                                    <div class="small">&mdash; {{opc.province}}</div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                        <div class="margin-left-5 uppercase date-picker-container"><!--span class="hidden-xs"><i class="fa fa-angle-right"></i> Ngày hẹn &mdash;</span-->
+                                            <input id="vm.selectedDate2" class="as-link width-auto with-border-bottom" uib-tooltip="Nhấn chuột để chọn ngày" placeholder="Chọn ngày..."
+                                                   ng-flatpickr
+                                                   fp-opts="vm.datepicker1.dateOpts"
+                                                   fp-on-setup="vm.datepicker1.datePostSetup(fpItem)"
+                                                   ng-model="vm.selectedDate2"
+                                                   data-enabletime="false" />
+                                            <i class="ind fa fa-caret-down"></i>
+                                        </div>
+                                        <div class="vertical-seperator float-right"></div>
+                                        <button ng-click="vm.showSetupAppointment()" data-ng-disabled="vm.orgsWritable.length <= 0" class="btn btn-primary no-border" uib-tooltip="Thêm bệnh nhân vào lịch hẹn"  tooltip-placement="auto"><i class="fa fa-plus"></i><span class="hidden-xs hidden-sm hidden-md"> Thêm BN vào lịch hẹn</span></button>
+                                        <div class="vertical-seperator float-right"></div>
+                                        <button ng-click="vm.exportDailyAppointments();" class="btn btn-default no-border" uib-tooltip="Xuất danh sách ra Excel" tooltip-placement="auto"><i class="fa fa-download"></i><span class="hidden-xs hidden-sm hidden-md"> Tải lịch hẹn ngày</span></button>
+										<input class="fixed-element" id="fixed_element" />
+									</div>
+                                    <div class="margin-top-20">
+                                        <div class="tabbable-line">
+                                            <ul class="nav nav-tabs special-tab">
+                                                <li class="active">
+                                                    <a href="#" uib-tooltip="{{vm.entries.length + ' bệnh nhân được hẹn khám'}}" tooltip-placement="auto"><i class="fa fa-th-list icon-muted margin-right-5"></i><span class="font-weight-600">{{vm.selectedDate | date:'EEEE, dd/MM/yyyy'}}</span><span class="badge badge-primary margin-left-5">{{vm.entries.length}} lần hẹn</span></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#/opc/appointment-cal" uib-tooltip="Lịch&nbsp;hẹn&nbsp;theo&nbsp;tháng" tooltip-placement="auto"><i class="icon-calendar"></i><span class="hidden-xs"> Lịch tháng</span></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#/opc/appointment-cal/late" uib-tooltip="Bệnh&nbsp;nhân&nbsp;muộn&nbsp;khám" tooltip-placement="auto"><i class="fa fa-clock-o"></i><span class="hidden-xs"> Muộn khám</span></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#/opc/appointment-cal/na" uib-tooltip="Chưa có lịch khám"><i class="fa fa-calendar-o"></i><span class="hidden-xs"> Chưa có lịch khám</span></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="tab-content summary-panel margin-top-15">
+                                            <div class="tab-pane active margin-bottom-30" class="dragon" drag-on ng-if="vm.entries.length > 0">
+                                                <table id="bsTableControl" bs-table-control="vm.bsTableControl"></table>
+                                            </div>
+                                            <div class="tab-pane active margin-bottom-30" ng-if="vm.entries.length <= 0">
+                                                <div class="no-content1 font-weight-600">
+                                                    <i class="fa fa-lightbulb-o"></i> Không có bệnh nhân nào được hẹn trong ngày {{vm.selectedDate | date:'EEEE, dd/MM/yyyy'}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<div ng-include="'_treatment/views/fragments/_information.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_confirmation.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_setup_appointment.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_patients_missing_appointments.html?v=' + settings.versionNumber"></div>

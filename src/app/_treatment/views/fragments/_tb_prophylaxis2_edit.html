@@ -1,0 +1,98 @@
+<script type="text/ng-template" id="tb_prophylaxis2_entry_edit_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title" ng-if="vm.tbProphylaxis2Entry.isNew == true"><i class="icon-plus"></i> Thêm mới đợt điều trị</h4>
+            <h4 class="modal-title" ng-if="vm.tbProphylaxis2Entry.isNew == false && !vm.tbProphylaxis2Entry.readOnly && vm.patient.editable"><i class="icon-pencil"></i> Sửa đợt điều trị</h4>
+            <h4 class="modal-title" ng-if="vm.tbProphylaxis2Entry.isNew == false && (vm.tbProphylaxis2Entry.readOnly || !vm.patient.editable)"><i class="icon-frame"></i> Xem đợt điều trị</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-6">
+                    <label class="bold">Phác đồ điều trị dự phòng lao</label>
+                    <ui-select id="vm.tbProphylaxis2Entry.regimen" ng-model="vm.tbProphylaxis2Entry.regimen" on-select="vm.onRegimenChange()" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="r.id as r in vm.regimens | filter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="r.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-xs-6 form-controller-alt-2">
+                    <label class="bold">Thời điểm bắt đầu dự phòng lao</label>
+                    <input id="vm.tbProphylaxis2Entry.startDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.tbProphylaxis2DatepickerStartDate.dateOpts"
+                           fp-on-setup="vm.tbProphylaxis2DatepickerStartDate.datePostSetup(fpItem)"
+                           ng-model="vm.tbProphylaxis2Entry.startDate"
+                           data-enabletime="false" />
+                    <a ng-if="vm.tbProphylaxis2Entry.startDate" class="clear-picker input-has-label" ng-click="vm.tbProphylaxis2DatepickerStartDate.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                </div>
+                <div class="col-xs-6 margin-top-2">
+                    <label class="bold">Trạng thái điều trị</label>
+                    <ui-select id="vm.tbProphylaxis2Entry.status" ng-model="vm.tbProphylaxis2Entry.status" on-select="vm.onEndTimeChange()"   sortable="true" close-on-select="true"  style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="r.id as r in vm.statusType | filter: {name: $select.search}">
+                            <div class="" ng-bind-html="r.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <!-- Thời điểm hoàn thành dự phòng lao -->
+                <div class="col-xs-6 form-controller-alt-2" ng-if="vm.endTime">
+                    <label class="bold">Thời điểm hoàn thành dự phòng lao</label>
+                    <input id="vm.tbProphylaxis2Entry.endDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.tbProphylaxis2DatepickerEndDate.dateOpts"
+                           fp-on-setup="vm.tbProphylaxis2DatepickerEndDate.datePostSetup(fpItem)"
+                           ng-model="vm.tbProphylaxis2Entry.endDate"
+                           data-enabletime="false" />
+                    <a ng-if="vm.tbProphylaxis2Entry.endDate" class="clear-picker input-has-label" ng-click="vm.tbProphylaxis2DatepickerEndDate.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                </div>
+				
+                <div class="col-xs-12" ng-if="vm.tbProphylaxis2Entry.regimen=='OTHER'">
+                    <label class="bold">Ghi rõ phác đồ khác</label>
+                    <textarea ng-model="vm.tbProphylaxis2Entry.note" class="form-control" rows="2"></textarea>
+                </div>
+            
+            </div>
+            <div class="row margin-top-10" ng-if="vm.tbProphylaxis2Entry.isNew == false">
+				<div class="col-xs-12">
+					<span class="bold">Theo dõi tình hình điều trị</span>		
+                    <button href="#" ng-if="vm.tbProphylaxis2Entry.isNew == false" ng-click="vm.openAddDispense();" class="btn btn-primary" uib-tooltip="Thêm&nbsp;mới"><i class="fa fa-plus"></i><span class="hidden-xs">Cấp thuốc</span></button>
+					<div class="with-border-top darker solid-border"></div>
+					
+					<div class="form-group">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>STT</th>
+                                <th>Ngày</th>
+                                <th>Số liều thuốc</th>
+                                <th>Thao tác</th>
+                            </tr>
+                            <tr ng-repeat="e in vm.tbProphylaxis2Entry.dispenses">
+                                <th>{{$index + 1}}</th>
+                                <th>{{e.recordDate | date:'dd/MM/yyyy'}}</th>
+                                <th>
+                                    <span ng-switch = "e.dispensedDoses">
+                                        <span ng-switch-when="-1">Quay lại điều trị</span>
+                                        <span ng-switch-when="-2">Ngưng điều trị</span>
+                                        <span ng-switch-default >{{e.dispensedDoses}}</span>
+                                    </span>
+                                </th>
+                                <th>
+                                    <a ng-if="e.dispensed" ng-click="vm.beginEditDispense($index)"><i class="icon-pencil"></i></a>
+                                    <a ng-click="vm.deleteAnDispense($index,e.id)"><i class="fa fa-times"></i></a>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+				</div>
+				
+            </div>
+           
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default no-border" data-dismiss="modal">Đóng lại</button>
+            <button type="button" ng-click="vm.saveTBProphylaxis2Entry()" ng-if="!vm.tbProphylaxis2Entry.readOnly && vm.patient.editable" class="btn btn-primary jumping" data-dismiss="modal">Lưu lại</button>
+        </div>
+    </div>
+</script>

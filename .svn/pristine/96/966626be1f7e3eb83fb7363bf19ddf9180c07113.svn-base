@@ -1,0 +1,95 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="im im-icon-Bar-Chart margin-right-5"></i> Báo cáo tuần</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#/reporting/weekly-dashboard">Trang chủ</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#">Tiến độ nộp báo cáo tuần</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="display-block no-content1 margin-top-10" ng-if="!isSiteManager(currentUser) && !isDistrictManager(currentUser) && !isProvincialManager(currentUser) && !isNationalManager(currentUser) && !isDonor(currentUser)">
+                    Bạn không có quyền xem nội dung này.
+                </div>
+                <div class="row" ng-if="isSiteManager(currentUser) || isDistrictManager(currentUser) || isProvincialManager(currentUser) || isNationalManager(currentUser) || isDonor(currentUser)">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs ">
+                                <li>
+                                    <a href="#/reporting/weekly-dashboard"><i class="fa fa-area-chart"></i> TỔNG QUAN</a>
+                                </li>
+                                <li>
+                                    <a uib-tooltip="Quản&nbsp;lý&nbsp;báo&nbsp;cáo" href="#/reporting/weekly/"><i class="icon-magic-wand"></i> QUẢN LÝ<span class="hidden-sm hidden-xs"> BÁO CÁO</span></a>
+                                </li>
+                                <li class="active">
+                                    <a uib-tooltip="Tiến&nbsp;độ&nbsp;báo&nbsp;cáo" href="#"><i class="fa fa-spin fa-spinner"></i><span class="hidden-xs"> TIẾN ĐỘ<span class="hidden-sm"> BÁO CÁO</span></span></a>
+                                </li>
+                                <li ng-if="isNationalManager(currentUser) || isDonor(currentUser)">
+                                    <a uib-tooltip="Chỉ&nbsp;tiêu&nbsp;năm" href="#/site-level-targets"><i class="fa fa-bullseye"></i><span class="hidden-xs"> CHỈ TIÊU<span class="hidden-sm"> NĂM</span></span></a>
+                                </li>
+                            </ul>
+                            <div class="tab-content summary-panel">
+                                <div class="tab-pane active">
+                                    <div class="filter-container margin-bottom-10 margin-top-10">
+                                        <div class="uppercase filter-text" ><label class="bold">Xem theo</label></div>
+                                        <div class="vertical-seperator filter-text"></div>
+                                        <div class="margin-right-10 form-controller-alt" ng-if="isNationalManager(currentUser) || isDonor(currentUser)">
+                                            <ui-select ng-model="vm.filter.province" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                <ui-select-match allow-clear="true" placeholder="Tất cả tỉnh...">{{$select.selected.name}}</ui-select-match>
+                                                <ui-select-choices repeat="province in vm.provinces | propsFilter: {name: $select.search}">
+                                                    <div class="bold" ng-bind-html="province.name | highlight: $select.search"></div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                        <div class="margin-right-10 form-controller-alt">
+                                            <ui-select ng-model="vm.filter.status" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                <ui-select-match allow-clear="true" placeholder="Tình trạng của đơn vị...">{{$select.selected.name}}</ui-select-match>
+                                                <ui-select-choices repeat="status in vm.statuses | propsFilter: {name: $select.search}">
+                                                    <div class="bold" ng-bind-html="status.name | highlight: $select.search"></div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                        <div class="margin-right-10 form-controller-alt larger">
+                                            <input class="form-control" placeholder="CHỌN TUẦN..."
+                                                   ng-flatpickr
+                                                   fp-opts="vm.datepicker.dateOpts"
+                                                   ng-model="vm.filter.tempDate"
+                                                   data-enabletime="false" />
+                                        </div>
+                                        <input type="text" style="width: 0; height: 0; float: right" id="fixed_element">
+                                    </div>
+                                    <div class="section-head">
+                                        <i class="fa fa-bookmark-o"></i> Tóm tắt kết quả đạt được trong tuần
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-xs-12">
+                                            <div id="chart_1"></div>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12">
+                                            <div id="chart_2"></div>
+                                        </div>
+                                    </div>
+                                    <div class="section-head">
+                                        <i class="fa fa-bookmark-o"></i> Chi tiết tiến độ nộp báo cáo của cơ sở
+                                    </div>
+                                    <div class="dragon custom-table-header-1" drag-on>
+                                        <table id="bsTableControl" bs-table-control="vm.bsTableControl"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

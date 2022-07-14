@@ -1,0 +1,49 @@
+/**
+ * Created by bizic on 28/8/2016.
+ */
+(function () {
+    'use strict';
+
+    angular.module('PDMA.PREV_REPORT').controller('PrevDashboardController', PrevDashboardController);
+
+    PrevDashboardController.$inject = [
+        '$rootScope',
+        '$scope',
+        '$state',
+        'blockUI',
+        '$timeout',
+        'settings',
+        '$uibModal',
+        'toastr',
+        'Utilities',
+        'PrevDashboardService'
+    ];
+    
+    function PrevDashboardController ($rootScope, $scope, $state, blockUI, $timeout,settings, modal, toastr, utils, service) {
+        $scope.$on('$viewContentLoaded', function() {
+            // initialize core components
+            App.initAjax();
+        });
+
+        // set sidebar closed and body solid layout mode
+        $rootScope.settings.layout.pageContentWhite = true;
+        $rootScope.settings.layout.pageBodySolid = false;
+        $rootScope.settings.layout.pageSidebarClosed = true;
+
+        // wait for current user object
+        blockUI.start();
+        $scope.$watch('currentUser.loaded', function (newVal, old) {
+            if (!newVal) {
+                return;
+            }
+
+            blockUI.stop();
+
+            // todo if necessary check if the current user is allowed to access this page
+        });
+
+        let vm = this;
+
+    }
+
+})();

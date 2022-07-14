@@ -1,0 +1,507 @@
+<script type="text/ng-template" id="patient_status_history_modal.html">
+    <div modal-movable auto-height="no" sticky-toolbar="yes" full-width="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="im im-icon-Clock-Back"></i> Lịch sử gián đoạn điều trị của {{vm.entry.theCase.person.fullname}}</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-12 opc-toolbar margin-bottom-10">
+                    <button class="btn btn-primary no-border" data-ng-disabled="!vm.entry.statusEditable" ng-click="vm.openEditPatientStatus();"><i class="icon-pencil"></i> Thay đổi trạng thái điều trị</button>
+                    <!--<div class="vertical-seperator float-right" ng-if="vm.fullStatusHistory && vm.fullStatusHistory.length > 0 && vm.fullStatusHistory[0].updateable"></div>-->
+                    <!--<button class="btn btn-default no-border margin-left-10" ng-if="vm.fullStatusHistory && vm.fullStatusHistory.length > 0 && vm.fullStatusHistory[0].updateable" ng-click="vm.changeReceivingFacility(vm.fullStatusHistory[0].id);"><i class="icon-pencil"></i> Đổi nơi tiếp nhận</button>-->
+                    <div class="vertical-seperator float-right" ng-if="vm.fullStatusHistory && vm.fullStatusHistory.length > 0 && vm.fullStatusHistory[0].updateable && isSiteManager(currentUser)"></div>
+                    <div class="btn-group" ng-if="vm.fullStatusHistory && vm.fullStatusHistory.length > 0 && vm.fullStatusHistory[0].updateable && isSiteManager(currentUser)">
+                        <a type="button" class="btn btn-primary no-border dropdown-toggle" data-toggle="dropdown" tabindex="-1" uib-tooltip="Cập&nbsp;nhật&nbsp;kết&nbsp;quả&nbsp;chuyển&nbsp;gửi" tooltip-placement="auto">
+                            <i class="fa icon-pencil"></i> Cập nhật chuyển gửi <i class="fa fa-caret-down margin-left-5"></i>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li>
+                                <button class="btn btn-default no-border width-100-percent" ng-click="vm.updateReferralResult(true);"><i class="fa fa-random"></i> Đổi cơ sở tiếp nhận bệnh nhân</button>
+                            </li>
+                            <li class="divider"> </li>
+                            <li>
+                                <button class="btn btn-default no-border width-100-percent" ng-click="vm.cancelTransferOut();"><i class="fa fa-close"></i> Huỷ bỏ chuyển gửi bệnh nhân</button>
+                            </li>
+                            <li class="divider"> </li>
+                            <li>
+                                <button class="btn btn-default no-border width-100-percent" ng-click="vm.updateReferralResult();"><i class="icon-pencil"></i> Nhập kết quả chuyển gửi</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="vertical-seperator float-right" ng-if="isProvincialManager(currentUser) && vm.fullStatusHistory && vm.fullStatusHistory.length > 0 && vm.fullStatusHistory[0].status == 'ACTIVE' && vm.fullStatusHistory[0].reEnrollable"></div>
+                    <button class="btn btn-default no-border margin-left-10" ng-if="isProvincialManager(currentUser) && vm.fullStatusHistory && vm.fullStatusHistory.length > 0 && vm.fullStatusHistory[0].status == 'ACTIVE' && vm.fullStatusHistory[0].reEnrollable" ng-click="vm.reEnrollPatient();"><i class="fa fa-long-arrow-left"></i> Bệnh nhân quay lại điều trị</button>
+                    <div class="vertical-seperator float-right" ng-if="isSiteManager(currentUser) && vm.fullStatusHistory && vm.fullStatusHistory.length > 0 && vm.fullStatusHistory[0].status != 'ACTIVE' && vm.fullStatusHistory[0].reEnrollable"></div>
+                    <button class="btn btn-default no-border margin-left-10" ng-if="isSiteManager(currentUser) && vm.fullStatusHistory && vm.fullStatusHistory.length > 0 && vm.fullStatusHistory[0].status != 'ACTIVE' && vm.fullStatusHistory[0].reEnrollable" ng-click="vm.reEnrollPatient();"><i class="fa fa-long-arrow-left"></i> Bệnh nhân quay lại điều trị</button>
+                    <button class="btn btn-default no-border float-right" data-ng-disabled="!isSiteManager(currentUser)" ng-click="vm.openEditPatientStatusRetrospective();"><i class="fa fa-plus"></i> Hồi cứu đợt điều trị</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 dragon custom-table-header-1" drag-on="">
+                    <table id="bsTableControl4Status" bs-table-control="vm.bsTableControl4Status"></table>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="update_patient_status_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="im im-icon-Clock-Back"></i> Cập nhật trạng thái điều trị của {{vm.entry.theCase.person.fullname}}</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="row margin-top-10">
+                        <div class="col-xs-6">
+                            <label class="bold">Trạng thái điều trị mới</label>
+                            <ui-select id="vm.caseOrgUpdate.targetStatus" ng-model="vm.caseOrgUpdate.targetStatus" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="f.id as f in vm.statuses4Update | filter: {name: $select.search}">
+                                    <div class="bold" ng-bind-html="f.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <div class="col-xs-6 form-controller-alt-2">
+                            <label class="bold">{{vm.caseOrgUpdate.dateLabel ? vm.caseOrgUpdate.dateLabel : 'Ngày thay đổi trạng thái điều trị'}}</label>
+                            <input id="vm.caseOrgUpdate.currentObj.endDate" class="form-control" placeholder="Chọn ngày..."
+                                   ng-flatpickr
+                                   fp-opts="vm.datepicker1.dateOpts"
+                                   fp-on-setup="vm.datepicker1.datePostSetup(fpItem)"
+                                   ng-model="vm.caseOrgUpdate.currentObj.endDate"
+                                   data-enabletime="false" />
+                            <a ng-if="vm.caseOrgUpdate.currentObj.endDate" class="clear-picker input-has-label" ng-click="vm.datepicker1.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                        </div>
+                    </div>
+                    <div class="row" ng-if="vm.caseOrgUpdate.targetStatus == 'TRANSFERRED_OUT'">
+                        <div class="margin-top-20" ng-class="{'col-xs-6' : vm.caseOrgUpdate.newObj.organization && vm.caseOrgUpdate.newObj.organization.code == 'organization_other_specified', 'col-xs-12' : !vm.caseOrgUpdate.newObj.organization || vm.caseOrgUpdate.newObj.organization.code != 'organization_other_specified'}">
+                            <label class="bold">Cơ sở điều trị mới</label>
+                            <ui-select id="vm.caseOrgUpdate.newObj.organization" ng-model="vm.caseOrgUpdate.newObj.organization" ng-change="vm.onNewFacilitySelection()" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="f in vm.opcs | filter: {name: $select.search}">
+                                    <div class="bold" ng-if="f.id > 0" ng-bind-html="f.name | highlight: $select.search"></div>
+                                    <div class="small" ng-if="f.id > 0 && f.code != 'organization_other_specified' && f.address && f.address.province" ng-bind-html="('&mdash; ' + f.address.province.name)"></div>
+                                    <div class="small" ng-if="f.id > 0 && f.code && f.code == 'organization_other_specified'">&mdash; Vui lòng ghi rõ</div>
+                                    <hr class="small-margin" ng-if="f.id == 0" />
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <div class="col-xs-6 margin-top-20" ng-if="vm.caseOrgUpdate.newObj.organization && vm.caseOrgUpdate.newObj.organization.code == 'organization_other_specified'">
+                            <label class="bold">Ghi rõ tên cơ sở điều trị mới</label>
+                            <input id="vm.caseOrgUpdate.newObj.organizationName" ng-model="vm.caseOrgUpdate.newObj.organizationName" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 margin-top-20">
+                            <label>{{vm.caseOrgUpdate.noteLabel ? vm.caseOrgUpdate.noteLabel : 'Lý do thay đổi trạng thái điều trị'}}</label>
+                            <textarea class="form-control textarea-noresize" textarea-autogrow="" rows="3" data-ng-model="vm.caseOrgUpdate.currentObj.endingReason"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="vm.savePatientStatus()" data-ng-disabled="vm.submitDisabled" class="btn btn-primary margin-right-10" data-dismiss="modal">Lưu lại</button>
+            <button ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="update_referral_result_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="im im-icon-Clock-Back"></i> Cập nhật kết quả chuyển gửi</h4>
+        </div>
+        <div class="modal-body">
+            <div class="info-box has-icon font-weight-500 danger" ng-if="vm.referral.result == 1 || vm.referral.result == 3">
+                <div><i class="icon-exclamation"></i></div>
+                <div><span>Chọn kết quả này khi bạn muốn ghi nhận kết quả chuyển gửi thành công, nhưng cơ sở tiếp nhận sẽ không nhận được hồ sơ bệnh án của bệnh nhân.
+                </span></div>
+            </div>
+            <div class="info-box has-icon font-weight-500" ng-if="vm.referral.result == 2">
+                <div><i class="icon-info"></i></div>
+                <div><span>Chọn kết quả này khi bạn muốn cập nhật trạng thái điều trị của bệnh nhân thành [Mất dấu].
+                </span></div>
+            </div>
+            <div class="info-box has-icon font-weight-500" ng-if="vm.referral.result == 4">
+                <div><i class="icon-info"></i></div>
+                <div><span>Chọn kết quả này khi bệnh nhân đã quay lại cơ sở của bạn để điều trị. Bạn sẽ có thể tiếp tục cập nhật thông tin cho bệnh nhân này.
+                </span></div>
+            </div>
+            <div class="info-box has-icon font-weight-500" ng-if="vm.referral.result == 5">
+                <div><i class="icon-info"></i></div>
+                <div><span>Chọn kết quả này khi bạn chọn nhầm cơ sở tiếp nhận, hoặc bệnh nhân muốn đổi cơ sở tiếp nhận.
+                </span></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="row margin-top-10">
+                        <div class="col-xs-6">
+                            <label class="bold">Kết quả chuyển gửi</label> <!-- 1=Đã tới; 2=Đã hủy/mất dấu; 3=Đã tới một cơ sở khác --- cần ghi nhận cơ sở -->
+                            <ui-select id="vm.referral.result" data-ng-disabled="vm.referral.disableResultOption" ng-model="vm.referral.result" sortable="true" ng-change="vm.onReferralResultChange()" close-on-select="true" style="width: 100%!important;">
+                                <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="r.id as r in vm.filteredReferralResults | filter: {name: $select.search}">
+                                    <div class="bold" ng-bind-html="r.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <div class="col-xs-6 form-controller-alt-2">
+                            <label class="bold">{{vm.referral.dateLabel ? vm.referral.dateLabel : 'Ngày ghi nhận thông tin'}}</label>
+                            <input id="vm.referral.resultDate" class="form-control" placeholder="Chọn ngày..."
+                                   ng-flatpickr
+                                   fp-opts="vm.datepicker5.dateOpts"
+                                   fp-on-setup="vm.datepicker5.datePostSetup(fpItem)"
+                                   ng-model="vm.referral.resultDate"
+                                   data-enabletime="false" />
+                            <a ng-if="vm.referral.resultDate" class="clear-picker input-has-label" ng-click="vm.datepicker5.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                        </div>
+                    </div>
+                    <div class="row" ng-if="vm.referral.result == 1">
+                        <div class="col-xs-6 margin-top-20">
+                            <label>Mã bệnh nhân tại cơ sở mới</label>
+                            <input ng-model="vm.referral.currentCaseOrg.patientChartId" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row" ng-if="vm.referral.result == 3 || vm.referral.result == 5">
+                        <div class="margin-top-20" ng-class="{'col-xs-6' : vm.referral.result == 3, 'col-xs-12' : vm.referral.result == 5}">
+                            <label class="bold">Cơ sở điều trị mới</label>
+                            <ui-select id="vm.referral.newOrg" ng-model="vm.referral.newOrg" ng-change="vm.onNewFacilitySelection2()" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="f in vm.opcs | filter: {name: $select.search}">
+                                    <div class="bold"  ng-if="f.id > 0" ng-bind-html="f.name | highlight: $select.search"></div>
+                                    <div class="small" ng-if="f.id > 0 && f.code != 'organization_other_specified' && f.address && f.address.province" ng-bind-html="('&mdash; ' + f.address.province.name)"></div>
+                                    <div class="small" ng-if="f.id > 0 && f.code && f.code == 'organization_other_specified'">&mdash; Vui lòng ghi rõ</div>
+                                    <hr class="small-margin" ng-if="f.id == 0" />
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <div class="col-xs-6 margin-top-20" ng-if="vm.referral.result == 3">
+                            <label>Mã bệnh nhân tại cơ sở mới</label>
+                            <input ng-model="vm.referral.currentCaseOrg.patientChartId" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row" ng-if="(vm.referral.result == 3 || vm.referral.result == 5) && vm.referral.newOrg && vm.referral.newOrg.code == 'organization_other_specified'">
+                        <div class="col-xs-12 margin-top-20" ng-if="vm.referral.newOrg && vm.referral.newOrg.code == 'organization_other_specified'">
+                            <label class="bold">Ghi rõ tên cơ sở điều trị mới</label>
+                            <input id="vm.referral.newOrgName" ng-model="vm.referral.newOrgName" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="vm.saveReferralResult()" data-ng-disabled="vm.submitDisabled" class="btn btn-primary margin-right-10" data-dismiss="modal">Lưu lại</button>
+            <button ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="pre_enroll_patient_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="im im-icon-Clock-Back"></i> Tiếp nhận bệnh nhân chuyển tới</h4>
+        </div>
+        <div class="modal-body summary-panel">
+            <div class="section-head">Vui lòng chọn đúng trong danh sách dưới đây để tiếp tục...</div>
+            <div class="info-box has-icon font-weight-500" ng-if="vm.enrollPatientOpts[0] == true">
+                <div><i class="icon-info"></i></div>
+                <div><span>Hệ thống sẽ ghi nhận kết quả chuyển gửi thành công, và chuyển hồ sơ bệnh án từ cơ sở cũ qua cho cơ sở của bạn. Bạn sẽ tiếp tục cập nhật thông tin điều trị cho bệnh nhân trên hồ sơ đó.
+                    <br /><br />Vui lòng nhấn nút <span class="bold">TIẾP TỤC</span> để tiếp nhận hồ sơ.
+                </span></div>
+            </div>
+            <div class="info-box has-icon font-weight-500" ng-if="vm.enrollPatientOpts[1] == true">
+                <div><i class="icon-info"></i></div>
+                <div><span>Hệ thống sẽ ghi nhận kết quả chuyển gửi thành công, nhưng sẽ không chuyển hồ sơ bệnh án từ cơ sở cũ qua cơ sở của bạn.
+                    <br /><br />Vui lòng nhấn nút <span class="bold">LƯU LẠI</span> để hoàn tất.
+                </span></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="md-checkbox margin-top-20">
+                        <input type="checkbox" id="checkbox_enroll_opt_1" ng-model="vm.enrollPatientOpts[0]" ng-change="vm.onEnrollmentOptSelected(0)" class="md-check">
+                        <label for="checkbox_enroll_opt_1" ng-class="{'font-weight-600': !vm.enrollPatientOpts[0], 'bold text-green': vm.enrollPatientOpts[0]}">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Tôi chưa nhập hồ sơ cho bệnh nhân này vào OPC-Assist
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="md-checkbox margin-top-20">
+                        <input type="checkbox" ng-disabled="true" id="checkbox_enroll_opt_2" ng-model="vm.enrollPatientOpts[1]" ng-change="vm.onEnrollmentOptSelected(1)" class="md-check">
+                        <label for="checkbox_enroll_opt_2" ng-class="{'font-weight-600': !vm.enrollPatientOpts[1], 'bold text-green': vm.enrollPatientOpts[1]}">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Tôi đã thêm mới một hồ sơ cho bệnh nhân này vào OPC-Assist
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="vm.enrollPatient()" data-ng-disabled="vm.submitDisabled || !(vm.enrollPatientOpts[0] || vm.enrollPatientOpts[1])" class="btn btn-primary jumping margin-right-10" data-dismiss="modal">{{vm.enrollPatientOpts[0] == true ? 'Tiếp tục' : 'Lưu lại'}}</button>
+            <button ng-click="$dismiss()" class="btn btn-default no-border" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Đóng lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="enroll_patient_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="im im-icon-Clock-Back"></i> Tiếp nhận bệnh nhân chuyển tới</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-6 margin-top-5">
+                    <label class="bold">Ngày bệnh nhân đến đăng ký điều trị</label>
+                    <input id="vm.caseOrgUpdate.currentObj.startDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker4.dateOpts"
+                           fp-on-setup="vm.datepicker4.datePostSetup(fpItem)"
+                           ng-model="vm.caseOrgUpdate.currentObj.startDate"
+                           data-enabletime="false" />
+                </div>
+                <div class="col-xs-6 margin-top-5">
+                    <label class="bold">Mã bệnh án cấp cho bệnh nhân</label>
+                    <input id="vm.caseOrgUpdate.currentObj.patientChartId" ng-model="vm.caseOrgUpdate.currentObj.patientChartId" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="$dismiss()" class="btn btn-default no-border" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Đóng lại</button>
+            <button ng-click="vm.savePatientEnrollment()" data-ng-disabled="vm.submitDisabled" class="btn btn-primary jumping margin-right-10" data-dismiss="modal">Tiếp tục<i class="margin-left-10 fa fa-caret-right"></i></button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="re-enroll_patient_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="im im-icon-Clock-Back"></i> Tiếp nhận bệnh nhân quay lại điều trị</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-6 margin-top-10">
+                    <label class="bold">Ngày bệnh nhân tới đăng ký điều trị</label>
+                    <input id="vm.caseOrgUpdate2.newObj.startDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker6.dateOpts"
+                           fp-on-setup="vm.datepicker6.datePostSetup(fpItem)"
+                           ng-model="vm.caseOrgUpdate2.newObj.startDate"
+                           data-enabletime="false" />
+                </div>
+                <div class="col-xs-6 margin-top-10">
+                    <label class="bold">Lý do bệnh nhân quay lại cơ sở</label>
+                    <ui-select id="vm.caseOrgUpdate2.originStatus" ng-model="vm.caseOrgUpdate2.originStatus" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="r.id as r in vm.originStatuses | filter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="r.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <div class="row" ng-if="vm.caseOrgUpdate2.originStatus == 'TRANSFERRED_OUT'">
+                <div class="col-xs-6 margin-top-20 form-controller-alt-2">
+                    <label class="font-weight-500">Ngày BN được cơ sở cũ chuyển đi</label>
+                    <input id="vm.caseOrgUpdate2.currentObj.endDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker7.dateOpts"
+                           fp-on-setup="vm.datepicker7.datePostSetup(fpItem)"
+                           ng-model="vm.caseOrgUpdate2.currentObj.endDate"
+                           data-enabletime="false" />
+                    <a ng-if="vm.caseOrgUpdate2.currentObj.endDate" class="clear-picker input-has-label" ng-click="vm.datepicker7.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="vm.savePatientReEnrollment()" data-ng-disabled="vm.submitDisabled" class="btn btn-primary margin-right-10" data-dismiss="modal">Lưu lại</button>
+            <button ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="edit_case_org_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title" ng-if="!vm.caseOrg.id"><i class="im im-icon-Clock-Back"></i> Nhập hồi cứu thông tin đợt điều trị</h4>
+            <h4 class="modal-title" ng-if="vm.caseOrg.id"><i class="im im-icon-Clock-Back"></i> Cập nhật thông tin đợt điều trị</h4>
+        </div>
+        <div class="modal-body">
+            <div class="summary-panel margin-bottom-25">
+                <div class="section-head smaller-top-margin with-background-1"><span class="margin-right-10">Tại cơ sở điều trị:</span><span class="bold">{{vm.caseOrg.organization && vm.caseOrg.organization.name ? vm.caseOrg.organization.name : '&mdash;'}}</span></div>
+            </div>
+            <!--<div class="row">-->
+                <!--<div class="col-xs-12 margin-bottom-20">-->
+                    <!--<span class="margin-right-10">Tại cơ sở điều trị:</span><span class="bold">{{vm.caseOrg.organization && vm.caseOrg.organization.name ? vm.caseOrg.organization.name : '&mdash;'}}</span>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="row">
+                <!--<div class="col-xs-6" ng-if="vm.caseOrg.id">-->
+                    <!--<label class="bold">Trạng thái điều trị</label>-->
+                    <!--<input readonly="readonly" class="form-control" ng-value="vm.caseOrg.status | patientStatus" />-->
+                <!--</div>-->
+                <div class="col-xs-6"> <!--  ng-if="!vm.caseOrg.id"-->
+                    <label class="bold">Loại đăng ký vào cơ sở</label>
+                    <ui-select id="enrollmentType" ng-model="vm.caseOrg.enrollmentType" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="et.id as et in vm.enrollmentTypes | propsFilter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="et.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-xs-6">
+                    <label class="font-weight-500">Mã số bệnh án tại cơ sở</label>
+                    <input class="form-control" ng-model="vm.caseOrg.patientChartId" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-20">
+                    <label class="bold">Ngày đăng ký vào cơ sở <span class="font-weight-500">(ở đợt này)</span></label>
+                    <input id="caseOrgStartDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker8.dateOpts"
+                           fp-on-setup="vm.datepicker8.datePostSetup(fpItem)"
+                           ng-model="vm.caseOrg.startDate"
+                           data-enabletime="false" />
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <label ng-class="{'text-muted mutter' : !vm.entry.theCase.arvStartDate}">Bắt đầu nhận ARV ở đợt này</label>
+                    <input class="form-control" disabled ng-if="!vm.entry.theCase.arvStartDate" />
+                    <input id="caseOrgArvStartDate" ng-if="vm.entry.theCase.arvStartDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker10.dateOpts"
+                           fp-on-setup="vm.datepicker10.datePostSetup(fpItem)"
+                           ng-model="vm.caseOrg.arvStartDate"
+                           data-enabletime="false" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-20">
+                    <label class="bold" ng-class="{'text-muted mutter' : vm.caseOrg.endDateLocked}">Ngày kết thúc tại cơ sở <span class="font-weight-500">(ở đợt này)</span></label>
+                    <input ng-if="vm.caseOrg.endDateLocked" disabled class="form-control" />
+                    <input id="caseOrgEndDate" ng-if="!vm.caseOrg.endDateLocked" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker9.dateOpts"
+                           fp-on-setup="vm.datepicker9.datePostSetup(fpItem)"
+                           ng-model="vm.caseOrg.endDate"
+                           data-enabletime="false" />
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <label ng-class="{'text-muted mutter' : vm.caseOrg.endDateLocked, 'bold' : !vm.caseOrg.id}">Lý do kết thúc đợt điều trị</label>
+                    <input ng-if="vm.caseOrg.id" class="form-control" data-ng-disabled="!vm.caseOrg.endDate" data-ng-model="vm.caseOrg.endingReason" />
+                    <ui-select ng-if="!vm.caseOrg.id" id="patientStatus" ng-model="vm.caseOrg.status" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="r.id as r in vm.patientStatuses4Backlog | filter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="r.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="vm.saveCaseOrg()" data-ng-disabled="vm.submitDisabled || !isSiteManager(currentUser)" class="btn btn-primary margin-right-10" data-dismiss="modal">Lưu lại</button>
+            <button ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="provincial_edit_case_org_modal.html">
+    <div modal-movable auto-height="no">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="im im-icon-Fountain-Pen"></i> Cập nhật thông tin đợt điều trị</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div ng-class="{'col-xs-6' : vm.caseOrg.organization && vm.caseOrg.organization.code == settings.organization.otherOrgCode, 'col-xs-12' : !vm.caseOrg.organization || !vm.caseOrg.organization.id || (vm.caseOrg.organization && vm.caseOrg.organization.code != settings.organization.otherOrgCode)}">
+                    <label class="bold">Cơ sở điều trị</label>
+                    <input readonly="readonly" class="form-control" ng-if="vm.caseOrg.organization.code != settings.organization.otherOrgCode" ng-value="vm.caseOrg.organization.name" />
+                    <input readonly="readonly" class="form-control" ng-if="vm.caseOrg.organization.code == settings.organization.otherOrgCode" ng-value="vm.caseOrg.organizationName" />
+                </div>
+                <div class="col-xs-6" ng-if="vm.caseOrg.organization && vm.caseOrg.organization.code == settings.organization.otherOrgCode">
+                    <label class="bold">Tên cơ sở điều trị</label>
+                    <input id="prov_organization_name" ng-model="vm.caseOrg.organizationName" class="form-control" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-20">
+                    <label class="bold">Trạng thái điều trị</label>
+                    <ui-select id="prov_patientStatus" ng-model="vm.caseOrg.status" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="stat.id as stat in vm.allowedStatuses | propsFilter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="stat.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <label class="bold">Loại đăng ký vào cơ sở</label>
+                    <ui-select id="prov_enrollmentType" ng-model="vm.caseOrg.enrollmentType" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="et.id as et in vm.enrollmentTypes | propsFilter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="et.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-20">
+                    <label class="bold">Ngày đăng ký vào cơ sở <span class="font-weight-500">(ở đợt này)</span></label>
+                    <input id="prov_caseOrgStartDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker8.dateOpts"
+                           fp-on-setup="vm.datepicker8.datePostSetup(fpItem)"
+                           ng-model="vm.caseOrg.startDate"
+                           data-enabletime="false" />
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <label class="font-weight-500">Mã số bệnh án tại cơ sở</label>
+                    <input class="form-control" ng-model="vm.caseOrg.patientChartId" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-20">
+                    <label ng-class="{'text-muted mutter' : !vm.entry.theCase.arvStartDate}">Bắt đầu nhận ARV ở đợt này</label>
+                    <input class="form-control" disabled ng-if="!vm.entry.theCase.arvStartDate" />
+                    <input id="prov_caseOrgArvStartDate" ng-if="vm.entry.theCase.arvStartDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker10.dateOpts"
+                           fp-on-setup="vm.datepicker10.datePostSetup(fpItem)"
+                           ng-model="vm.caseOrg.arvStartDate"
+                           data-enabletime="false" />
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <label ng-class="{'bold':vm.caseOrg.status != 'ACTIVE' && vm.caseOrg.status != 'PENDING_ENROLLMENT'}">Ngày kết thúc tại cơ sở <span class="font-weight-500">(ở đợt này)</span></label>
+                    <input class="form-control" disabled ng-if="vm.caseOrg.status == 'ACTIVE' || vm.caseOrg.status == 'PENDING_ENROLLMENT'" />
+                    <input id="prov_caseOrgEndDate" ng-if="vm.caseOrg.status != 'ACTIVE' && vm.caseOrg.status != 'PENDING_ENROLLMENT'" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker9.dateOpts"
+                           fp-on-setup="vm.datepicker9.datePostSetup(fpItem)"
+                           ng-model="vm.caseOrg.endDate"
+                           data-enabletime="false" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 margin-top-20">
+                    <label>Ghi chú</label>
+                    <textarea class="form-control textarea-noresize" data-ng-disabled="vm.caseOrg.status == 'ACTIVE' || vm.caseOrg.status == 'PENDING_ENROLLMENT'" textarea-autogrow="" rows="3" data-ng-model="vm.caseOrg.endingReason"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="vm.saveCaseOrg({provincialEdit: 1})" data-ng-disabled="vm.submitDisabled || !isProvincialManager(currentUser)" class="btn btn-primary jumping margin-right-10" data-dismiss="modal">Lưu thay đổi</button>
+            <button ng-click="$dismiss()" class="btn btn-default no-border" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Đóng lại</button>
+        </div>
+    </div>
+</script>

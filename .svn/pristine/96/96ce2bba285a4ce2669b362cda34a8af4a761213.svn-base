@@ -1,0 +1,72 @@
+<div class="section-head margin-top-30">
+    <i class="fa fa-envira icon-muted"></i> Thông tin cơ bản
+</div>
+
+<div class="grid-2-col">
+    <div class="grid-body">
+        <div class="first-child">
+            <div>Tên cơ sở cung cấp dịch vụ</div>
+            <div>
+                <ui-select ng-disabled="vm.entry.locked" id="vm.entry.facility" ng-model="vm.entry.facility" sortable="true" close-on-select="true" style="width: 90%!important;">
+                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                    <ui-select-choices repeat="f in vm.orgsWritable | filter: {name: $select.search}">
+                        <div class="bold" ng-bind-html="f.name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div>
+            <div>Tên đối tác triển khai</div>
+            <div>
+                <ui-select ng-disabled="vm.entry.locked" id="vm.entry.ip" ng-model="vm.entry.ip" sortable="true" close-on-select="true" style="width: 90%!important;">
+                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                    <ui-select-choices repeat="o.id as o in vm.ips | filter: {name: $select.search}">
+                        <div class="bold" ng-bind-html="o.name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div>
+            <div>Họ tên người tiến hành buổi đánh giá</div>
+            <div>
+                <input ng-disabled="vm.entry.locked" id="vm.entry.assessorName" type="text" class="form-control" ng-model="vm.entry.assessorName" />
+            </div>
+        </div>
+        <div>
+            <div>Địa chỉ email của người tiến hành buổi đánh giá</div>
+            <div>
+                <input ng-disabled="vm.entry.locked" id="vm.entry.assessorEmail" type="text" class="form-control" ng-model="vm.entry.assessorEmail" />
+            </div>
+        </div>
+        <div>
+            <div>Ngày đánh giá</div>
+            <div>
+                <input class="form-control" ng-if="vm.entry.locked" ng-disabled="true" ng-value="vm.entry.assessmentDate | date:'dd/MM/yyyy'" />
+                <input ng-if="!vm.entry.locked" id="vm.entry.assessmentDate" class="form-control" placeholder="Chọn ngày..."
+                       ng-flatpickr
+                       fp-opts="vm.datepicker1.dateOpts"
+                       fp-on-setup="vm.datepicker1.datePostSetup(fpItem)"
+                       ng-model="vm.entry.assessmentDate"
+                       data-enabletime="false" />
+            </div>
+        </div>
+        <div>
+            <div>Họ tên người phụ trách cơ sở</div>
+            <div>
+                <input ng-disabled="vm.entry.locked" id="vm.entry.facilityPocName" type="text" class="form-control" ng-model="vm.entry.facilityPocName" />
+            </div>
+        </div>
+        <div>
+            <div>Số nhân viên tư vấn xét nghiệm HIV tại cơ sở</div>
+            <div>
+                <input ng-disabled="vm.entry.locked" id="vm.entry.counselorCount" type="number" class="form-control" ng-model="vm.entry.counselorCount" />
+            </div>
+        </div>
+        <div>
+            <div>Số nhân viên tư vấn dịch vụ TBXNBT/BC tại cơ sở</div>
+            <div>
+                <input ng-disabled="vm.entry.locked" id="vm.entry.counselor4Pns" type="number" class="form-control" ng-model="vm.entry.counselor4Pns" />
+            </div>
+        </div>
+    </div>
+</div>

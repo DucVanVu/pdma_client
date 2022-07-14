@@ -1,0 +1,196 @@
+<script type="text/ng-template" id="export_patients_modal.html">
+    <div modal-movable auto-height="no">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="fa fa-download"></i> Xuất dữ liệu bệnh nhân</h4>
+        </div>
+        <div class="modal-body summary-panel">
+            <div class="section-head margin-top-10"><span class="text-muted fa fa-braille"></span> Chọn mục dữ liệu cần xuất</div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-20">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_patient" ng-init="vm.filter.exportPatient = true" ng-model="vm.filter.exportPatient" class="md-check" disabled="disabled">
+                        <label for="chk_patient">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Danh sách bệnh nhân
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_treatment_history" ng-model="vm.filter.exportTreatmentHistory" class="md-check">
+                        <label for="chk_treatment_history">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Dữ liệu lịch sử điều trị
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-20">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_arv_history" ng-model="vm.filter.exportArvHistory" class="md-check">
+                        <label for="chk_arv_history">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Dữ liệu phác đồ ARV đã dùng
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_viral_load" ng-model="vm.filter.exportViralLoad" class="md-check">
+                        <label for="chk_viral_load">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Dữ liệu xét nghiệm TLVR HIV
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-20">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_cd4" ng-model="vm.filter.exportCD4" class="md-check">
+                        <label for="chk_cd4">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Dữ liệu xét nghiệm CD4
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_shi" ng-model="vm.filter.exportShi" class="md-check">
+                        <label for="chk_shi">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Dữ liệu BHYT trong điều trị ARV
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-20">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_risk" ng-model="vm.filter.exportRisk" class="md-check">
+                        <label for="chk_risk">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Dữ liệu phân nhóm nguy cơ
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_tb_prophylaxis" ng-model="vm.filter.exportTbProphylaxis" class="md-check">
+                        <label for="chk_tb_prophylaxis">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Dữ liệu dự phòng lao
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-20">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_tb_treatment" ng-model="vm.filter.exportTbTreatment" class="md-check">
+                        <label for="chk_tb_treatment">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Dữ liệu điều trị lao
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_who_stage" ng-model="vm.filter.exportWhoStage" class="md-check">
+                        <label for="chk_who_stage">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Lịch sử giai đoạn lâm sàng
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-20">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_hiv_dr" ng-model="vm.filter.exportHivDr" class="md-check">
+                        <label for="chk_hiv_dr">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Dữ liệu kháng thuốc
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_hepatitis" ng-model="vm.filter.exportHepatitis" class="md-check">
+                        <label for="chk_hepatitis">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Dữ liệu viêm gan B/C
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-20">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_mmt" ng-model="vm.filter.exportMmt" class="md-check">
+                        <label for="chk_mmt">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Dữ liệu điều trị Methadone
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_pregnancy" ng-model="vm.filter.exportPregnancy" class="md-check">
+                        <label for="chk_pregnancy">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Lịch sử mang thai/sinh đẻ
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!--<div class="section-head margin-top-20"><span class="text-muted icon-equalizer"></span> Giới hạn dữ liệu xuất ra</div>-->
+            <!--<div class="row">-->
+                <!--<div class="col-xs-6">-->
+                    <!--<div class="md-radio-inline">-->
+                        <!--<div class="md-radio margin-top-10">-->
+                            <!--<input type="radio" id="rad_whole" name="radio_data_scope" ng-model="vm.filter.exportScope" value="whole" ng-init="vm.filter.exportScope = vm.filter.isFiltered ? 'scoped' : 'whole'" class="md-radiobtn">-->
+                            <!--<label for="rad_whole">-->
+                                <!--<span></span>-->
+                                <!--<span class="check"></span>-->
+                                <!--<span class="box"></span> Toàn bộ dữ liệu-->
+                            <!--</label>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="col-xs-6">-->
+                    <!--<div class="md-radio-inline">-->
+                        <!--<div class="md-radio margin-top-10">-->
+                            <!--<input type="radio" id="rad_part" name="radio_data_scope" ng-model="vm.filter.exportScope" value="scoped" class="md-radiobtn" ng-disabled="!vm.filter.isFiltered">-->
+                            <!--<label for="rad_part">-->
+                                <!--<span></span>-->
+                                <!--<span class="check"></span>-->
+                                <!--<span class="box"></span> Bệnh nhân trong kết quả tìm kiếm-->
+                            <!--</label>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="modal-footer">
+            <button ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+            <button ng-click="vm.startExport2Excel(1)" class="btn btn-primary" data-dismiss="modal">Bắt đầu</button>
+        </div>
+    </div>
+</script>

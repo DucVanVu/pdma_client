@@ -1,0 +1,24 @@
+<script type="text/ng-template" id="individual_appointments.html">
+    <div modal-movable auto-height="no" sticky-toolbar="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-calendar"></i> Xem lịch khám của bệnh nhân</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-12 opc-toolbar">
+                    <button class="btn btn-primary no-border" data-ng-disabled="!vm.appointment || !vm.appointment.id" ng-click="vm.redirect2AppointmentEdit(1)"><i class="icon-pencil margin-right-10"></i>Cập nhật lịch khám</button>
+                    <div class="vertical-seperator float-right"></div>
+                    <button class="btn btn-default no-border" data-ng-disabled="!vm.appointment || !vm.appointment.id" ng-click="vm.redirect2AppointmentEdit(2);"><i class="icon-pencil margin-right-10"></i>Ghi nhận kết quả khám</button>
+                    <div class="vertical-seperator float-right"></div>
+                    <button type="button" ng-click="$dismiss()" class="btn btn-default no-border" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Đóng lại</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 margin-top-20">
+                    <table id="bsTableControl4Appointments" bs-table-control="vm.bsTableControl4Appointments"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>

@@ -1,0 +1,29 @@
+<script type="text/ng-template" id="patients_missing_appointments.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-if="vm.dialog.allowDismissing" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">{{vm.dialog.title}}</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-12 label-with-line">
+                    <label class="bold text-muted">Số ngày muộn khám</label>
+                    <div></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-9 special-input with-label">
+                    <label>Muộn &ge;</label>
+                    <input id="vm.filter.lateDays" class="form-control" placeholder="Nhập số ngày" ng-model="vm.filter.lateDays" autofocus="autofocus" input-mask="9{*}" />
+                </div>
+                <div class="col-xs-3 padding-top-10">
+                    <label>(ngày)</label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="vm.dialog.callback();" class="btn btn-primary" data-dismiss="modal"><i class="fa {{vm.dialog.yesButtonIcon}} margin-right-10"></i>{{vm.dialog.yesButton}}</button>
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Đóng lại</button>
+        </div>
+    </div>
+</script>

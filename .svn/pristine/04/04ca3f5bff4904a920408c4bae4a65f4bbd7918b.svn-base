@@ -1,0 +1,384 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="im im-icon-Microscope"></i> {{vm.entry.id ? 'Cập nhật thông tin khách hàng' : 'Thêm mới khách hàng'}}</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#/">Trang chủ</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#">Tự xét nghiệm</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body" id="stickey-container">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs ">
+                                <li class="uppercase">
+                                    <a href="#/prevention/dashboard" uib-tooltip="Tổng quan"><i class="fa fa-area-chart"></i> Tổng quan</a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/pe" uib-tooltip="Tiếp cận cộng đồng"><i class="im im-icon-Cube-Molecule2"></i><span class="hidden-xs hidden-sm hidden-md"> TCCĐ</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/hts" uib-tooltip="Tư vấn XN HIV"><i class="im im-icon-Drop"></i><span class="hidden-xs hidden-sm hidden-md"> TVXN HIV</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/pns" uib-tooltip="Thông báo XN BT/BC"><i class="im im-icon-Twister"></i><span class="hidden-xs hidden-sm hidden-md"> TB XN BT/BC</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/sns" uib-tooltip="Dữ liệu SNS"><i class="im im-icon-Chemical-5"></i><span class="hidden-xs hidden-sm hidden-md"> SNS</span></a>
+                                </li>
+                                <li class="uppercase active">
+                                    <a href="#" uib-tooltip="{{vm.entry.id ? 'Cập nhật thông tin tự xét nghiệm' : 'Thêm mới thông tin tự xét nghiệm'}}"><i class="im im-icon-Microscope"></i><span class="hidden-xs hidden-sm hidden-md"> Tự XN: {{vm.entry.id ? 'Cập nhật' : 'Thêm mới'}}</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/report" uib-tooltip="Báo cáo"><i class="fa fa-bar-chart"></i><span class="hidden-xs hidden-sm hidden-md"> Báo cáo</span></a>
+                                </li>
+                                <li ng-if="isAdministrator(currentUser)" class="uppercase">
+                                    <a href="#/prevention/import" uib-tooltip="Import"><i class="fa fa-cloud-upload"></i><span class="hidden-xs hidden-sm hidden-md"> Import</span></a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane active">
+                                    <div class="row">
+                                        <div class="col-xs-12 padding-left-20 padding-right-20 padding-bottom-30">
+                                            <div class="opc-toolbar margin-top-10 margin-bottom-10  sticky-panel" hl-sticky="" container="sticky-container" sticky-class="is-sticky custom-alt-2 padding-right-20 padding-left-20">
+                                                <button ng-click="vm.saveEntry();" data-ng-disabled="vm.submitDisabled || !isSiteManager(currentUser)" class="btn btn-primary jumping" uib-tooltip="Lưu thông tin khách hàng">Lưu lại</button>
+                                                <div class="vertical-seperator float-right"></div>
+                                                <a href="#/prevention/self_test" class="btn btn-default no-border" uib-tooltip="Quay trở lại danh sách"><i class="fa fa-long-arrow-left margin-right-5"></i><span class="hidden-xs">Quay lại danh sách</span></a>
+                                            </div>
+                                            <div class="summary-panel">
+                                                <div class="section-head with-background-1 bold"><i class="im im-icon-Add-User color-7"></i> Thông tin chung</div>
+                                                <div class="row">
+                                                    <div class="col-lg-9">
+                                                        <div class="row">
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px">
+                                                                <label class="bold">Cơ sở dịch vụ <span style="color: red">*</span></label>
+                                                                <ui-select id="vm.entry.organization" data-ng-disabled="vm.entry.id" ng-model="vm.entry.organization" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                                    <ui-select-choices repeat="org in vm.orgsWritable | propsFilter: {name: $select.search}">
+                                                                        <div class="bold" ng-bind-html="org.name | highlight: $select.search"></div>
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px">
+                                                                <label class="bold">Nhân viên cấp phát <span style="color: red">*</span></label>
+                                                                <ui-select id="vm.entry.dispensingStaff" ng-model="vm.entry.dispensingStaff" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.fullName}}</ui-select-match>
+                                                                    <ui-select-choices repeat="staff in vm.staffList | propsFilter: {fullName: $select.search}">
+                                                                        <div class="bold" ng-bind-html="staff.fullName | highlight: $select.search"></div>
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px">
+                                                                <label class="bold">Ngày cấp phát <span style="color: red">*</span></label>
+                                                                <input id="vm.entry.dispensingDate" class="form-control" placeholder="Chọn ngày..."
+                                                                       ng-flatpickr
+                                                                       fp-opts="vm.datepicker1.dateOpts"
+                                                                       fp-on-setup="vm.datepicker1.datePostSetup(fpItem)"
+                                                                       ng-model="vm.entry.dispensingDate"
+                                                                       data-enabletime="false" />
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px">
+                                                                <label class="bold">Họ tên khách hàng <span style="color: red">*</span></label>
+                                                                <input data-ng-disabled="vm.entry.person.fullname==='-'" type="text" id="vm.entry.person.fullname" autocomplete="off" title-case="" ng-model="vm.entry.person.fullname" class="form-control" />
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px">
+                                                                <label class="bold">Điện thoại liên lạc <span style="color: red">*</span></label>
+                                                                <input type="text" data-ng-disabled="vm.entry.person.mobilePhone==='-'" id="vm.entry.person.mobilePhone" class="form-control" ng-model="vm.entry.person.mobilePhone" />
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px">
+                                                                <label class="bold">Nguồn tự xét nghiệm <span style="color: red">*</span></label></label>
+                                                                <ui-select id="vm.entry.selfTestSource" ng-model="vm.entry.selfTestSource" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                                    <ui-select-choices repeat="c.val as c in vm.selfTestSourceValues | propsFilter: {name: $select.search}">
+                                                                        <div class="bold" ng-bind-html="c.name | highlight: $select.search"></div>
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-12 margin-top-20">
+                                                                <div class="underline-alt padding-bottom-5 font-weight-500"><i class="im im-icon-Map-Marker2 color-7"></i> Địa chỉ của khách hàng</div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px">
+                                                                <label class="bold">Tỉnh/thành phố <span style="color: red">*</span></label>
+                                                                <ui-select id="vm.entry.person.locations[0].province" ng-model="vm.entry.person.locations[0].province" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                    <ui-select-match allow-clear="false" placeholder="Chọn tỉnh...">{{$select.selected.name}}</ui-select-match>
+                                                                    <ui-select-choices repeat="province in vm.provinces | propsFilter: {name: $select.search}">
+                                                                        <div class="bold" ng-bind-html="province.name | highlight: $select.search"></div>
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px">
+                                                                <label class="bold">Huyện/quận <span style="color: red">*</span></label>
+                                                                <ui-select id="vm.entry.person.locations[0].district" ng-model="vm.entry.person.locations[0].district" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                    <ui-select-match allow-clear="false" placeholder="{{vm.entry.person.locations[0].province && vm.entry.person.locations[0].province.id ? 'Chọn huyện...' : 'Chọn tỉnh trước...'}}">{{$select.selected.name}}</ui-select-match>
+                                                                    <ui-select-choices repeat="district in vm.districts | propsFilter: {name: $select.search}">
+                                                                        <div class="bold" ng-bind-html="district.name | highlight: $select.search"></div>
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px">
+                                                                <label class="font-weight-500">Xã/phường</label>
+                                                                <ui-select ng-model="vm.entry.person.locations[0].commune" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                    <ui-select-match allow-clear="true" placeholder="{{vm.entry.person.locations[0].district && vm.entry.person.locations[0].district.id ? 'Chọn xã...' : 'Chọn huyện trước...'}}">{{$select.selected.name}}</ui-select-match>
+                                                                    <ui-select-choices repeat="commune in vm.communes | propsFilter: {name: $select.search}">
+                                                                        <div class="bold" ng-bind-html="commune.name | highlight: $select.search"></div>
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                            </div>
+                                                            <div class="col-lg-12 col-md-6 col-sm-6 margin-top-20 fixed-height-58px">
+                                                                <label class="font-weight-500">Thôn bản/số nhà</label>
+                                                                <input data-ng-disabled="vm.entry.person.locations[0].streetAddress==='-'" type="text" class="form-control" ng-model="vm.entry.person.locations[0].streetAddress" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="section-head with-background-1 bold"><i class="im im-icon-Add-User color-7"></i> Thông tin cấp phát sinh phẩm xét nghiệm</div>
+                                                <div class="row" ng-if="vm.entry.id">
+                                                    <div class="col-xs-12 padding-bottom-5">
+                                                        <button class="btn btn-default no-border jumping" ng-click="vm.addSpecimen();" data-ng-disabled="!vm.entry.id || !isSiteManager(currentUser)"><i class="fa fa-plus margin-right-5"></i>Thêm một sinh phẩm</button>
+                                                    </div>
+                                                </div>
+                                                <div class="row" ng-if="!vm.entry.id">
+                                                    <div class="col-lg-9">
+                                                        <div class="row">
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px">
+                                                                <label class="bold">Tên sinh phẩm <span style="color: red">*</span></label>
+                                                                <!--suppress XmlDuplicatedId -->
+                                                                <ui-select id="vm.specimen.code" ng-model="vm.specimen.code" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn">{{$select.selected.name}}</ui-select-match>
+                                                                    <ui-select-choices repeat="specimen.code as specimen in vm.specimens | propsFilter: {name: $select.search}">
+                                                                        <div class="bold" ng-bind-html="specimen.name | highlight: $select.search"></div>
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px" ng-if="vm.entry.specimens.length >= 0 && vm.specimen.code == 'OTHER'">
+                                                                <label class="bold">Ghi rõ tên sinh phẩm <span style="color: red">*</span></label>
+                                                                <!--suppress XmlDuplicatedId -->
+                                                                <input id="vm.specimen.name" ng-model="vm.specimen.name" class="form-control" />
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px">
+                                                                <label class="bold">Hình thức xét nghiệm <span style="color: red">*</span></label>
+                                                                <!--suppress XmlDuplicatedId -->
+                                                                <ui-select id="vm.specimen.support" ng-model="vm.specimen.support" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn">{{$select.selected.name}}</ui-select-match>
+                                                                    <ui-select-choices repeat="support.code as support in vm.supportTypes | propsFilter: {name: $select.search}">
+                                                                        <div class="bold" ng-bind-html="support.name | highlight: $select.search"></div>
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px">
+                                                                <label class="bold">Ngày cấp phát sinh phẩm <span style="color: red">*</span></label>
+                                                                <input id="vm.specimen.dispensingDate" class="form-control" placeholder="Chọn ngày..."
+                                                                       ng-flatpickr
+                                                                       fp-opts="vm.dispensingDate.dateOpts"
+                                                                       fp-on-setup="vm.dispensingDate.datePostSetup(fpItem)"
+                                                                       ng-model="vm.specimen.dispensingDate"
+                                                                       data-enabletime="false" />
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px" ng-if="vm.specimen.support && vm.specimen.support == 'WO_SUPPORT'">
+                                                                <label class="bold">Người cần xét nghiệm <span style="color: red">*</span></label>
+                                                                <!--suppress XmlDuplicatedId -->
+                                                                <ui-select id="vm.specimen.client" ng-model="vm.specimen.client" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn">{{$select.selected.name}}</ui-select-match>
+                                                                    <ui-select-choices repeat="client.code as client in vm.clients | propsFilter: {name: $select.search}">
+                                                                        <div class="bold" ng-bind-html="client.name | highlight: $select.search"></div>
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px" ng-if="vm.specimen.support && vm.specimen.support == 'W_SUPPORT'">
+                                                                <label class="bold">Năm sinh của khách hàng <span style="color: red">*</span></label>
+                                                                <!--suppress XmlDuplicatedId -->
+                                                                <ui-select id="vm.specimen.clientYob" ng-model="vm.specimen.clientYob" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                                    <ui-select-choices repeat="yob.code as yob in vm.yobList | propsFilter: {name: $select.search}">
+                                                                        <div class="bold" ng-bind-html="yob.name | highlight: $select.search"></div>
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px" ng-if="vm.specimen.support && vm.specimen.support == 'W_SUPPORT'">
+                                                                <label class="bold">Giới tính của khách hàng <span style="color: red">*</span></label>
+                                                                <!--suppress XmlDuplicatedId -->
+                                                                <ui-select id="vm.specimen.clientGender" ng-model="vm.specimen.clientGender" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                                    <ui-select-choices repeat="gender.code as gender in vm.genderList | propsFilter: {name: $select.search}">
+                                                                        <div class="bold" ng-bind-html="gender.name | highlight: $select.search"></div>
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px">
+                                                                <label class="font-weight-500">Thuộc nhóm nguy cơ</label>
+                                                                <!--suppress XmlDuplicatedId -->
+                                                                <ui-select id="vm.specimen.clientRiskGroup" ng-model="vm.specimen.clientRiskGroup" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                    <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                                    <ui-select-choices repeat="risk.code as risk in vm.risks | propsFilter: {name: $select.search}">
+                                                                        <div class="bold" ng-bind-html="risk.name | highlight: $select.search"></div>
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px">
+                                                                <label class="font-weight-500">Kết quả tự xét nghiệm</label>
+                                                                <!--suppress XmlDuplicatedId -->
+                                                                <ui-select id="vm.specimen.screenResult" ng-model="vm.specimen.screenResult" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                    <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                                    <ui-select-choices repeat="result.code as result in vm.screenResults | propsFilter: {name: $select.search}">
+                                                                        <div class="bold" ng-bind-html="result.name | highlight: $select.search"></div>
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                            </div>
+                                                            
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 margin-top-20 fixed-height-58px" ng-if="vm.specimen.screenResult && vm.specimen.screenResult == 'REACTIVE'">
+                                                                <label class="font-weight-500">Kết quả xét nghiệm khẳng định</label>
+                                                                <!--suppress XmlDuplicatedId -->
+                                                                <ui-select id="vm.specimen.confirmResult" ng-model="vm.specimen.confirmResult" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                    <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                                    <ui-select-choices repeat="result.code as result in vm.confirmResults | propsFilter: {name: $select.search}">
+                                                                        <div class="bold" ng-bind-html="result.name | highlight: $select.search"></div>
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="dragon" drag-on ng-if="vm.entry.id">
+                                                    <table id="bsTableControl" bs-table-control="vm.bsTableControl"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- END MAIN CONTENT -->
+<script type="text/ng-template" id="edit_specimen_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" data-ng-disabled="true" aria-hidden="true"></button>
+            <h4 class="modal-title" ng-if="vm.entry.id"><i class="icon-pencil"></i> Thêm thông tin sinh phẩm xét nghiệm</h4>
+            <h4 class="modal-title" ng-if="!vm.entry.id"><i class="icon-pencil"></i> Sửa thông tin sinh phẩm xét nghiệm</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-sm-6 margin-top-20 fixed-height-58px">
+                    <label class="bold">Tên sinh phẩm <span style="color: red">*</span></label>
+                    <!--suppress XmlDuplicatedId -->
+                    <ui-select id="vm.specimen.code" ng-model="vm.specimen.code" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="specimen.code as specimen in vm.specimens | propsFilter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="specimen.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-sm-6 margin-top-20 fixed-height-58px" ng-if="vm.entry.specimens.length >= 0 && vm.specimen.code == 'OTHER'">
+                    <label class="bold">Ghi rõ tên sinh phẩm <span style="color: red">*</span></label>
+                    <!--suppress XmlDuplicatedId -->
+                    <input id="vm.specimen.name" ng-model="vm.specimen.name" class="form-control" />
+                </div>
+                <div class="col-sm-6 margin-top-20 fixed-height-58px">
+                    <label class="bold">Hình thức xét nghiệm <span style="color: red">*</span></label>
+                    <!--suppress XmlDuplicatedId -->
+                    <ui-select id="vm.specimen.support" ng-model="vm.specimen.support" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="support.code as support in vm.supportTypes | propsFilter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="support.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-sm-6 margin-top-20 fixed-height-58px">
+                    <label class="bold">Ngày cấp phát sinh phẩm <span style="color: red">*</span></label>
+                    <input id="vm.specimen.dispensingDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.dispensingDate.dateOpts"
+                           fp-on-setup="vm.dispensingDate.datePostSetup(fpItem)"
+                           ng-model="vm.specimen.dispensingDate"
+                           data-enabletime="false" />
+                </div>
+                <div class="col-sm-6 margin-top-20 fixed-height-58px" ng-if="vm.specimen.support && vm.specimen.support == 'WO_SUPPORT'">
+                    <label class="bold">Người cần xét nghiệm <span style="color: red">*</span></label>
+                    <!--suppress XmlDuplicatedId -->
+                    <ui-select id="vm.specimen.client" ng-model="vm.specimen.client" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="client.code as client in vm.clients | propsFilter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="client.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-sm-6 margin-top-20 fixed-height-58px" ng-if="vm.specimen.support && vm.specimen.support == 'W_SUPPORT'">
+                    <label class="bold">Năm sinh của khách hàng <span style="color: red">*</span></label>
+                    <!--suppress XmlDuplicatedId -->
+                    <ui-select id="vm.specimen.clientYob" ng-model="vm.specimen.clientYob" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="yob.code as yob in vm.yobList | propsFilter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="yob.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-sm-6 margin-top-20 fixed-height-58px" ng-if="vm.specimen.support && vm.specimen.support == 'W_SUPPORT'">
+                    <label class="bold">Giới tính của khách hàng <span style="color: red">*</span></label>
+                    <!--suppress XmlDuplicatedId -->
+                    <ui-select id="vm.specimen.clientGender" ng-model="vm.specimen.clientGender" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="gender.code as gender in vm.genderList | propsFilter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="gender.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-sm-6 margin-top-20 fixed-height-58px">
+                    <label class="font-weight-500">Thuộc nhóm nguy cơ</label>
+                    <!--suppress XmlDuplicatedId -->
+                    <ui-select id="vm.specimen.clientRiskGroup" ng-model="vm.specimen.clientRiskGroup" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="risk.code as risk in vm.risks | propsFilter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="risk.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-sm-6 margin-top-20 fixed-height-58px">
+                    <label class="font-weight-500">Kết quả tự xét nghiệm</label>
+                    <!--suppress XmlDuplicatedId -->
+                    <ui-select id="vm.specimen.screenResult" ng-model="vm.specimen.screenResult" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="result.code as result in vm.screenResults | propsFilter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="result.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-sm-6 margin-top-20 fixed-height-58px" ng-if="vm.specimen.screenResult && vm.specimen.screenResult == 'REACTIVE'">
+                    <label class="font-weight-500">Kết quả xét nghiệm khẳng định</label>
+                    <!--suppress XmlDuplicatedId -->
+                    <ui-select id="vm.specimen.confirmResult" ng-model="vm.specimen.confirmResult" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="result.code as result in vm.confirmResults | propsFilter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="result.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default no-border" data-dismiss="modal"><i class="fa fa-close margin-right-5"></i>Bỏ qua</button>
+            <button type="button" ng-click="vm.saveSpecimenEntry()" class="btn btn-primary jumping" data-dismiss="modal">Lưu lại</button>
+        </div>
+    </div>
+</script>
+
+<div ng-include="'_treatment/views/fragments/_confirmation.html?v=' + settings.versionNumber"></div>

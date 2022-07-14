@@ -1,0 +1,38 @@
+(function () {
+    'use strict';
+
+    PDMA.PeerOutreach = angular.module('PDMA.PeerOutreach', [
+        'ui.router',
+        'oc.lazyLoad',
+        'bsTable',
+        'toastr',
+
+        'PDMA.Common'
+    ]);
+
+    PDMA.PeerOutreach.config(['$stateProvider', function ($stateProvider) {
+
+        $stateProvider
+
+        // General Settings
+            .state('application.peer_outreach', {
+                url: '/prevention/pe',
+                templateUrl: '_peer-outreach/views/index.html',
+                data: {pageTitle: 'Tiếp cận cộng đồng'},
+                controller: 'IndexController as vm',
+                resolve: {
+                    deps: ['$ocLazyLoad', function ($ocLazyLoad) {
+                        return $ocLazyLoad.load({
+                            name: 'PDMA.PeerOutreach',
+                            insertBefore: '#ng_load_plugins_before',
+                            files: [
+                                '_peer-outreach/controllers/IndexController.js',
+                                '_peer-outreach/business/IndexService.js',
+                            ]
+                        });
+                    }]
+                }
+            });
+    }]);
+
+})();

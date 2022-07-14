@@ -1,0 +1,25 @@
+<script type="text/ng-template" id="patient_status_history_modal_alt.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="im im-icon-Clock-Back"></i> Lịch sử gián đoạn điều trị</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <!--<div class="opc-toolbar margin-bottom-10">-->
+                        <!--<button class="btn btn-primary no-border" data-ng-disabled="!vm.entry.statusEditable" ng-click="vm.openEditPatientStatus();"><i class="fa fa-random icon-muted"></i> Thay đổi trạng thái điều trị</button>-->
+                        <!--<button class="btn btn-default no-border margin-left-10" ng-if="vm.fullStatusHistory && vm.fullStatusHistory.length > 0 && vm.fullStatusHistory[0].updateable" ng-click="vm.updateReferralResult(vm.fullStatusHistory[0].id);"><i class="icon-pencil"></i> Cập nhật kết quả chuyển gửi</button>-->
+                        <!--<button class="btn btn-default no-border margin-left-10" ng-if="vm.fullStatusHistory && vm.fullStatusHistory.length > 0 && vm.fullStatusHistory[0].reEnrollable" ng-click="vm.reEnrollPatient();"><i class="fa fa-undo"></i> Bệnh nhân quay lại điều trị</button>-->
+                    <!--</div>-->
+                    <div class="dragon" drag-on>
+                        <table id="bsTableControl4Status" bs-table-control="vm.bsTableControl4Status"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+        </div>
+    </div>
+</script>

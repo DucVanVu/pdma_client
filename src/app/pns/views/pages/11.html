@@ -1,0 +1,55 @@
+<div class="section-head bold margin-top-30">
+    <i class="fa fa-envira icon-muted"></i> Phần 4: Ghi nhận sự tham gia của cộng đồng
+</div>
+<div class="grid-2-col">
+    <div class="grid-body">
+        <div class="first-child">
+            <div>{{vm.questions.q4_1.name}}</div>
+            <div>
+                <div class="md-checkbox margin-top-20" ng-repeat="opt in vm.questions.q4_1.options">
+                    <input ng-disabled="vm.entry.locked" type="checkbox" id="checkbox_q4_1_{{opt.id}}" class="md-check" ng-change="vm.updateDelimitedProps('q4_1')" ng-model="vm.entry.q4_1_tmp[$index]">
+                    <label for="checkbox_q4_1_{{opt.id}}">
+                        <span></span>
+                        <span class="check"></span>
+                        <span class="box"></span> {{opt.name}}
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div ng-if="vm.entry.q4_1 && (vm.entry.q4_1.includes('1') || vm.entry.q4_1.includes('2'))">
+            <div>4.2. Ghi tên cụ thể của các nhóm tham gia này và mô tả ngắn gọn cách họ giúp cải thiện/giám sát các hoạt động TBXNBT/BC</div>
+            <div>
+                <textarea ng-disabled="vm.entry.locked" class="form-control" rows="4" data-ng-model="vm.entry.q4_2" placeholder="Nhập tên nhóm và mô tả..."></textarea>
+            </div>
+        </div>
+        <div>
+            <div>4.3. Cơ sở có cơ chế hoặc hệ thống để cộng đồng phản hồi và góp ý như thẻ cho điểm của cộng đồng hoặc LINK để cộng đồng thường xuyên giám sát qua đó giúp cải thiện thiện và duy trì chất lượng dịch vụ TBXNBT/BC?</div>
+            <div>
+                <div class="md-radio-inline">
+                    <div class="md-radio margin-top-20">
+                        <input ng-disabled="vm.entry.locked" type="radio" id="checkbox_q4_3_yes" name="radio_q4_3" ng-change="vm.updateBooleanProps('q4_3')" ng-model="vm.entry.q4_3" value="1" class="md-radiobtn">
+                        <label for="checkbox_q4_3_yes">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Có
+                        </label>
+                    </div>
+                    <div class="md-radio margin-top-20 margin-left-20">
+                        <input ng-disabled="vm.entry.locked" type="radio" id="checkbox_q4_3_no" name="radio_q4_3" ng-change="vm.updateBooleanProps('q4_3')" ng-model="vm.entry.q4_3" value="0" class="md-radiobtn">
+                        <label for="checkbox_q4_3_no">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Không
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-if="vm.entry.q4_3 && vm.entry.q4_3 == 1">
+            <div>Bạn đã chọn "Có", hãy mô tả ngắn gọn về cơ chế hoặc hệ thống này.</div>
+            <div>
+                <textarea ng-disabled="vm.entry.locked" class="form-control" rows="4" data-ng-model="vm.entry.q4_3_text" placeholder="Nhập mô tả ngắn gọn..."></textarea>
+            </div>
+        </div>
+    </div>
+</div>

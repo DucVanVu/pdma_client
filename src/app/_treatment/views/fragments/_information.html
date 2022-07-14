@@ -1,0 +1,16 @@
+<script type="text/ng-template" id="information.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">{{vm.dialog.title}}</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="{{vm.dialog.icon ? vm.dialog.icon : 'icon-info'}}"></i></div>
+            <div><span><div ng-bind-html="vm.dialog.message"></div>
+            </span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="vm.dialog.callback('ok');" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>{{vm.dialog.ok ? vm.dialog.ok : 'Đóng lại'}}</button>
+        </div>
+    </div>
+</script>

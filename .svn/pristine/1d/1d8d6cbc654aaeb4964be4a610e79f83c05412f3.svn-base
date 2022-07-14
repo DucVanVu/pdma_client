@@ -1,0 +1,19 @@
+<script type="text/ng-template" id="input.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-if="vm.dialog.allowDismissing" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">{{vm.dialog.title}}</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="im im-icon-Keyboard"></i></div>
+            <div><span><label ng-bind-html="vm.dialog.message"></label>
+                <input ng-if="!vm.dialog.masked" class="form-control" id="vm.dialog.input" ng-model="vm.dialog.input"/>
+                <input ng-if="vm.dialog.masked" class="form-control" id="vm.dialog.input" ng-model="vm.dialog.input" input-mask="99999999999999999999" maxlength="20"/>
+            </span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-if="vm.dialog.ok" ng-click="vm.dialog.callback('ok');" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>{{vm.dialog.ok ? vm.dialog.ok : 'Chọn'}}</button>
+            <button type="button" ng-if="vm.dialog.cancel" ng-click="vm.dialog.callback('cancel');" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>{{vm.dialog.cancel ? vm.dialog.cancel : 'Hủy bỏ'}}</button>
+        </div>
+    </div>
+</script>

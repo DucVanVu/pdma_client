@@ -1,0 +1,65 @@
+<script type="text/ng-template" id="upload_patient_photo_modal.html">
+    <div modal-movable min-width="350px">
+        <div class="modal-header">
+            <h4 class="modal-title"><i class="icon-cloud-upload"></i> Tải ảnh bệnh nhân</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <a class="no-content1 display-block link" ngf-select="vm.patientPhoto.triggerUpload($file, $invalidFiles)"
+                       accept="image/*" ngf-pattern="image/*, .jpg, .png" ngf-accept="'image/*'" ngf-multiple="false" ngf-max-size="1MB"
+                       ngf-min-height="300" ngf-max-height="1000" ngf-min-width="300" ngf-max-width="1000"><i class="fa fa-cloud-upload"></i> Chọn tệp tin hình ảnh để tải lên</a>
+                </div>
+
+                <div class="col-md-12 margin-top-20" ng-if="vm.patientPhoto.uploadedFile != null">
+                    <div class="row">
+                        <div class="col-xs-5 align-right">
+                            <label>Tệp tin:</label>
+                        </div>
+                        <div class="col-xs-7">
+                            <span class="bold">{{vm.patientPhoto.uploadedFile.name}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 margin-top-20" ng-if="vm.patientPhoto.errorFile != null && vm.patientPhoto.errorFile.$error != ''">
+                    Có lỗi: <span class="bold" ng-if="vm.patientPhoto.errorFile.$error == 'maxSize'">Kích thước tệp tin phải nhỏ hơn {{vm.patientPhoto.errorFile.$errorParam}}</span>
+                    <span class="bold" ng-if="vm.patientPhoto.errorFile.$error == 'maxWidth' || vm.patientPhoto.errorFile.$error == 'maxHeight' || vm.patientPhoto.errorFile.$error == 'minWidth' || vm.patientPhoto.errorFile.$error == 'minHeight'">Kích thước ảnh phải trong khoảng 300 - 1000 điểm ảnh (px).</span>
+                    <span class="bold" ng-if="vm.patientPhoto.errorFile.$error != null && vm.patientPhoto.errorFile.$error != 'maxSize' && vm.patientPhoto.errorFile.$error != 'maxWidth' && vm.patientPhoto.errorFile.$error != 'maxHeight' && vm.patientPhoto.errorFile.$error != 'minWidth' && vm.patientPhoto.errorFile.$error != 'minHeight'">Tệp tin {{vm.patientPhoto.errorFile.name}} không hợp lệ. Xin mời chọn tệp tin khác.</span>
+                </div>
+
+                <div class="col-md-12 margin-top-20" ng-if="vm.patientPhoto.uploadedFile.progress >= 0">
+                    <div class="progress" style="height: 20px">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" ng-bind="vm.patientPhoto.uploadedFile.progress + '%'" style="width:{{vm.patientPhoto.uploadedFile.progress}}%;">
+                            {{vm.patientPhoto.uploadedFile.progress}}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="vm.patientPhoto.closeUploadFile()"  data-ng-disabled="vm.patientPhoto.uploadedFile.progress > 0 && vm.patientPhoto.uploadedFile.progress < 100" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+            <button type="button" ng-click="vm.patientPhoto.startUploadFile(vm.patientPhoto.uploadedFile)" class="btn btn-primary" data-ng-disabled="vm.patientPhoto.uploadedFile == null || (vm.patientPhoto.errorFile != null && vm.patientPhoto.errorFile.$error != '') || vm.patientPhoto.uploadedFile.progress >= 100" data-dismiss="modal">Tải lên</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="crop_patient_photo_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <h4 class="modal-title"><i class="fa fa-crop"></i> Chỉnh sửa ảnh</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="cropper-crop-area">
+                        <ui-cropper image="vm.patientPhoto.photoUrl" area-type="square" area-init-size="{ w:cropper.cropWidth,h:cropper.cropHeight}" cropject="vm.patientPhoto.cropper" result-image="vm.patientPhoto.croppedImage"></ui-cropper>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$close('yes')" class="btn btn-primary" data-dismiss="modal">Đồng ý</button>
+        </div>
+    </div>
+</script>

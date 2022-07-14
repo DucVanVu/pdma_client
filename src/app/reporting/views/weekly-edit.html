@@ -1,0 +1,1113 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="im im-icon-Bar-Chart margin-right-5"></i> Báo cáo tuần</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#/reporting/weekly-dashboard">Trang chủ</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#/reporting/weekly/">Báo cáo tuần</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#">Cập nhật báo cáo</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body" id="sticky-header-container">
+                <div class="display-block no-content1 margin-top-10" ng-if="!isSiteManager(currentUser) && !isDistrictManager(currentUser) && !isProvincialManager(currentUser) && !isNationalManager(currentUser) && !isDonor(currentUser)">
+                    Bạn không có quyền xem nội dung này.
+                </div>
+                <div class="row" ng-if="isSiteManager(currentUser) || isDistrictManager(currentUser) || isProvincialManager(currentUser) || isNationalManager(currentUser) || isDonor(currentUser)">
+                    <div ng-if="vm.dirty.value === true && (isSiteManager(currentUser) || isDistrictManager(currentUser) || isProvincialManager(currentUser))" class="col-xs-12 bottom-warning">
+                        <div class="top-gradient"></div>
+                        <div class="ribbon"><i class="im im-icon-Thunder"></i></div>
+                        <span ng-if="vm.weeklyReport.id" class="pull-left display-inlineblock margin-top-10">&mdash; LƯU Ý: Bạn chưa lưu các thay đổi<span class="hidden-xs"> mà bạn vừa thực hiện</span>.</span>
+                        <span ng-if="!vm.weeklyReport.id" class="pull-left display-inlineblock margin-top-10">&mdash; LƯU Ý: Bạn chưa lưu báo cáo.</span>
+                        <a class="btn btn-circle blue-dark-stripe red btn-sm pull-right" href="#" data-ng-click="vm.saveReport()">lưu báo cáo</a>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs ">
+                                <li class="disabled">
+                                    <a href="#"><i class="fa fa-area-chart"></i> TỔNG QUAN </a>
+                                </li>
+                                <li class="active">
+                                    <a href="#" data-toggle="tab"><i class="icon-magic-wand"></i> QUẢN LÝ<span class="hidden-sm hidden-xs"> BÁO CÁO</span></a>
+                                </li>
+                                <li class="disabled">
+                                    <a href="#"><i class="fa fa-spinner"></i><span class="hidden-xs"> TIẾN ĐỘ</span><span class="hidden-sm hidden-xs"> BÁO CÁO</span></a>
+                                </li>
+                                <li class="disabled" ng-if="isNationalManager(currentUser) || isDonor(currentUser)">
+                                    <a href="#"><i class="fa fa-bullseye"></i><span class="hidden-xs"> CHỈ TIÊU<span class="hidden-sm"> NĂM</span></span></a>
+                                </li>
+                            </ul>
+                            <div class="tab-content small-gap">
+                                <div class="tab-pane active summary-panel">
+                                    <div class="col-xs-12 tab-content-container">
+                                        <div class="row sticky-panel" hl-sticky="" sticky-class="is-sticky custom" container="sticky-header-container">
+                                            <div class="col-xs-12">
+                                                <div class="wr-edit-title">
+                                                    <span ng-if="!vm.weeklyReport.id">Thêm mới báo cáo tuần</span>
+                                                    <span ng-if="vm.weeklyReport.id && vm.weeklyReport.status <= 1">Cập nhật báo cáo <span class="hidden-lg hidden-md">tuần</span><span class="hidden-sm hidden-xs">{{vm.weeklyReport.fromDate | weekString}}</span><span ng-if="vm.weeklyReport.id > 0"><!--<span class="margin-left-10 margin-right-10">|</span> <a href="#" uib-tooltip="Nội&nbsp;dung&nbsp;hội&nbsp;thoại"><i class="icon-bubbles"></i><span class="hidden-md hidden-sm hidden-xs margin-left-10">Hội thoại...</span></a>--></span></span>
+                                                    <span ng-if="vm.weeklyReport.id && vm.weeklyReport.status > 1">Chi tiết báo cáo <span class="hidden-lg hidden-md">tuần</span><span class="hidden-sm hidden-xs">{{vm.weeklyReport.fromDate | weekString}}</span><span ng-if="vm.weeklyReport.id > 0"><!--<span class="margin-left-10 margin-right-10">|</span> <a href="#" uib-tooltip="Nội&nbsp;dung&nbsp;hội&nbsp;thoại"><i class="icon-bubbles"></i><span class="hidden-md hidden-sm hidden-xs margin-left-10">Hội thoại...</span></a>--></span></span>
+
+                                                    <div class="pull-right report-status rounded-right status-{{vm.weeklyReport.status}}">
+                                                        <span ng-if="vm.weeklyReport.status == 0" class="uppercase"><i class="icon-pencil margin-right-5"></i><span class="hidden-sm hidden-xs">ĐANG SOẠN THẢO</span></span>
+                                                        <span ng-if="vm.weeklyReport.status == 1" class="uppercase"><i class="fa fa-spinner fa-spin margin-right-5"></i><span class="hidden-sm hidden-xs">CHỜ TỈNH PHÊ DUYỆT</span></span>
+                                                        <span ng-if="vm.weeklyReport.status == 2" class="uppercase"><i class="fa fa-spinner fa-spin margin-right-5"></i><span class="hidden-sm hidden-xs">CHỜ XUẤT BẢN</span></span>
+                                                        <span ng-if="vm.weeklyReport.status == 3" class="uppercase"><i class="fa fa-check margin-right-5"></i><span class="hidden-sm hidden-xs">ĐÃ XUẤT BẢN</span></span>
+                                                    </div>
+                                                    <div ng-if="vm.weeklyReport.id && (!vm.weeklyReport.dapproved || vm.weeklyReport.dapproved == false)" class="pull-right report-status status-99" uib-tooltip="Tuyến&nbsp;huyện&nbsp;chưa&nbsp;duyệt báo&nbsp;cáo&nbsp;này">
+                                                        <span class="uppercase"><i class="fa fa-check-circle-o"></i></span>
+                                                    </div>
+                                                    <div ng-if="vm.weeklyReport.id && (vm.weeklyReport.dapproved && vm.weeklyReport.dapproved == true)" class="pull-right report-status status-99-1" uib-tooltip="Tuyến&nbsp;huyện&nbsp;đã&nbsp;duyệt báo&nbsp;cáo&nbsp;này">
+                                                        <span class="uppercase"><i class="fa fa-check-circle-o"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12">
+                                                <div class="buttons-group">
+                                                    <button class="btn btn-primary red-stripe" uib-tooltip="Lưu&nbsp;báo&nbsp;cáo" ng-if="isSiteManager(currentUser) || isDistrictManager(currentUser) || isProvincialManager(currentUser)" data-ng-disabled="(vm.weeklyReport.status > 1) || !vm.dirty.value" data-ng-click="vm.saveReport()"><i class="fa fa-save"></i> <span class="hidden-sm hidden-xs">Lưu báo cáo</span></button>
+                                                    <button class="btn btn-default no-border" uib-tooltip="Gửi&nbsp;báo&nbsp;cáo" ng-if="isSiteManager(currentUser)" data-ng-disabled="!vm.weeklyReport.id || vm.weeklyReport.status != 0" data-ng-click="vm.changeReportStatus(1)"><i class="icon-paper-plane"></i> <span class="hidden-sm hidden-xs">Gửi báo cáo</span></button>
+                                                    <button class="btn btn-default no-border" uib-tooltip="Tuyến&nbsp;huyện&nbsp;duyệt&nbsp;báo&nbsp;cáo" ng-if="isDistrictManager(currentUser)" data-ng-disabled="!vm.weeklyReport.id || vm.weeklyReport.status != 1 || vm.weeklyReport.dapproved" data-ng-click="vm.markDistrictApproval()"><i class="fa fa-check"></i> <span class="hidden-sm hidden-xs">Huyện duyệt</span></button>
+                                                    <button class="btn btn-default no-border" uib-tooltip="Tuyến&nbsp;tỉnh&nbsp;duyệt&nbsp;báo&nbsp;cáo" ng-if="isProvincialManager(currentUser)" data-ng-disabled="!vm.weeklyReport.id || vm.weeklyReport.status != 1" data-ng-click="vm.changeReportStatus(2)"><i class="fa fa-check"></i> <span class="hidden-sm hidden-xs">Tỉnh Duyệt</span></button>
+                                                    <button class="btn btn-default no-border" uib-tooltip="Tuyến&nbsp;TW&nbsp;Xuất&nbsp;bản&nbsp;báo&nbsp;cáo" ng-if="isNationalManager(currentUser)" data-ng-disabled="!vm.weeklyReport.id || vm.weeklyReport.status != 2" data-ng-click="vm.changeReportStatus(3)"><i class="fa fa-check"></i> <span class="hidden-sm hidden-xs">TW Xuất bản</span></button>
+
+                                                    <div class="btn-group" ng-if="isDistrictManager(currentUser) || isProvincialManager(currentUser) || isNationalManager(currentUser)">
+                                                        <button class="btn btn-default no-border" uib-tooltip="Trả&nbsp;lại&nbsp;báo&nbsp;cáo" href="javascript:;" data-toggle="dropdown" data-ng-disabled="(isDistrictManager(currentUser) || isProvincialManager(currentUser)) && vm.weeklyReport.status != 1">
+                                                            <i class="im im-icon-Left-4"></i> <span class="hidden-sm hidden-xs">Trả lại</span>
+                                                            <i class="fa fa-angle-down"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li ng-if="isDistrictManager(currentUser) || isProvincialManager(currentUser)">
+                                                                <a href="#" data-ng-click="vm.changeReportStatus(0, true)"><i class="im im-icon-Left-4"></i> Trả lại cơ sở gửi báo cáo</a>
+                                                            </li>
+                                                            <li ng-if="isNationalManager(currentUser)">
+                                                                <a href="#" data-ng-click="vm.changeReportStatus(1, true)"><i class="im im-icon-Left-4"></i> Trả lại tuyến tỉnh</a>
+                                                            </li>
+                                                            <li ng-if="isNationalManager(currentUser)">
+                                                                <a href="#" data-ng-click="vm.changeReportStatus(0, true)"><i class="im im-icon-Left-4"></i> Trả lại cơ sở gửi báo cáo</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <button class="btn btn-default no-border" uib-tooltip="Xuất&nbsp;dữ&nbsp;liệu&nbsp;ra&nbsp;Excel" data-ng-disabled="!vm.weeklyReport.id" data-ng-click="vm.export2Excel()"><i class="fa fa-download"></i> <span class="hidden-sm hidden-xs">Xuất Excel</span></button>
+                                                    <a href="#/reporting/weekly/" uib-tooltip="Quay&nbsp;lại&nbsp;danh&nbsp;sách" class="btn btn-default no-border"><i class="icon-arrow-left margin-right-5"></i><span class="hidden-xs">Quay lại</span></a>
+                                                </div>
+                                            </div>
+                                            <div ng-if="vm.weeklyReport.id && vm.weeklyReport.comment && vm.weeklyReport.comment.length > 0" class="col-xs-12">
+                                                <div class="report-comment"><span class="bold"><i class="icon-bubbles"></i> Lời nhắn:</span> {{vm.weeklyReport.comment}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4 col-sm-4 col-xs-12 margin-top-20">
+                                                <label><span class="bold">Báo cáo của tuần</span></label>
+                                                <input ng-if="vm.weeklyReport.id" readonly class="form-control" ng-value="vm.weeklyReport.fromDate | weekString" />
+                                                <input ng-if="!vm.weeklyReport.id" class="form-control" placeholder="Chọn tuần..."
+                                                       ng-flatpickr
+                                                       fp-opts="vm.datepicker.dateOpts"
+                                                       fp-on-setup="vm.datepicker.datePostSetup(fpItem)"
+                                                       ng-model="vm.weeklyReport.tempDate"
+                                                       data-enabletime="false" />
+                                            </div>
+                                            <div class="col-md-4 col-sm-4 col-xs-12 margin-top-20">
+                                                <label class="bold">Báo cáo của cơ sở</label>
+                                                <input ng-if="vm.weeklyReport.id" type="text" readonly ng-model="vm.weeklyReport.organization.name" class="form-control" />
+                                                <ui-select ng-if="!vm.weeklyReport.id" ng-model="vm.weeklyReport.organization" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                    <ui-select-match allow-clear="false" placeholder="Chọn cơ sở...">{{$select.selected.name}}</ui-select-match>
+                                                    <ui-select-choices repeat="organization in vm.orgsWritable | propsFilter: {name: $select.search}">
+                                                        <div class="bold" ng-bind-html="organization.name | highlight: $select.search"></div>
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                            </div>
+                                            <div class="col-md-4 col-sm-4 col-xs-12 margin-top-20 form-group" ng-class="{'has-error' : vm.weeklyReport.htsTst < 0 || vm.weeklyReport.htsPos > vm.weeklyReport.htsTst}">
+                                                <label class="bold hidden-lg hidden-md hidden-xs">Tổng số KH được làm XN</label>
+                                                <label class="bold hidden-md hidden-sm">Tổng số KH được làm XN và nhận kết quả</label>
+                                                <label class="bold hidden-lg hidden-sm hidden-xs">Tổng số KH được làm XN và nhận KQ</label>
+                                                <input type="number" class="form-control" ng-if="!isSiteManager(currentUser)" ng-readonly="vm.weeklyReport.status > 0" ng-model="vm.weeklyReport.htsTst" />
+                                                <input type="number" class="form-control" ng-if="isSiteManager(currentUser)" ng-readonly="vm.weeklyReport.status != 0" ng-model="vm.weeklyReport.htsTst" />
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-if="vm.weeklyReport.organization">
+                                            <div class="col-xs-12">
+                                                <div class="section-head with-background-1 margin-top-30">
+                                                    <i class="fa fa-caret-down color-7 margin-right-10"></i>Các khách hàng khẳng định HIV dương tính<span class="hidden-xs"> trong tuần</span>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4 col-sm-6 col-xs-12 margin-top-10 margin-bottom-15" ng-class="{'has-error' : vm.weeklyReport.htsPos < 0 || vm.positiveCases.length != vm.weeklyReport.htsPos}">
+                                                        <label><span class="bold">Tổng số KH HIV+ trong tuần</span></label>
+                                                        <input type="number" class="form-control" ng-if="!isSiteManager(currentUser)" ng-readonly="vm.weeklyReport.status > 0" ng-model="vm.weeklyReport.htsPos" />
+                                                        <input type="number" class="form-control" ng-if="isSiteManager(currentUser)" ng-readonly="vm.weeklyReport.status != 0" ng-model="vm.weeklyReport.htsPos" />
+                                                    </div>
+                                                    <div class="col-md-8 col-sm-6 col-xs-12 margin-top-10 margin-bottom-15" ng-if="isSiteManager(currentUser) || isDistrictManager(currentUser) || isProvincialManager(currentUser)">
+                                                        <div class="margin-bottom-5 hidden-xs">&nbsp;</div>
+                                                        <button class="btn btn-default no-border" ng-if="isSiteManager(currentUser)" data-ng-disabled="vm.weeklyReport.status > 0" data-ng-click="vm.addPositiveCase()"><i class="icon-plus"></i> Thêm K.H. dương tính</button>
+                                                        <button ng-if="isDistrictManager(currentUser) || isProvincialManager(currentUser)" class="btn btn-default no-border" data-ng-disabled="vm.weeklyReport.status != 1" data-ng-click="vm.updatePositiveNewOld()"><i class="icon-pencil"></i> Dương tính cũ - mới</button>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <div ng-if="(!vm.positiveCases || vm.positiveCases.length <= 0) && vm.weeklyReport.id && vm.weeklyReport.status > 0" class="no-content1 display-block align-left large-padding-tb"><i class="fa fa-warning icon-muted"></i> Không có khách hàng dương tính nào được báo cáo.</div>
+                                                        <div ng-if="(!vm.positiveCases || vm.positiveCases.length <= 0) && isSiteManager(currentUser) && !vm.weeklyReport.id" class="no-content1 display-block align-left large-padding-tb"><i class="fa fa-warning icon-muted"></i> Bạn cần <a href="#" ng-click="vm.saveReport()" class="bold">lưu báo cáo</a> trước khi thêm khách hàng dương tính.</div>
+                                                        <div ng-if="(!vm.positiveCases || vm.positiveCases.length <= 0) && isSiteManager(currentUser) && vm.weeklyReport.id && vm.weeklyReport.status == 0" class="no-content1 display-block align-left large-padding-tb"><i class="fa fa-warning icon-muted"></i> Chưa có khách hàng dương tính nào được ghi nhận. Bạn có thể <a href="#" ng-click="vm.addPositiveCase()" class="bold">thêm một khách hàng dương tính</a>.</div>
+
+                                                        <div ng-if="vm.positiveCases && vm.positiveCases.length > 0">
+                                                            <table id="bsTableControl1" bs-table-control="vm.bsTableControl1"></table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-if="vm.weeklyReport.organization">
+                                            <div class="col-xs-12">
+                                                <div class="section-head with-background-1 margin-top-30">
+                                                    <i class="fa fa-caret-down color-7 margin-right-10"></i>Bệnh nhân được bắt đầu điều trị<span class="hidden-xs"> tại cơ sở trong tuần</span>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4 col-sm-6 col-xs-12 margin-top-10 margin-bottom-15 form-group" ng-class="{'has-error' : vm.weeklyReport.txNew < 0 || vm.treatmentCases.length != vm.weeklyReport.txNew}">
+                                                        <label><span class="bold">Tổng số BN đưa vào ĐT trong tuần</span></label>
+                                                        <input type="number" class="form-control" ng-if="!isSiteManager(currentUser)" ng-readonly="vm.weeklyReport.status > 0" ng-model="vm.weeklyReport.txNew" />
+                                                        <input type="number" class="form-control" ng-if="isSiteManager(currentUser)" ng-readonly="vm.weeklyReport.status != 0" ng-model="vm.weeklyReport.txNew" />
+                                                    </div>
+                                                    <div class="col-md-8 col-sm-6 col-xs-12 margin-top-10 margin-bottom-15">
+                                                        <div class="margin-bottom-5 hidden-xs">&nbsp;</div>
+                                                        <button ng-if="isSiteManager(currentUser)" class="btn btn-default no-border" data-ng-disabled="vm.weeklyReport.status > 0" data-ng-click="vm.addTreatmentCase()"><i class="icon-plus"></i> Thêm B.N. điều trị</button>
+                                                        <button ng-if="isDistrictManager(currentUser) || isProvincialManager(currentUser)" class="btn btn-default no-border" data-ng-disabled="vm.weeklyReport.status != 1" data-ng-click="vm.updateTreatmentNewOld()"><i class="icon-pencil"></i> Điều trị cũ - mới</button>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <div ng-if="(!vm.treatmentCases || vm.treatmentCases.length <= 0) && vm.weeklyReport.id && vm.weeklyReport.status > 0" class="no-content1 display-block align-left large-padding-tb"><i class="fa fa-warning icon-muted"></i> Không có bệnh nhân điều trị trong tuần nào được báo cáo.</div>
+                                                        <div ng-if="(!vm.treatmentCases || vm.treatmentCases.length <= 0) && isSiteManager(currentUser) && !vm.weeklyReport.id" class="no-content1 display-block align-left large-padding-tb"><i class="fa fa-warning icon-muted"></i> Bạn cần <a href="#" ng-click="vm.saveReport()" class="bold">lưu báo cáo</a> trước khi thêm một bệnh nhân điều trị.</div>
+                                                        <div ng-if="(!vm.treatmentCases || vm.treatmentCases.length <= 0) && isSiteManager(currentUser) && vm.weeklyReport.id && vm.weeklyReport.status == 0" class="no-content1 display-block align-left large-padding-tb"><i class="fa fa-warning icon-muted"></i> Chưa có bệnh nhân điều trị trong tuần nào được ghi nhận. Bạn có thể <a href="#" ng-click="vm.addTreatmentCase()" class="bold">thêm một bệnh nhân</a>.</div>
+
+                                                        <div ng-if="vm.treatmentCases && vm.treatmentCases.length > 0">
+                                                            <div class="margin-top-10" ng-if="!isSiteManager(currentUser) && !isProvincialManager(currentUser)"></div>
+                                                            <table id="bsTableControl2" bs-table-control="vm.bsTableControl2"></table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="section-head with-background-1 margin-top-30">
+                                            <i class="fa fa-caret-down color-7 margin-right-10"></i>Ghi chú thêm
+                                        </div>
+                                        <div class="row margin-bottom-40">
+                                            <div class="col-xs-12" ng-if="isSiteManager(currentUser)">
+                                                <text-angular ta-disabled="vm.weeklyReport.id && vm.weeklyReport.status > 0" ta-toolbar-class="btn-toolbar" ta-toolbar-group-class="btn-group" ta-toolbar-button-class="btn btn-default" ta-toolbar-active-button-class="active" ta-toolbar="[['bold', 'italics', 'underline', 'ul', 'ol']]" name="vm.editorOptions" ng-model="vm.weeklyReport.note"></text-angular>
+                                            </div>
+                                            <div class="col-xs-12" ng-if="!isSiteManager(currentUser)">
+                                                <div class="an-content">
+                                                    <text-angular ta-disabled="vm.weeklyReport.status > 0" ta-toolbar-class="btn-toolbar" ta-toolbar-group-class="btn-group" ta-toolbar-button-class="btn btn-default" ta-toolbar-active-button-class="active" ta-toolbar="[['bold', 'italics', 'underline', 'ul', 'ol']]" name="vm.editorOptions" ng-model="vm.weeklyReport.note"></text-angular>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/ng-template" ng-if="isSiteManager(currentUser)" id="edit_positive_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title" data-ng-if="vm.positiveCase.isNew == true"><i class="icon-plus"></i> Thêm một ca dương tính</h4>
+            <h4 class="modal-title" data-ng-if="vm.positiveCase.isNew == false"><i class="fa fa-pencil-square-o"></i> Cập nhật thông tin một ca dương tính</h4>
+        </div>
+        <div class="modal-body summary-panel">
+            <div class="row margin-top-10">
+                <div class="col-xs-3">
+                    <label class="bold">Họ tên khách hàng</label>
+                    <input class="form-control" ng-model="vm.positiveCase.fullname" id="vm.positiveCase.fullname" autofocus />
+                </div>
+                <div class="col-xs-3">
+                    <label class="bold">Ngày sinh</label>
+                    <input class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker2.dateOpts"
+                           fp-on-setup="vm.datepicker2.datePostSetup(fpItem)"
+                           ng-model="vm.positiveCase.dob"
+                           data-enabletime="false" />
+                </div>
+                <div class="col-xs-3">
+                    <label class="bold">Giới tính</label>
+                    <ui-select ng-model="vm.positiveCase.gender" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="gender.id as gender in vm.genders | propsFilter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="gender.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-xs-3">
+                    <label>Số CMTND (nếu có)</label>
+                    <input class="form-control" ng-model="vm.positiveCase.nationalId" maxlength="20" />
+                </div>
+            </div>
+            <div class="row">
+                <div ng-class="{'col-xs-12': vm.positiveCase.sameAddress == true, 'col-xs-6': vm.positiveCase.sameAddress == false}">
+                    <div class="section-head with-background-1">Địa chỉ hiện tại</div>
+                    <div class="row">
+                        <div class="col-xs-6 margin-top-10">
+                            <label class="bold">Tỉnh/thành phố</label>
+                            <ui-select ng-model="vm.caseAddress.currentAddress.province" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                <ui-select-match allow-clear="true" placeholder="Chọn tỉnh...">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="province in vm.addressFilter1.provinces | propsFilter: {name: $select.search}">
+                                    <div class="bold" ng-bind-html="province.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <div class="col-xs-6 margin-top-10">
+                            <label class="bold">Huyện/quận</label>
+                            <ui-select ng-model="vm.caseAddress.currentAddress.district" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                <ui-select-match allow-clear="true" placeholder="Chọn huyện...">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="district in vm.addressFilter1.districts | propsFilter: {name: $select.search}">
+                                    <div class="bold" ng-bind-html="district.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 margin-top-20">
+                            <label>Xã/phường</label>
+                            <ui-select ng-model="vm.caseAddress.currentAddress.commune" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                <ui-select-match allow-clear="true" placeholder="Chọn xã...">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="commune in vm.addressFilter1.communes | propsFilter: {name: $select.search}">
+                                    <div class="bold" ng-bind-html="commune.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <div class="col-xs-6 margin-top-20">
+                            <label>Thôn bản/số nhà</label>
+                            <input class="form-control" ng-model="vm.caseAddress.currentAddress.streetAddress" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 margin-top-20">
+                            <div class="md-checkbox">
+                                <input type="checkbox" id="chk_same_address" ng-model="vm.positiveCase.sameAddress" class="md-check">
+                                <label for="chk_same_address">
+                                    <span></span>
+                                    <span class="check"></span>
+                                    <span class="box"></span> Địa chỉ hiện tại trùng với địa chỉ thường trú?
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6" ng-if="vm.positiveCase.sameAddress == false">
+                    <div class="section-head with-background-1">Địa chỉ thường trú</div>
+                    <div class="row">
+                        <div class="col-xs-6 margin-top-10">
+                            <label class="bold">Tỉnh/thành phố</label>
+                            <ui-select ng-model="vm.caseAddress.residentialAddress.province" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                <ui-select-match allow-clear="true" placeholder="Chọn tỉnh...">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="province in vm.addressFilter2.provinces | propsFilter: {name: $select.search}">
+                                    <div class="bold" ng-bind-html="province.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <div class="col-xs-6 margin-top-10">
+                            <label class="bold">Huyện/quận</label>
+                            <ui-select ng-model="vm.caseAddress.residentialAddress.district" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                <ui-select-match allow-clear="true" placeholder="Chọn huyện...">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="district in vm.addressFilter2.districts | propsFilter: {name: $select.search}">
+                                    <div class="bold" ng-bind-html="district.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 margin-top-20">
+                            <label>Xã/phường</label>
+                            <ui-select ng-model="vm.caseAddress.residentialAddress.commune" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                <ui-select-match allow-clear="true" placeholder="Chọn xã...">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="commune in vm.addressFilter2.communes | propsFilter: {name: $select.search}">
+                                    <div class="bold" ng-bind-html="commune.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <div class="col-xs-6 margin-top-20">
+                            <label>Thôn bản/số nhà</label>
+                            <input class="form-control" ng-model="vm.caseAddress.residentialAddress.streetAddress" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section-head with-background-1"> Thông tin xét nghiệm</div>
+            <div class="row">
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Ngày làm XN sàng lọc</label>
+                    <input class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker3.dateOpts"
+                           fp-on-setup="vm.datepicker3.datePostSetup(fpItem)"
+                           ng-model="vm.positiveCase.screeningDate"
+                           data-enabletime="false" />
+                </div>
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Đơn vị đầu tiên tiếp cận KH</label>
+                    <input class="form-control" ng-model="vm.positiveCase.screeningSite" id="vm.positiveCase.screeningSite" />
+                </div>
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Ngày khẳng định HIV+</label>
+                    <input class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker4.dateOpts"
+                           fp-on-setup="vm.datepicker4.datePostSetup(fpItem)"
+                           ng-model="vm.positiveCase.confirmDate"
+                           data-enabletime="false" />
+                </div>
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Mã số XNKĐ HIV+</label>
+                    <input class="form-control" ng-model="vm.positiveCase.hivConfirmId" id="vm.positiveCase.hivConfirmId" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-20">
+                    <label class="bold">Nơi khẳng định HIV+</label>
+                    <ui-select ng-model="vm.positiveCase.confirmLab" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="lab in vm.confirmLabs | propsFilter: {name: $select.search}" position="up">
+                            <div class="bold" ng-bind-html="lab.name | highlight: $select.search"></div>
+                            <div ng-bind-html="lab.address.province.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <label class="bold">Kết quả xét nghiệm nhanh nhiễm mới</label>
+                    <ui-select ng-model="vm.positiveCase.rtriPos" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="opt.id as opt in vm.rtriOptions | propsFilter: {name: $select.search}" position="up">
+                            <div class="bold" ng-bind-html="opt.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-20">
+                    <label class="bold">Tư vấn xét nghiệm bạn tình/bạn chích chung</label>
+                    <ui-select ng-model="vm.positiveCase.offeredPns" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="opt.id as opt in vm.offeredPnsOptions | propsFilter: {name: $select.search}" position="up">
+                            <div class="bold" ng-bind-html="opt.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <label class="bold">Tình hình chuyển gửi</label>
+                    <ui-select ng-model="vm.positiveCase.treatmentStatus" sortable="true" close-on-select="true"  style="width: 100%!important;">
+                        <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="txStatus in vm.treatmentStatuses | propsFilter: {name: $select.search}" position="up">
+                            <div class="bold" ng-bind-html="txStatus.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <div class="section-head with-background-1" ng-if="vm.positiveCase.treatmentStatus && vm.positiveCase.treatmentStatus.id > 0"> Thông tin điều trị</div>
+            <div class="row" ng-if="vm.positiveCase.treatmentStatus && vm.positiveCase.treatmentStatus.id == 1">
+                <div class="col-xs-6 margin-top-10">
+                    <label class="bold">Cơ sở điều trị đã tiếp nhận bệnh nhân</label>
+                    <ui-select ng-model="vm.positiveCase.opc" sortable="true" close-on-select="true"  style="width: 100%!important;">
+                        <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="opc in vm.opcs | propsFilter: {name: $select.search}" position="up">
+                            <div class="bold" ng-bind-html="opc.name | highlight: $select.search"></div>
+                            <span ng-if="opc.address.province" class="small" ng-bind-html="opc.address.province.name | highlight: $select.search"></span>
+                            <span ng-if="opc.address.district">&mdash;</span>
+                            <span ng-if="opc.address.district" class="small" ng-bind-html="opc.address.district.name"></span>
+                        </ui-select-choices>
+                    </ui-select>
+                    <a id="edit-positive-bottom.anchor_1"></a>
+                </div>
+            </div>
+            <div class="row" ng-if="vm.positiveCase.treatmentStatus && vm.positiveCase.treatmentStatus.id == 2">
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Ngày đăng ký điều trị</label>
+                    <input class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker5.dateOpts"
+                           fp-on-setup="vm.datepicker5.datePostSetup(fpItem)"
+                           ng-model="vm.positiveCase.enrollmentDate"
+                           data-enabletime="false" />
+                </div>
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Ngày bắt đầu điều trị</label>
+                    <input class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker6.dateOpts"
+                           fp-on-setup="vm.datepicker6.datePostSetup(fpItem)"
+                           ng-model="vm.positiveCase.arvInitiationDate"
+                           data-enabletime="false" />
+                </div>
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Mã BN tại PKNT</label>
+                    <input type="text" class="form-control" ng-model="vm.positiveCase.patientChartId" id="vm.positiveCase.patientChartId" />
+                </div>
+                <a id="edit-positive-bottom.anchor_2"></a>
+            </div>
+            <div class="section-head with-background-1"> Ghi chú</div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <!--<label>Ghi chú</label>-->
+                    <textarea class="form-control" ng-model="vm.positiveCase.note" rows="1" style="resize: vertical; min-height: 35px"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Huỷ bỏ</button>
+            <button type="button" ng-click="vm.savePositiveCase()" class="btn btn-primary" data-dismiss="modal">Lưu lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" ng-if="!isSiteManager(currentUser)" id="edit_positive_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="fa fa-th-large"></i> Chi tiết một ca dương tính</h4>
+        </div>
+        <div class="modal-body summary-panel">
+            <div class="row margin-top-10">
+                <div class="col-xs-3">
+                    <label class="bold">Họ tên khách hàng</label>
+                    <span class="form-control gray">{{vm.positiveCase.fullname}}</span>
+                </div>
+                <div class="col-xs-3">
+                    <label class="bold">Ngày sinh</label>
+                    <span class="form-control gray">{{vm.positiveCase.dob | date: 'dd/MM/yyyy'}}</span>
+                </div>
+                <div class="col-xs-3">
+                    <label class="bold">Giới tính</label>
+                    <span class="form-control gray">{{vm.positiveCase.gender == 'MALE' ? 'Nam' : vm.positiveCase.gender == 'FEMALE' ? 'Nữ' : 'Không rõ'}}</span>
+                </div>
+                <div class="col-xs-3">
+                    <label>Số CMTND (nếu có)</label>
+                    <span class="form-control gray">{{vm.positiveCase.nationalId}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="section-head with-background-1">Địa chỉ hiện tại</div>
+                    <div class="row">
+                        <div class="col-xs-6 margin-top-10">
+                            <label class="bold">Tỉnh/thành phố</label>
+                            <span class="form-control gray">{{vm.caseAddress.currentAddress.province.name}}</span>
+                        </div>
+                        <div class="col-xs-6 margin-top-10">
+                            <label class="bold">Huyện/quận</label>
+                            <span class="form-control gray">{{vm.caseAddress.currentAddress.district.name}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 margin-top-20">
+                            <label>Xã/phường</label>
+                            <span class="form-control gray">{{vm.caseAddress.currentAddress.commune ? vm.caseAddress.currentAddress.commune.name : ''}}</span>
+                        </div>
+                        <div class="col-xs-6 margin-top-20">
+                            <label>Thôn bản/số nhà</label>
+                            <span class="form-control gray">{{vm.caseAddress.currentAddress.streetAddress}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="section-head with-background-1">Địa chỉ thường trú</div>
+                    <div class="row">
+                        <div class="col-xs-6 margin-top-10">
+                            <label class="bold">Tỉnh/thành phố</label>
+                            <span class="form-control gray">{{vm.caseAddress.residentialAddress.province.name}}</span>
+                        </div>
+                        <div class="col-xs-6 margin-top-10">
+                            <label class="bold">Huyện/quận</label>
+                            <span class="form-control gray">{{vm.caseAddress.residentialAddress.district.name}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 margin-top-20">
+                            <label>Xã/phường</label>
+                            <span class="form-control gray">{{vm.caseAddress.residentialAddress.commune ? vm.caseAddress.residentialAddress.commune.name : ''}}</span>
+                        </div>
+                        <div class="col-xs-6 margin-top-20">
+                            <label>Thôn bản/số nhà</label>
+                            <span class="form-control gray">{{vm.caseAddress.residentialAddress.streetAddress}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section-head with-background-1"> Thông tin xét nghiệm</div>
+            <div class="row">
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Ngày làm XN sàng lọc</label>
+                    <span class="form-control gray">{{vm.positiveCase.screeningDate | date: 'dd/MM/yyyy hh:mm a'}}</span>
+                </div>
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Đơn vị đầu tiên tiếp cận KH</label>
+                    <span class="form-control gray">{{vm.positiveCase.screeningSite}}</span>
+                </div>
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Ngày khẳng định HIV+</label>
+                    <span class="form-control gray">{{vm.positiveCase.confirmDate | date: 'dd/MM/yyyy hh:mm a'}}</span>
+                </div>
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Mã số XNKĐ HIV+</label>
+                    <span class="form-control gray">{{vm.positiveCase.hivConfirmId}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-20">
+                    <label class="bold">Nơi khẳng định HIV+</label>
+                    <span class="form-control gray">{{vm.positiveCase.confirmLab.name}}</span>
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <label class="bold">Kết quả xét nghiệm nhanh nhiễm mới</label>
+                    <span class="form-control gray">{{vm.positiveCase.rtriPosLabel}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 margin-top-20">
+                    <label class="bold">Tư vấn xét nghiệm bạn tình/bạn chích chung</label>
+                    <span class="form-control gray">{{vm.positiveCase.offeredPnsLabel}}</span>
+                </div>
+                <div class="col-xs-6 margin-top-20">
+                    <label class="bold">Tình hình chuyển gửi</label>
+                    <span class="form-control gray">{{vm.positiveCase.treatmentStatus.name}}</span>
+                </div>
+            </div>
+            <div class="section-head with-background-1" ng-if="vm.positiveCase.treatmentStatus && vm.positiveCase.treatmentStatus.id > 0"> Thông tin điều trị</div>
+            <div class="row" ng-if="vm.positiveCase.treatmentStatus && vm.positiveCase.treatmentStatus.id == 1">
+                <div class="col-xs-6 margin-top-10">
+                    <label class="bold">Cơ sở điều trị đã tiếp nhận bệnh nhân</label>
+                    <span class="form-control gray">{{vm.positiveCase.opc.name}}</span>
+                </div>
+            </div>
+            <div class="row" ng-if="vm.positiveCase.treatmentStatus && vm.positiveCase.treatmentStatus.id == 2">
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Ngày đăng ký điều trị</label>
+                    <span class="form-control gray">{{vm.positiveCase.enrollmentDate | date: 'dd/MM/yyyy hh:mm a'}}</span>
+                </div>
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Ngày bắt đầu điều trị</label>
+                    <span class="form-control gray">{{vm.positiveCase.arvInitiationDate | date: 'dd/MM/yyyy hh:mm a'}}</span>
+                </div>
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Mã BN tại PKNT</label>
+                    <span class="form-control gray">{{vm.positiveCase.patientChartId}}</span>
+                </div>
+            </div>
+            <div class="section-head with-background-1"> Ghi chú</div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <span class="form-control gray">{{vm.positiveCase.note}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="edit_treatment_search_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-plus"></i> Thêm một ca điều trị</h4>
+        </div>
+        <div class="modal-body summary-panel">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="btn-group">
+                        <form class="form-inline" action="#" onsubmit="javascript: return false;">
+                        <input type="text" class="form-control" placeholder="Tìm trong danh sách..." ng-model="vm.untreatedFilter.keyword" autofocus />
+                        <button class="btn btn-default no-border" ng-click="vm.untreatedFilter.search()"><i class="icon-magnifier"></i> Tìm kiếm</button>
+                        </form>
+                    </div>
+                    <div class="btn-group pull-right">
+                        <button class="btn btn-default no-border" data-ng-click="vm.prepareEditForm4Tx()"><i class="fa fa-plus-circle"></i> Thêm bệnh nhân mới</button>
+                        <button type="button" class="btn btn-default no-border" ng-click="$dismiss()"><i class="fa fa-close"></i> Đóng lại</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row margin-top-10">
+                <div class="col-xs-12">
+                    <table id="bsTableControl3" bs-table-control="vm.bsTableControl3" ng-if="vm.untreatedCases.length > 0"></table>
+                    <div class="no-content1 display-block margin-top-20" ng-if="vm.untreatedCases.length <= 0">
+                        Không tìm thấy ca dương tính nào phù hợp. Bạn cũng có thể <a href="#" ng-click="vm.prepareEditForm4Tx()">thêm một bệnh nhân mới</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" ng-if="isSiteManager(currentUser)" id="edit_treatment_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title" data-ng-if="vm.treatmentCase.isNew == true"><i class="icon-plus"></i> Thêm một ca điều trị</h4>
+            <h4 class="modal-title" data-ng-if="vm.treatmentCase.isNew == false"><i class="fa fa-pencil-square-o"></i> Cập nhật thông tin một ca điều trị</h4>
+        </div>
+        <div class="modal-body summary-panel">
+            <div class="row margin-top-10">
+                <div class="col-xs-3">
+                    <label class="bold">Họ tên bệnh nhân</label>
+                    <input class="form-control" ng-model="vm.treatmentCase.fullname" id="vm.treatmentCase.fullname" autofocus />
+                </div>
+                <div class="col-xs-3">
+                    <label class="bold">Ngày sinh</label>
+                    <input class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker2.dateOpts"
+                           fp-on-setup="vm.datepicker2.datePostSetup(fpItem)"
+                           ng-model="vm.treatmentCase.dob"
+                           data-enabletime="false" />
+                </div>
+                <div class="col-xs-3">
+                    <label class="bold">Giới tính</label>
+                    <ui-select ng-model="vm.treatmentCase.gender" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="gender.id as gender in vm.genders | propsFilter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="gender.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-xs-3">
+                    <label>Số CMTND (nếu có)</label>
+                    <input class="form-control" ng-model="vm.treatmentCase.nationalId" maxlength="20" />
+                </div>
+            </div>
+            <div class="row">
+                <div ng-class="{'col-xs-12': vm.treatmentCase.sameAddress == true, 'col-xs-6': vm.treatmentCase.sameAddress == false}">
+                    <div class="section-head with-background-1">Địa chỉ hiện tại</div>
+                    <div class="row">
+                        <div class="col-xs-6 margin-top-10">
+                            <label class="bold">Tỉnh/thành phố</label>
+                            <ui-select ng-model="vm.caseAddress.currentAddress.province" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                <ui-select-match allow-clear="true" placeholder="Chọn tỉnh...">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="province in vm.addressFilter1.provinces | propsFilter: {name: $select.search}">
+                                    <div class="bold" ng-bind-html="province.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <div class="col-xs-6 margin-top-10">
+                            <label class="bold">Huyện/quận</label>
+                            <ui-select ng-model="vm.caseAddress.currentAddress.district" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                <ui-select-match allow-clear="true" placeholder="Chọn huyện...">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="district in vm.addressFilter1.districts | propsFilter: {name: $select.search}">
+                                    <div class="bold" ng-bind-html="district.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 margin-top-20">
+                            <label>Xã/phường</label>
+                            <ui-select ng-model="vm.caseAddress.currentAddress.commune" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                <ui-select-match allow-clear="true" placeholder="Chọn xã...">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="commune in vm.addressFilter1.communes | propsFilter: {name: $select.search}">
+                                    <div class="bold" ng-bind-html="commune.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <div class="col-xs-6 margin-top-20">
+                            <label>Thôn bản/số nhà</label>
+                            <input class="form-control" ng-model="vm.caseAddress.currentAddress.streetAddress" />
+                        </div>
+                    </div>
+                    <div>
+                        <div class="col-xs-12 margin-top-20">
+                            <div class="md-checkbox">
+                                <input type="checkbox" id="chk_same_address_alt" ng-model="vm.treatmentCase.sameAddress" class="md-check">
+                                <label for="chk_same_address_alt">
+                                    <span></span>
+                                    <span class="check"></span>
+                                    <span class="box"></span> Địa chỉ hiện tại trùng với địa chỉ thường trú?
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6" ng-if="vm.treatmentCase.sameAddress == false">
+                    <div class="section-head with-background-1">Địa chỉ thường trú</div>
+                    <div class="row">
+                        <div class="col-xs-6 margin-top-10">
+                            <label class="bold">Tỉnh/thành phố</label>
+                            <ui-select ng-model="vm.caseAddress.residentialAddress.province" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                <ui-select-match allow-clear="true" placeholder="Chọn tỉnh...">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="province in vm.addressFilter2.provinces | propsFilter: {name: $select.search}">
+                                    <div class="bold" ng-bind-html="province.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <div class="col-xs-6 margin-top-10">
+                            <label class="bold">Huyện/quận</label>
+                            <ui-select ng-model="vm.caseAddress.residentialAddress.district" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                <ui-select-match allow-clear="true" placeholder="Chọn huyện...">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="district in vm.addressFilter2.districts | propsFilter: {name: $select.search}">
+                                    <div class="bold" ng-bind-html="district.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 margin-top-20">
+                            <label>Xã/phường</label>
+                            <ui-select ng-model="vm.caseAddress.residentialAddress.commune" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                <ui-select-match allow-clear="true" placeholder="Chọn xã...">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="commune in vm.addressFilter2.communes | propsFilter: {name: $select.search}">
+                                    <div class="bold" ng-bind-html="commune.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <div class="col-xs-6 margin-top-20">
+                            <label>Thôn bản/số nhà</label>
+                            <input class="form-control" ng-model="vm.caseAddress.residentialAddress.streetAddress" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section-head with-background-1">Thông tin xét nghiệm và điều trị<span ng-if="vm.treatmentCase.fromPrevWeek" class="warning">&mdash; GHI CHÚ: Bệnh nhân này được khẳng định từ trước.</span></div>
+            <div class="row">
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Ngày khẳng định HIV+</label>
+                    <input ng-if="vm.treatmentCase.fromPrevWeek" type="text" readonly="readonly" class="form-control" ng-value="vm.treatmentCase.confirmDate | date: 'dd/MM/yyyy hh:mm a'" />
+                    <input ng-if="!vm.treatmentCase.fromPrevWeek" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker4.dateOpts"
+                           fp-on-setup="vm.datepicker4.datePostSetup(fpItem)"
+                           ng-model="vm.treatmentCase.confirmDate"
+                           data-enabletime="false" />
+                </div>
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Mã số XNKĐ HIV+</label>
+                    <input class="form-control" ng-readonly="vm.treatmentCase.fromPrevWeek" ng-model="vm.treatmentCase.hivConfirmId" id="vm.treatmentCase.hivConfirmId" />
+                </div>
+                <div class="col-xs-6 margin-top-10">
+                    <label class="bold">Nơi khẳng định HIV+</label>
+                    <input ng-if="vm.treatmentCase.fromPrevWeek" type="text" readonly="readonly" class="form-control" ng-value="vm.treatmentCase.confirmLab.name" />
+                    <ui-select ng-if="!vm.treatmentCase.fromPrevWeek" ng-model="vm.treatmentCase.confirmLab" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="lab in vm.confirmLabs | propsFilter: {name: $select.search}" position="up">
+                            <div class="bold" ng-bind-html="lab.name | highlight: $select.search"></div>
+                            <div ng-bind-html="lab.address.province.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-3 margin-top-20">
+                    <label class="bold">Ngày đăng ký điều trị</label>
+                    <input class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker5.dateOpts"
+                           fp-on-setup="vm.datepicker5.datePostSetup(fpItem)"
+                           ng-model="vm.treatmentCase.enrollmentDate"
+                           data-enabletime="false" />
+                </div>
+                <div class="col-xs-3 margin-top-20">
+                    <label class="bold">Ngày bắt đầu điều trị</label>
+                    <input class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker6.dateOpts"
+                           fp-on-setup="vm.datepicker6.datePostSetup(fpItem)"
+                           ng-model="vm.treatmentCase.arvInitiationDate"
+                           data-enabletime="false" />
+                </div>
+                <div class="col-xs-3 margin-top-20">
+                    <label class="bold">Mã BN tại PKNT</label>
+                    <input type="text" class="form-control" ng-model="vm.treatmentCase.patientChartId" id="vm.treatmentCase.patientChartId" />
+                </div>
+                <div class="col-xs-3 margin-top-20">
+                    <label>Ghi chú</label>
+                    <textarea class="form-control" ng-model="vm.treatmentCase.note" rows="1" style="resize: vertical; min-height: 35px"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-if="!isSiteManager(currentUser)" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+            <button type="button" ng-if="isSiteManager(currentUser)" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Huỷ bỏ</button>
+            <button type="button" ng-if="isSiteManager(currentUser)" ng-click="vm.saveTreatmentCase()" class="btn btn-primary" data-dismiss="modal">Lưu lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" ng-if="!isSiteManager(currentUser)" id="edit_treatment_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="fa fa-th-large"></i> Chi tiết thông tin một ca điều trị</h4>
+        </div>
+        <div class="modal-body summary-panel">
+            <div class="row margin-top-10">
+                <div class="col-xs-3">
+                    <label class="bold">Họ tên bệnh nhân</label>
+                    <span class="form-control gray">{{vm.treatmentCase.fullname}}</span>
+                </div>
+                <div class="col-xs-3">
+                    <label class="bold">Ngày sinh</label>
+                    <span class="form-control gray">{{vm.treatmentCase.dob | date: 'dd/MM/yyyy'}}</span>
+                </div>
+                <div class="col-xs-3">
+                    <label class="bold">Giới tính</label>
+                    <span class="form-control gray">{{vm.treatmentCase.gender == 'MALE' ? 'Nam' : vm.treatmentCase.gender == 'FEMALE' ? 'Nữ' : 'Không rõ'}}</span>
+                </div>
+                <div class="col-xs-3">
+                    <label>Số CMTND (nếu có)</label>
+                    <span class="form-control gray">{{vm.treatmentCase.nationalId}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="section-head with-background-1">Địa chỉ hiện tại</div>
+                    <div class="row">
+                        <div class="col-xs-6 margin-top-10">
+                            <label class="bold">Tỉnh/thành phố</label>
+                            <span class="form-control gray">{{vm.caseAddress.currentAddress.province.name}}</span>
+                        </div>
+                        <div class="col-xs-6 margin-top-10">
+                            <label class="bold">Huyện/quận</label>
+                            <span class="form-control gray">{{vm.caseAddress.currentAddress.district.name}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 margin-top-20">
+                            <label>Xã/phường</label>
+                            <span class="form-control gray">{{vm.caseAddress.currentAddress.commune ? vm.caseAddress.currentAddress.commune.name : ''}}</span>
+                        </div>
+                        <div class="col-xs-6 margin-top-20">
+                            <label>Thôn bản/số nhà</label>
+                            <span class="form-control gray">{{vm.caseAddress.currentAddress.streetAddress}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="section-head with-background-1">Địa chỉ thường trú</div>
+                    <div class="row">
+                        <div class="col-xs-6 margin-top-10">
+                            <label class="bold">Tỉnh/thành phố</label>
+                            <span class="form-control gray">{{vm.caseAddress.residentialAddress.province.name}}</span>
+                        </div>
+                        <div class="col-xs-6 margin-top-10">
+                            <label class="bold">Huyện/quận</label>
+                            <span class="form-control gray">{{vm.caseAddress.residentialAddress.district.name}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 margin-top-20">
+                            <label>Xã/phường</label>
+                            <span class="form-control gray">{{vm.caseAddress.residentialAddress.commune ? vm.caseAddress.residentialAddress.commune.name : ''}}</span>
+                        </div>
+                        <div class="col-xs-6 margin-top-20">
+                            <label>Thôn bản/số nhà</label>
+                            <span class="form-control gray">{{vm.caseAddress.residentialAddress.streetAddress}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section-head with-background-1">Thông tin xét nghiệm và điều trị<span ng-if="vm.treatmentCase.fromPrevWeek" class="warning">&mdash; GHI CHÚ: Bệnh nhân này được khẳng định từ trước.</span></div>
+            <div class="row">
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Ngày khẳng định HIV+</label>
+                    <span class="form-control gray">{{vm.treatmentCase.confirmDate | date: 'dd/MM/yyyy hh:mm a'}}</span>
+                </div>
+                <div class="col-xs-3 margin-top-10">
+                    <label class="bold">Mã số XNKĐ HIV+</label>
+                    <span class="form-control gray">{{vm.treatmentCase.hivConfirmId}}</span>
+                </div>
+                <div class="col-xs-6 margin-top-10">
+                    <label class="bold">Nơi khẳng định HIV+</label>
+                    <span class="form-control gray">{{vm.treatmentCase.confirmLab.name}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-3 margin-top-20">
+                    <label class="bold">Ngày đăng ký điều trị</label>
+                    <span class="form-control gray">{{vm.treatmentCase.enrollmentDate | date: 'dd/MM/yyyy hh:mm a'}}</span>
+                </div>
+                <div class="col-xs-3 margin-top-20">
+                    <label class="bold">Ngày bắt đầu điều trị</label>
+                    <span class="form-control gray">{{vm.treatmentCase.arvInitiationDate | date: 'dd/MM/yyyy hh:mm a'}}</span>
+                </div>
+                <div class="col-xs-3 margin-top-20">
+                    <label class="bold">Mã BN tại PKNT</label>
+                    <span class="form-control gray">{{vm.treatmentCase.patientChartId}}</span>
+                </div>
+                <div class="col-xs-3 margin-top-20">
+                    <label>Ghi chú</label>
+                    <span class="form-control gray">{{vm.treatmentCase.note}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="report_found_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" data-ng-disabled="true" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-question"></i> Báo cáo đã tồn tại</h4>
+        </div>
+        <div class="modal-body">
+            <p>Cơ sở <b>{{vm.weeklyReport.organization.name}}</b> đã lập một báo cáo của tuần <b>{{vm.weeklyReport.fromDate | weekString}}</b>. Bạn không thể lập 2 báo cáo cho cùng một cơ sở trong một tuần, tuy nhiên bạn có thể sửa báo cáo đã được lập trước đó.<br /><br /> Bạn có muốn thực hiện sửa báo cáo này không?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="vm.datepicker.setNull()" class="btn btn-default" data-dismiss="modal">Không</button>
+            <a type="button" href="#/reporting/weekly/edit/{{vm.weeklyReport.id}}/" class="btn btn-default" data-dismiss="modal">Có</a>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="confirm_delete_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-question"></i> Xoá bản ghi</h4>
+        </div>
+        <div class="modal-body">
+            <p>Bạn có chắc chắn muốn xoá <span ng-cloak>{{vm.selectedReports.length}}</span> bản ghi đã chọn không?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Không</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-default" data-dismiss="modal">Có</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="confirm_delete_positivecase_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-question"></i> Xoá bản ghi</h4>
+        </div>
+        <div class="modal-body">
+            <p>Bạn có chắc chắn muốn xoá thông tin khách hàng dương tính <b>{{vm.positiveCase.fullname}}</b> không?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Không</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-default" data-dismiss="modal">Có</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="confirm_delete_treatmentcase_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-question"></i> Xoá bản ghi</h4>
+        </div>
+        <div class="modal-body">
+            <p>Bạn có chắc chắn muốn xoá thông tin bệnh nhân <b>{{vm.treatmentCase.fullname}}</b> không?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Không</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-default" data-dismiss="modal">Có</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="confirm_dapproval_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-question"></i> {{vm.dialog.title}}</h4>
+        </div>
+        <div class="modal-body">
+            <p ng-bind-html="vm.dialog.message"></p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Không</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-primary" data-dismiss="modal">Có</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="confirm_change_status_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-question"></i> {{vm.dialog.title}}</h4>
+        </div>
+        <div class="modal-body">
+            <p ng-bind-html="vm.dialog.message"></p>
+            <div class="row" ng-if="vm.dialog.returned">
+                <div class="col-xs-12">
+                    <div class="error-block" ng-if="vm.dialog.hasCommentError"><i class="icon-exclamation"></i> <span class="bold">Có lỗi:</span> Bạn vui lòng cho biết lý do trả lại báo cáo.</div>
+                    <label class="bold">Lý do trả lại báo cáo</label>
+                    <textarea id="vm.weeklyReport.comment" autofocus class="form-control" ng-model="vm.weeklyReport.comment" rows="3" style="resize: vertical; min-height: 35px"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Không</button>
+            <button type="button" ng-click="vm.submitReportStatus(vm.dialog.status)" class="btn btn-primary" data-dismiss="modal">Có</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="case_note_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <h4 class="modal-title"><i class="icon-exclamation"></i> {{_case.fullname + (_case.hivConfirmId? (' -- ' + _case.hivConfirmId) : '')}}</h4>
+        </div>
+        <div class="modal-body">
+            <label>Nội dung ghi chú</label>
+            <textarea rows="4" data-ng-model="_case.note" autofocus class="form-control"></textarea>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Lưu lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="error_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-exclamation"></i> {{vm.dialog.title}}</h4>
+        </div>
+        <div class="modal-body">
+            <p ng-bind-html="vm.dialog.message"></p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="old_new_cases_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <!--<button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>-->
+            <h4 class="modal-title"><i class="im im-icon-Clock-Back"></i> {{vm.dialog.title}}</h4>
+        </div>
+        <div class="modal-body summary-panel">
+            <div class="row">
+                <div class="col-xs-12">
+                    <table id="bsTableControl4" bs-table-control="vm.bsTableControl4" ng-if="cases.length > 0"></table>
+                    <div class="no-content1 display-block margin-top-20" ng-if="cases.length <= 0">
+                        {{vm.dialog.message}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button  ng-if="cases.length <= 0" type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+            <button  ng-if="cases.length > 0" type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Huỷ bỏ</button>
+            <button  ng-if="cases.length > 0" type="button" ng-click="$close('yes')" class="btn btn-primary" data-dismiss="modal">Lưu lại</button>
+        </div>
+    </div>
+</script>
+<!-- END MAIN CONTENT -->

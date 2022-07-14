@@ -1,0 +1,153 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="fa fa-magic"></i> Đánh giá tiêu chuẩn làm TBXNBT/BC</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#">Trang chủ</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#/pns-assess">Đánh giá TBXNBT/BC</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body" id="sticky-header-container">
+                <div class="row sticky-panel on-toolbar not-for-print" hl-sticky="" sticky-class="is-sticky custom-alt narrow-bottom-margin" >
+                    <div class="col-xs-12">
+                        <div class="opc-toolbar margin-top-10 margin-bottom-10">
+                            <button data-ng-disabled="vm.page.current <= 1" ng-click="vm.page.change(-1)" class="btn btn-primary no-border" tooltip-placement="bottom" uib-tooltip="Quay&nbsp;lại"><i class="fa fa-long-arrow-left"></i><span class="hidden-xs hidden-sm"> Quay lại</span></button>
+                            <div class="vertical-seperator float-right"></div>
+                            <button class="btn btn-primary no-border" tooltip-placement="bottom" uib-tooltip="Lưu&nbsp;lại" data-ng-disabled="vm.entry.locked || vm.prohibited.value" ng-click="vm.save(vm.page.current)"><i class="fa fa-download"></i><span class="hidden-xs hidden-sm"> Lưu lại</span></button>
+                            <div class="vertical-seperator float-right"></div>
+                            <button data-ng-disabled="vm.page.current >= vm.page.max" ng-if="vm.entry.locked || (vm.page.current == 1 && vm.entry.id)" ng-click="vm.page.change(1)" class="btn btn-primary no-border" tooltip-placement="bottom" uib-tooltip="Đi&nbsp;tiếp"><span class="hidden-xs hidden-sm">Đi tiếp </span><i class="fa fa-long-arrow-right"></i></button>
+                            <button data-ng-disabled="vm.page.current >= vm.page.max || vm.prohibited.value" ng-if="!vm.entry.locked && vm.entry.id && vm.page.current != 1" ng-click="vm.page.change(1)" class="btn btn-primary no-border" tooltip-placement="bottom" uib-tooltip="Lưu&nbsp;&&nbsp;đi&nbsp;tiếp"><span class="hidden-xs hidden-sm">Lưu và Đi tiếp </span><i class="fa fa-long-arrow-right"></i></button>
+                            <div class="vertical-seperator float-right" ng-if="vm.entry.id"></div>
+                            <a class="btn btn-default no-border" href="#/pns-assess" tooltip-placement="bottom" uib-tooltip="Đóng&nbsp;lại"><i class="fa fa-close"></i><span class="hidden-xs hidden-sm hidden-md"> Đóng lại</span></a>
+                            <div class="vertical-seperator float-right" ng-if="vm.page.current == vm.page.max"></div>
+                            <button class="btn btn-primary" ng-click="vm.beforeSubmit();" tooltip-placement="bottom" uib-tooltip="Gửi&nbsp;kết&nbsp;quả&nbsp;đánh&nbsp;giá" data-ng-disabled="vm.entry.submitted || !vm.entry.id" ng-if="vm.page.current == vm.page.max"><i class="fa fa-paper-plane-o"></i><span class="hidden-xs"> Gửi kết quả<span class="hidden-sm hidden-md"> lên tuyến trên</span></span></button>
+                            <div class="vertical-seperator float-right" ng-if="vm.page.current == 1"></div>
+                            <a ng-if="vm.page.current == 1" ng-click="vm.statusPaneVis.toggle();" class="btn btn-default" ng-class="{'btn-selected' : vm.statusPaneVis.value, 'no-border' : !vm.statusPaneVis.value}" href="#"><i class="im im-icon-Light-Bulb2"></i><span class="hidden-xs"> Hướng dẫn</span></a>
+                            <span ng-if="!vm.entry.id" class="btn btn-default no-border float-right">Trang {{vm.page.current}} / Tổng số {{vm.page.max}} trang.</span>
+                            <div ng-if="vm.entry.id" class="pns-toolbar-selectbox">
+                                <ui-select ng-model="vm.page.current" sortable="true" close-on-select="true" style="width: 110px !important;">
+                                    <ui-select-match allow-clear="false" placeholder="Xin chọn...">{{$select.selected.value}}</ui-select-match>
+                                    <ui-select-choices repeat="p.id as p in vm.page.pages | filter: {value: $select.search}">
+                                        <div class="bold" ng-bind-html="p.value | highlight: $select.search"></div>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                            <div ng-if="vm.entry.id" class="hidden-xs bold">&nbsp;/ {{vm.page.max}} TRANG</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 summary-panel padding-bottom-30">
+                        <div class="info-box-alt" ng-if="vm.statusPaneVis.value && vm.page.current == 1"><span class="header"><i class="im im-icon-Idea-2"></i> Hướng dẫn đánh giá</span>
+                            <p>Trước khi bắt đầu, hãy giải thích mục đích và phương pháp buổi đánh giá cho nhân viên tại cơ sở. Nhấn mạnh rằng đánh giá là để tăng cường chất lượng dịch vụ TBXNBT/BC đang được cung cấp tại cơ sở trên tinh thần hợp tác và giúp đỡ. Hỏi nhân viên cơ sở xem họ có thắc mắc gì về việc đánh giá không.</p>
+                            <p>Cần trả lời và điền đầy đủ cũng như tải lên các tài liệu (định dạng .doc, .pdf, hoặc .ppt, khác) liên quan như yêu cầu trong các câu hỏi của đánh giá.</p>
+                            <p>Nội dung yêu cầu trong đánh giá được ẩn tùy theo các câu trả lời.</p>
+                            <p>Có chức năng lưu tạm để tiếp tục hoàn thành các câu hỏi trong lần truy cập sau.</p>
+                            <p>Khi kết thúc cần gửi kết quả đánh giá lên tuyến trên để cùng phối hợp trong việc ghi nhận và có hành động cùng cải thiện. Cơ sở và tuyến trên tiếp cận và in ra kết quả và các thông tin ghi nhận tại buổi đánh giá.</p>
+                            <p>Cần phản hồi tại chỗ ngay sau buổi đánh giá cho nhân viên và phụ trách cơ sở cung cấp dịch vụ:</p>
+                            <ul style="padding-left: 60px;">
+                                <li>Cảm ơn nhân viên cơ sở đã dành thời gian và hợp tác trong quá trình đánh giá; thừa nhận là buổi đánh giá có thể đã gây gián đoạn việc cung cấp dịch vụ.</li>
+                                <li>Nêu rõ các lĩnh vực được thực hiện tốt và kinh nghiệm tốt. Cách phản hồi này là để thúc đẩy tinh thần, khuyến khích sự chủ động và truyền cảm hứng cho nhân viên trong việc cung cấp dịch vụ và tiếp tục cải thiện các lĩnh vực được xác định.</li>
+                                <li>Tiếp theo, đề cập đến các lĩnh vực đòi hỏi cần cải thiện đáng kể. Hãy khẳng định rõ là kết quả đánh giá không phải để trừng phạt mà để xác định rõ các lĩnh vực cơ sở và các bên liên quan sẽ cần cùng nhau phối hợp để cải thiện chất lượng và kết quả. Cần có sự quan tâm của lãnh đạo hoặc phụ trách và nhân viên liên quan tại cơ sở tới các vấn đề về chính sách hoặc quy trình được phát hiện. Hãy thảo luận về các cách khắc phục hoặc cải thiện. Yêu cầu rõ ràng cơ sở cần có kế hoạch hành động cụ thể để khắc phục hay cải thiện việc chưa đạt các tiêu chuẩn tối thiểu.</li>
+                                <li>In hoặc hoặc gửi email cho nhân viên và cơ sở cung cấp dịch vụ một bản copy kết quả buổi đánh giá trước khi kết thúc.</li>
+                            </ul>
+                        </div>
+                        <div ng-repeat="p in [].constructor(vm.page.max) track by $index" ng-if="vm.page.current == ($index + 1)" ng-include="'pns/views/pages/' + ($index + 1) + '.html'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<!-- BEGIN MAIN JS-->
+<script type="text/ng-template" id="upload_file_modal.html">
+    <div modal-movable min-width="350px" auto-height="yes">
+        <div class="modal-header">
+            <h4 class="modal-title"><i class="icon-cloud-upload"></i> Tải tệp tin</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a class="no-content1 display-block link" ngf-select="vm.uploader.triggerUpload($file, $invalidFiles)"
+                               accept="*/*" ngf-max-size="{{vm.uploader.MAX_FILE_SIZE}}"><i class="fa fa-cloud-upload"></i> Chọn tệp tin để tải lên</a>
+                        </div>
+
+                        <div class="col-md-12 margin-top-20" ng-if="vm.uploader.uploadedFile != null">
+                            <div class="row">
+                                <div class="col-xs-5 align-right">
+                                    <label>Tệp tin đã chọn:</label>
+                                </div>
+                                <div class="col-xs-7">
+                                    <span class="bold">{{vm.uploader.uploadedFile.name}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 margin-top-20" ng-if="vm.uploader.errorFile != null && vm.uploader.errorFile.$error != ''">
+                            Lỗi: <span class="bold" ng-if="vm.uploader.errorFile.$error == 'maxSize'">Kích thước tệp tin phải nhỏ hơn {{vm.uploader.errorFile.$errorParam}}</span>
+                            <span class="bold" ng-if="vm.uploader.errorFile.$error != null && vm.uploader.errorFile.$error != 'maxSize'">Tệp tin {{vm.uploader.errorFile.name}} không hợp lệ. Vui lòng chọn tệp tin khác.</span>
+                        </div>
+
+                        <div class="col-md-12 margin-top-20" ng-if="vm.uploader.uploadedFile.progress >= 0">
+                            <div class="progress" style="height: 20px">
+                                <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" ng-bind="vm.uploader.uploadedFile.progress + '%'" style="width:{{vm.uploader.uploadedFile.progress}}%;">
+                                    {{vm.uploader.uploadedFile.progress}}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="vm.uploader.closeUploadFile()"  data-ng-disabled="vm.uploader.uploadedFile.progress > 0 && vm.uploader.uploadedFile.progress < 100" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+            <button type="button" ng-click="vm.uploader.startUploadFile(vm.uploader.uploadedFile)" class="btn btn-primary" data-ng-disabled="vm.uploader.uploadedFile == null || (vm.uploader.errorFile != null && vm.uploader.errorFile.$error != '') || vm.uploader.uploadedFile.progress >= 100" data-dismiss="modal">Tải lên</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="confirm_submission_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="fa fa-paper-plane-o"></i> Gửi đánh giá lên tuyến trên</h4>
+        </div>
+        <div class="modal-body">
+            <p>Bạn có chắc chắn muốn gửi đánh giá của cơ sở [{{vm.entry.facility.name}}] lên tuyến trên không?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Không</button>
+            <button type="button" ng-click="vm.submit()" class="btn btn-primary" data-dismiss="modal">Có</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="prohibited_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Đã tồn tại bản ghi</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="icon-exclamation"></i></div>
+            <div><span>{{vm.prohibited.message}}
+            </span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Đóng lại</button>
+        </div>
+    </div>
+</script>
+<!-- BEGIN MAIN JS -->

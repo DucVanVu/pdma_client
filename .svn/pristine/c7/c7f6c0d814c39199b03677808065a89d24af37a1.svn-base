@@ -1,0 +1,390 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="pdma-ext1-icon-life-insurance-2 margin-right-5"></i> Tình hình sử dụng BHYT trong điều trị ARV</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#/opc/patients"><i class="fa fa-th-large"></i> Danh sách</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#/opc/view-patient/{{vm.patient.id}}">{{vm.patient.theCase.person.fullname}}</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#">Tình hình sử dụng BHYT</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body" id="sticky-container">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs">
+                                <li class="uppercase">
+                                    <a href="#/opc-dashboard" uib-tooltip="Tổng quan"><i class="fa fa-area-chart"></i><span class="hidden-xs" ng-class="{'hidden-sm' : isSiteManager(currentUser) || (vm.selectedEntry && vm.selectedEntry.theCase.person)}"> Tổng quan</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/patients" uib-tooltip="Quản&nbsp;lý bệnh&nbsp;nhân"><i class="fa fa-wheelchair-alt"></i><span class="hidden-xs hidden-sm hidden-md"> Bệnh nhân</span></a>
+                                </li>
+                                <li class="uppercase" ng-if="isSiteManager(currentUser)">
+                                    <a href="#/opc/appointment-cal/edit" uib-tooltip="Khám&nbsp;bệnh&nbsp;-&nbsp;Cấp&nbsp;thuốc"><i class="icon-calendar"></i><span class="hidden-xs"> Lịch khám </span></a>
+                                    <!--<span class="tab-new-function"><i class="fa fa-flash"></i> mới</span>-->
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/report" uib-tooltip="Báo&nbsp;cáo"><i class="fa fa-bar-chart"></i><span class="hidden-xs"> Báo cáo</span></a>
+                                </li>
+                                <li class="active uppercase">
+                                    <a href="#"><i class="icon-pencil"></i> <span class="bold">Thông tin BHYT:</span> {{vm.patient.theCase.person.fullname}}</a>
+                                </li>
+                                <li class="uppercase" ng-if="vm.editingEntry">
+                                    <a uib-tooltip="Cập&nbsp;nhật&nbsp;hồ&nbsp;sơ" href="#/opc/edit-patient/{{vm.editingEntry.id ? vm.editingEntry.id : 0}}"><i class="icon-pencil"></i> {{vm.editingEntry.theCase.person && vm.editingEntry.theCase.person.fullname ? vm.editingEntry.theCase.person.fullname : 'Bệnh nhân mới'}}</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content summary-panel">
+                                <div class="tab-pane active margin-bottom-30">
+                                    <div class="opc-toolbar margin-top-10 margin-bottom-10 sticky-panel" hl-sticky="" container="sticky-container" sticky-class="is-sticky custom-alt-2">
+                                        <button data-ng-disabled="vm.orgsWritable.length <= 0 || !vm.patient.editable" ng-click="vm.saveInterview();" class="btn btn-primary no-border" uib-tooltip="Lưu&nbsp;kết&nbsp;quả&nbsp;phỏng&nbsp;vấn" tooltip-placement="auto"><i class="glyphicon glyphicon-save margin-right-10"></i>Lưu thay đổi</button>
+                                        <div class="vertical-seperator float-right"></div>
+                                        <div class="col-lg-3 col-xs-5 inline-control">
+                                            <ui-select ng-model="vm.filter.instance" ng-change="vm.onInterviewDateChange()" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                <ui-select-match allow-clear="false" placeholder="{{vm.filter.interviewDatePlaceholder}}">{{$select.selected.interviewDateLabel}}</ui-select-match>
+                                                <ui-select-choices repeat="instance in vm.instances | filter: {interviewDateLabel: $select.search}">
+                                                    <div class="bold" ng-if="$index > 1" ng-bind-html="instance.interviewDateLabel">hello</div>
+                                                    <hr class="small-margin" ng-if="$index == 1" />
+                                                    <div class="bold" ng-if="$index == 0" ng-bind-html="instance.interviewDateLabel"></div>
+                                                    <div class="small" ng-if="$index > 1" ng-bind-html="'&mdash;' + (instance.hasShiCard ? ' Có thẻ BHYT' : ' Không có thẻ BHYT')"></div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                        <div class="vertical-seperator float-right"></div>
+                                        <a href="#/opc/view-patient/{{vm.patient.id}}" uib-tooltip="Quay&nbsp;trở&nbsp;lại" class="btn btn-default no-border" tooltip-placement="auto"><i class="fa fa-arrow-left"></i> Trở lại</a>
+                                        <button class="float-right btn btn-danger no-border" data-ng-disabled="vm.orgsWritable.length <= 0 || !vm.entry.id || !vm.patient.editable" uib-tooltip="Xóa&nbsp;bản&nbsp;ghi" ng-click="vm.deleteShiRecord()" tooltip-placement="auto"><i class="icon-trash"></i><span class="margin-left-10 hidden-xs">Xóa bản ghi</span></button>
+                                    </div>
+                                    <div class="padding-left-20">
+                                        <!--
+                                        <div class="section-head with-background-1 bold"><i class="im im-icon-Leafs color-7 margin-right-10"></i>Thông tin chung</div>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-sm-4 margin-top-20">
+                                                <label class="font-weight-500">Tình trạng đăng ký chỗ ở</label>
+                                                <ui-select id="vm.entry.residentStatus" ng-model="vm.entry.residentStatus" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                    <ui-select-choices repeat="f.id as f in vm.options.residencies | filter: {name: $select.search}">
+                                                        <div class="bold" ng-bind-html="f.name | highlight: $select.search"></div>
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-4 margin-top-20">
+                                                <label class="font-weight-500">Công việc hiện tại</label>
+                                                <ui-select id="vm.entry.occupation" ng-model="vm.entry.occupation" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                    <ui-select-choices repeat="f.id as f in vm.options.occupations | filter: {name: $select.search}">
+                                                        <div class="bold" ng-bind-html="f.name | highlight: $select.search"></div>
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-4 margin-top-20">
+                                                <label class="font-weight-500" ng-class="{'text-muted mutter' : vm.entry.occupation != 9}">Ghi rõ công việc khác</label>
+                                                <input id="vm.entry.occupationName" class="form-control" ng-model="vm.entry.occupationName" ng-disabled="vm.entry.occupation != 9" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-sm-4 margin-top-20">
+                                                <label class="font-weight-500">Thu nhập trung bình tháng</label>
+                                                <ui-select id="vm.entry.monthlyIncome" ng-model="vm.entry.monthlyIncome" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                    <ui-select-choices repeat="f.id as f in vm.options.monthlyIncomes | filter: {name: $select.search}">
+                                                        <div class="bold" ng-bind-html="f.name | highlight: $select.search"></div>
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-4 margin-top-20">
+                                                <label class="font-weight-500">Tình trạng kinh tế</label>
+                                                <ui-select id="vm.entry.wealthStatus" ng-model="vm.entry.wealthStatus" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                    <ui-select-choices repeat="f.id as f in vm.options.wealthStatuses | filter: {name: $select.search}">
+                                                        <div class="bold" ng-bind-html="f.name | highlight: $select.search"></div>
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-4 margin-top-20">
+                                                <label class="font-weight-500" ng-class="{'text-muted mutter' : vm.entry.wealthStatus != 4}">Ghi rõ tình trạng kinh tế khác</label>
+                                                <input id="vm.entry.wealthStatusName" class="form-control" ng-model="vm.entry.wealthStatusName" ng-disabled="vm.entry.wealthStatus != 4" />
+                                            </div>
+                                        </div>
+                                        -->
+                                        <div class="section-head with-background-1 bold"><i class="im im-icon-Leafs color-7 margin-right-10"></i>Thông tin về thẻ bảo hiểm y tế</div>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-sm-4 margin-top-20">
+                                                <label class="bold">Thẻ bảo hiểm y tế</label>
+                                                <ui-select id="vm.entry.hasShiCard" ng-model="vm.entry.hasShiCard" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                    <ui-select-choices repeat="f.id as f in vm.options.shiAvailability | filter: {name: $select.search}">
+                                                        <div class="bold" ng-bind-html="f.name | highlight: $select.search"></div>
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-4 margin-top-20">
+                                                <label class="bold" ng-class="{'text-muted mutter' : !vm.entry.hasShiCard}">Mã thẻ bảo hiểm y tế</label>
+                                                <input id="vm.entry.shiCardNumber" class="form-control" ng-model="vm.entry.shiCardNumber" input-mask="AA 9 99 999 999 9999" ng-disabled="!vm.entry.hasShiCard" />
+                                            </div>
+                                            <div class="col-lg-3 col-sm-4 margin-top-20 form-controller-alt-2">
+                                                <label class="bold" ng-class="{'text-muted mutter' : !vm.entry.hasShiCard}">Hạn dùng thẻ bảo hiểm y tế</label>
+                                                <input class="form-control" ng-if="!vm.entry.hasShiCard" disabled="disabled" />
+                                                <input id="vm.entry.shiExpiryDate" ng-if="vm.entry.hasShiCard" class="form-control" placeholder="Chọn ngày..."
+                                                       ng-flatpickr
+                                                       fp-opts="vm.datepicker.dateOpts"
+                                                       fp-on-setup="vm.datepicker.datePostSetup(fpItem)"
+                                                       ng-model="vm.entry.shiExpiryDate"
+                                                       data-enabletime="false" />
+                                                <a ng-if="vm.entry.shiExpiryDate" class="clear-picker input-has-label" ng-click="vm.datepicker.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-sm-4 margin-top-20">
+                                                <label class="bold" ng-class="{'text-muted mutter' : !vm.entry.hasShiCard}">Tuyến thẻ bảo hiểm</label>
+                                                <input class="form-control" ng-if="!vm.entry.hasShiCard" disabled="disabled" />
+                                                <ui-select id="vm.entry.shiRoute" ng-if="vm.entry.hasShiCard" ng-model="vm.entry.shiRoute" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                    <ui-select-choices repeat="f.id as f in vm.options.shiRoutes | filter: {name: $select.search}">
+                                                        <div class="bold" ng-bind-html="f.name | highlight: $select.search"></div>
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-5 margin-top-20">
+                                                <label class="bold" ng-class="{'text-muted mutter' : !vm.entry.hasShiCard}">Nơi đ/ký KCB ban đầu</label>
+                                                <input class="form-control" ng-if="!vm.entry.hasShiCard" disabled="disabled" />
+                                                <ui-select id="vm.entry.primaryCareFacility" ng-if="vm.entry.hasShiCard" ng-model="vm.entry.primaryCareFacility" ng-change="vm.onPrimaryCareFacilityChange()" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                    <ui-select-choices repeat="f in vm.options.opcs | filter: {name: $select.search}">
+                                                        <div class="bold" ng-if="$index != 1" ng-bind-html="f.name | highlight: $select.search"></div>
+                                                        <div class="small" ng-if="$index > 1 && f.address && f.address.province" ng-bind-html="('&mdash; ' + f.address.province.name)"></div>
+                                                        <hr class="small-margin" ng-if="$index == 1" />
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-if="vm.entry.primaryCareFacility && vm.entry.primaryCareFacility.id == 0">
+                                            <div class="col-sm-9 margin-top-20">
+                                                <label class="bold">Nơi đ/ký KCB ban đầu khác</label>
+                                                <input id="vm.entry.primaryCareFacilityName" class="form-control" ng-model="vm.entry.primaryCareFacilityName" />
+                                            </div>
+                                        </div>
+                                        <!--
+                                        <div class="row">
+                                            <div class="col-sm-6 margin-top-30">
+                                                <div class="md-checkbox">
+                                                    <input type="checkbox" id="chk_want_shi4arv" ng-model="vm.entry.wantShiForArv" class="md-check">
+                                                    <label for="chk_want_shi4arv">
+                                                        <span></span>
+                                                        <span class="check"></span>
+                                                        <span class="box"></span> Bệnh nhân muốn sử dụng BHYT trong điều trị ARV
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6 margin-top-30">
+                                                <div class="md-checkbox">
+                                                    <input type="checkbox" ng-disabled="!vm.entry.hasShiCard" id="chk_used_shi4arv" ng-model="vm.entry.usedShiForArv" class="md-check">
+                                                    <label for="chk_used_shi4arv">
+                                                        <span></span>
+                                                        <span class="check"></span>
+                                                        <span class="box"></span> Bệnh nhân đã sử dụng BHYT trong điều trị ARV
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-if="vm.entry.hasShiCard == false">
+                                            <div class="col-xs-12 margin-top-20"><label class="bold">Lý do bệnh nhân không có thẻ BHYT</label></div>
+                                        </div>
+                                        <div class="row" ng-if="vm.entry.hasShiCard == false">
+                                            <div class="col-lg-9" style="padding-left: 20px">
+                                                <div class="row">
+                                                    <div class="col-sm-6" style="padding-top: 20px;" ng-repeat="opt in vm.options.noSHIReasons">
+                                                        <div class="md-checkbox">
+                                                            <input type="checkbox" id="chk_noshireason_{{opt.id}}" ng-change="vm.updateSelectBoxValues('noShiReasons')" ng-model="vm.entry.noShiReasons_tmp[opt.id]" class="md-check">
+                                                            <label for="chk_noshireason_{{opt.id}}">
+                                                                <span></span>
+                                                                <span class="check"></span>
+                                                                <span class="box"></span> {{opt.value}}
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-6" style="padding-top: 25px;">
+                                                        <div class="md-checkbox">
+                                                            <input type="checkbox" id="chk_noshireason_other" ng-model="vm.entry.tmpOtherNoSHIReason" class="md-check">
+                                                            <label for="chk_noshireason_other">
+                                                                <span></span>
+                                                                <span class="check"></span>
+                                                                <span class="box"></span> Lý do khác
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6" style="padding-top: 20px;">
+                                                        <input type="text" id="vm.entry.otherNoShiReason" autofocus="autofocus" placeholder="Ghi rõ lý do khác" ng-model="vm.entry.otherNoShiReason" class="form-control" ng-disabled="!vm.entry.tmpOtherNoSHIReason" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-if="vm.entry.hasShiCard">
+                                            <div class="col-xs-12 margin-top-20"><label class="bold">Các dịch vụ chi trả qua BHYT trong lần khám gần nhất</label></div>
+                                        </div>
+                                        <div class="row" ng-if="vm.entry.hasShiCard">
+                                            <div class="col-lg-9" style="padding-left: 20px">
+                                                <div class="row">
+                                                    <div class="col-sm-6" style="padding-top: 20px;" ng-repeat="opt in vm.options.servicesUsedPaidBySHI">
+                                                        <div class="md-checkbox">
+                                                            <input type="checkbox" ng-disabled="!vm.entry.usedShiForArv" id="chk_servicespaidbyshi_{{opt.id}}" ng-change="vm.updateSelectBoxValues('usedShiServices')" ng-model="vm.entry.usedShiServices_tmp[opt.id]" class="md-check">
+                                                            <label for="chk_servicespaidbyshi_{{opt.id}}">
+                                                                <span></span>
+                                                                <span class="check"></span>
+                                                                <span class="box"></span> {{opt.value}}
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6" style="padding-top: 20px;">
+                                                        <div class="md-checkbox">
+                                                            <input type="checkbox" ng-disabled="!vm.entry.usedShiForArv" id="chk_servicespaidbyshi_other" ng-model="vm.entry.tmpOtherServiceUsedPaidBySHI" class="md-check">
+                                                            <label for="chk_servicespaidbyshi_other">
+                                                                <span></span>
+                                                                <span class="check"></span>
+                                                                <span class="box"></span> Dịch vụ khác
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-xs-12" style="padding-top: 20px;">
+                                                        <input type="text" id="vm.entry.otherUsedShiService" autofocus="autofocus" placeholder="Ghi rõ các dịch vụ khác đã được BHYT chi trả trong lần khám gần nhất" ng-model="vm.entry.otherUsedShiService" class="form-control" ng-disabled="!vm.entry.tmpOtherServiceUsedPaidBySHI" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="section-head"><i class="im im-icon-Leafs color-7 margin-right-10"></i>Nhu cầu sử dụng bảo hiểm y tế trong điều trị ARV</div>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-sm-4 margin-top-20">
+                                                <label class="font-weight-500" ng-class="{'text-muted mutter' : !vm.entry.hasShiCard}">Nhu cầu sử dụng bảo hiểm</label>
+                                                <ui-select id="vm.entry.shiForArvPref" data-ng-disabled="!vm.entry.hasShiCard" ng-model="vm.entry.shiForArvPref" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                    <ui-select-choices repeat="f.id as f in vm.options.shiForArvPrefs | filter: {name: $select.search}">
+                                                        <div class="bold" ng-bind-html="f.name | highlight: $select.search"></div>
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-5 margin-top-20">
+                                                <label class="font-weight-500" ng-class="{'text-muted mutter' : !vm.entry.hasShiCard}">Nơi điều trị ARV mong muốn</label>
+                                                <ui-select id="vm.entry.continuingFacility" data-ng-disabled="!vm.entry.hasShiCard" ng-model="vm.entry.continuingFacility"  ng-change="vm.onContinuingFacilityChange()" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                    <ui-select-choices repeat="f in vm.options.opcs | filter: {name: $select.search}">
+                                                        <div class="bold" ng-if="$index != 1" ng-bind-html="f.name | highlight: $select.search"></div>
+                                                        <div class="small" ng-if="$index > 1 && f.address && f.address.province" ng-bind-html="('&mdash; ' + f.address.province.name)"></div>
+                                                        <hr class="small-margin" ng-if="$index == 1" />
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-if="vm.entry.continuingFacility && vm.entry.continuingFacility.id == 0">
+                                            <div class="col-sm-9 margin-top-20">
+                                                <label class="font-weight-500">Nơi điều trị ARV khác</label>
+                                                <input id="vm.entry.continuingFacilityName" class="form-control" ng-model="vm.entry.continuingFacilityName" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-sm-4 margin-top-20">
+                                                <label class="font-weight-500" ng-class="{'text-muted mutter' : vm.entry.wantShiForArv}">Điều trị ARV không qua BHYT</label>
+                                                <ui-select id="vm.entry.arvTreatmentPref" ng-model="vm.entry.arvTreatmentPref" data-ng-disabled="vm.entry.wantShiForArv" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                    <ui-select-choices repeat="f.id as f in vm.options.arvTreatmentPrefs | filter: {name: $select.search}">
+                                                        <div class="bold" ng-bind-html="f.name | highlight: $select.search"></div>
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-8 margin-top-20">
+                                                <label class="font-weight-500" ng-class="{'text-muted mutter' : vm.entry.arvTreatmentPref != 4}">Hình thức điều trị ARV khác (khi không dùng BHYT)</label>
+                                                <input id="vm.entry.arvTreatmentPrefName" class="form-control" ng-model="vm.entry.arvTreatmentPrefName" ng-disabled="vm.entry.arvTreatmentPref != 4" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-sm-4 margin-top-20" style="padding-top: 30px">
+                                                <div class="md-checkbox">
+                                                    <input type="checkbox" id="chk_buy_shi_nextquarter" ng-model="vm.entry.buyShiNextQuarter" class="md-check">
+                                                    <label for="chk_buy_shi_nextquarter">
+                                                        <span></span>
+                                                        <span class="check"></span>
+                                                        <span class="box"></span> Sẽ mua BHYT vào kỳ tới
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-4 margin-top-20" style="padding-top: 30px">
+                                                <div class="md-checkbox">
+                                                    <input type="checkbox" id="chk_need_support4shi" ng-model="vm.entry.needSupportForShi" class="md-check">
+                                                    <label for="chk_need_support4shi">
+                                                        <span></span>
+                                                        <span class="check"></span>
+                                                        <span class="box"></span> Cần hỗ trợ để mua BHYT
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-4 margin-top-20">
+                                                <label class="font-weight-500" ng-class="{'text-muted mutter' : !vm.entry.needSupportForShi}">Nêu rõ nhu cầu cần hỗ trợ</label>
+                                                <input id="vm.entry.needSupportDetails" class="form-control" ng-model="vm.entry.needSupportDetails" ng-disabled="!vm.entry.needSupportForShi" />
+                                            </div>
+                                        </div>
+                                        -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+
+<script type="text/ng-template" id="select_interview_date_modal.html">
+    <div modal-movable auto-height="yes" calendar-inline="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Ghi nhận ngày phỏng vấn</h4>
+        </div>
+        <div class="modal-body" style="max-width: 376px !important;">
+            <input class="form-control" placeholder="Chọn ngày..."
+                   ng-flatpickr
+                   fp-opts="vm.datepicker2.dateOpts"
+                   fp-on-setup="vm.datepicker2.datePostSetup(fpItem)"
+                   ng-model="vm.entry.interviewDate"
+                   data-enabletime="false" />
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default no-border" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Không chọn</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>Chọn</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="delete_record_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Xóa bản ghi</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="icon-exclamation"></i></div>
+            <div><span>Bạn có chắc chắn muốn xóa thông tin lần phỏng vấn về nhu cầu sử dụng BHYT trong điều trị ARV của bệnh nhân <strong>{{vm.patient.person.fullname}}</strong> không?
+            </span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Không</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-danger no-border" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>Có</button>
+        </div>
+    </div>
+</script>
+
+<div ng-include="'_treatment/views/fragments/_noneditable_alert.html?v=' + settings.versionNumber"></div>

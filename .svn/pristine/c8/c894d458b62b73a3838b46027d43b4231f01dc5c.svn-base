@@ -1,0 +1,528 @@
+/**
+ * Created by bizic on 30/8/2016.
+ */
+(function () {
+    'use strict';
+
+    angular.module('PDMA.PeerOutreach').service('PEIndexService', PEIndexService);
+
+    PEIndexService.$inject = [
+        '$http',
+        '$q',
+        'settings',
+        'Utilities'
+    ];
+
+    function PEIndexService($http, $q, settings, utils) {
+        let self = this;
+        let baseUrl = settings.api.baseUrl + settings.api.apiV1Url;
+
+        self.getTableDefinition = getTableDefinition;
+        self.getAllEntries=getAllEntries;
+        self.deleteEntries=deleteEntries;
+        self.getListStaff=getListStaff;
+        self.getEntry=getEntry;
+        self.exportPE=exportPE;
+
+        function getListStaff(org) {
+            let url = baseUrl + 'staff/list';
+            return utils.resolveAlt(url, 'POST', null, org, {
+                'Content-Type': 'application/json; charset=utf-8'
+            }, angular.noop, angular.noop);
+        }
+
+        function deleteEntries(id, successCallback, errorCallback) {
+            let url = baseUrl + 'pecase/'+id;
+            return utils.resolveAlt(url, 'DELETE', null, null, {
+                'Content-Type': 'application/json; charset=utf-8'
+            }, successCallback, errorCallback);
+        }
+
+        function getAllEntries(filter) {
+
+            let url = baseUrl + 'pecase/list';
+
+            return utils.resolveAlt(url, 'POST', null, filter, {
+                'Content-Type': 'application/json; charset=utf-8'
+            }, angular.noop, angular.noop);
+        };
+        function getEntry(id){
+            if (!id) {
+                return $q.when(null);
+            }
+            let url = baseUrl + 'pecase/' + id;
+            return utils.resolve(url, 'GET', angular.noop, angular.noop);
+        }
+
+        function exportPE(filterReport) {
+            let url = baseUrl + 'pecase/export';
+            return $http({
+                method: 'POST',
+                url: url,
+                params: null,
+                data: filterReport,
+                headers: {'Content-Type': 'application/json; charset=utf-8'},
+                cache: false,
+                responseType: 'arraybuffer'
+            });
+        }
+
+        function getTableDefinition(isSiteManager, sortField1, sortField2, sortField3) {
+
+            let _tableOperation = function (value, row, index) {
+                let url = '';
+                if(!isSiteManager){
+                    url += '<div class="opc-toolbar">';
+                    url +=     '<a href="#/prevention/pe-edit/'+ row.id +'" class="btn btn-sm btn-primary no-border margin-right-20" tooltip-placement="auto">';
+                    url +=          '<i class="icon-frame margin-right-5"></i>Xem chi tiết ';
+                    url +=     '</a>';
+                    url += '</div>';
+                }else{
+                    url += '<div class="opc-toolbar">';
+                    if(!row.parent){
+                    url +=     '<a href="#/prevention/pe-add-contact/'+ row.id +'" class="btn btn-primary no-padding-tb jumping no-border" uib-tooltip="Thêm bạn tình, bạn chích" tooltip-placement="auto">';
+                    url +=          '<i class="icon-plus"></i>';
+                    url +=     '</a>';
+                    url +=     '<div class="vertical-seperator shorter float-right"></div>';
+                    }
+                    else{
+                    url +=     '<a  class="btn btn-primary no-padding-tb jumping no-border" uib-tooltip="" tooltip-placement="auto">';
+                    url +=          '<i class="fa fa-fw fa-angle-right"></i>';
+                    url +=     '</a>';
+                    url +=     '<div class="vertical-seperator shorter float-right"></div>';
+                    }
+                    url +=     '<a href="#/prevention/pe-edit/'+ row.id +'" class="btn btn-primary no-padding-tb jumping no-border" uib-tooltip="Sửa" tooltip-placement="auto">';
+                    url +=          '<i class="icon-pencil"></i>';
+                    url +=     '</a>';
+                    url +=     '<div class="vertical-seperator shorter float-right"></div>';
+                    url +=     '<a data-ng-click="$parent.deletePE(' + "'" + row.id + "'" + ')" class="btn btn-primary no-padding-tb jumping no-border" uib-tooltip="Xóa" href="#" tooltip-placement="auto">';
+                    url +=         '<i class="fa fa-trash"></i>';
+                    url +=     '</a>';
+                    url += '</div>';
+                }
+                
+                return url;
+                //return '<a class="green-dark margin-right-20" href="#" data-ng-click="$parent.editEntry(' + "'" + row.id + "'" + ')"><i class="icon-pencil margin-right-5"></i>Edit</a>';
+            };
+            
+            let _genderFormatter = function (value, row, index) {
+                if(value){
+                    if(value=='MALE'){
+                        return 'NAM';
+                    }
+                    else if(value=='FEMALE'){
+                        return 'NỮ';
+                    }
+                    else if(value=='OTHER'){
+                        return 'KHÁC';
+                    }
+                }
+                return '';
+            };
+            let _yesNoNoneFormatter = function (value, row, index) {
+                if(value){
+                    if(value.includes("2") || value.includes("YES")){
+                        return 'Có';
+                    }
+                    else if(value.includes("1") || value.includes("NO")){
+                        return 'Không';
+                    }
+                    else if(value.includes("3") || value.includes("NO_")){
+                        return 'Không có thông tin';
+                    }
+                }
+                return '';
+            };
+
+            let _c1Formatter = function (value, row, index, field) {
+                if (!value) {
+                    return '';
+                }
+                return moment(value).format('MM/YYYY');
+            };
+            let _cellNowrap = function (value, row, index, field) {
+                return {
+                    classes: '',
+                    css: {'white-space': 'nowrap'}
+                };
+            };
+
+            let _dateFormatter = function (value, row, index) {
+                if (!value) {
+                    return '';
+                }
+                return moment(value).format('DD/MM/YYYY');
+            };
+            let _nameFormatter = function (value, row, index) {
+                if (value) {             
+                        if(value.fullName){
+                            return value.fullName;
+                        }
+                        return ""; 
+                }
+                return "";
+            };
+            
+            let _c28Formatter = function (value, row, index) {
+                if (value) {
+                    if(value=='UNKNOWN'){
+                        return 'Không rõ';
+                    }
+                    else if(value=='answer1'){
+                        return 'Để XN HIV';
+                    }
+                    else if(value=='answer2'){
+                        return 'Để XN giang mai';
+                    }else if(value=='answer3'){
+                        return 'Để XN cả HIV và giang mai';
+                    }
+                    else if(value=='answer4'){
+                        return 'Do dịch vụ PrEP chuyển gửi XN';
+                    }
+                }
+                return '';
+            };
+            
+            let _c6Formatter= function (value, row, index) {
+                let res="";
+                if (value && value.length>0) {
+                    for(let item of value){
+                        if(item.name){
+                            res+=","+item.name;
+                        }
+                    }
+                    if(res.length>0){
+                        res = res.substr(1);
+                    }
+                    return res;
+                }
+                return '';
+            };
+
+            let _c1ReportFormatter= function (value, row, index) {
+                let res="";
+                if (value) {
+                    res+="Tháng "+value;
+                    return res;
+                }
+                return '';
+            };
+
+            let _c1ReportYearFormatter= function (value, row, index) {
+                let res="";
+                if (value) {
+                    res+="Năm "+value;
+                    return res;
+                }
+                return '';
+            };
+            
+            let _addressDistrictFormatter= function (value, row, index) {
+                let res="";
+                if (value) {
+                    res+=value.name;
+                    return res;
+                }
+                return '';
+            };
+            
+            let _sortIcon1 = 'fa-long-arrow-up';
+            let _sortIcon2 = 'fa-long-arrow-down';
+            
+            let columns = [
+                {
+                    field: '',
+                    title: 'Thao tác',
+                    switchable: false,
+                    visible: true,
+                    formatter: _tableOperation,
+                    cellStyle: _cellNowrap
+                },
+                {
+                    field: 'c1',
+                    // title: 'Kỳ báo cáo',
+                    title: '<div class="header-with-sorter">Kỳ báo cáo<span title="Sắp xếp theo kỳ báo cáo" style="margin-left: 10px"><a data-ng-show="'+!sortField1+' || '+sortField1+' == '+2+' " ng-click="$parent.sort1(1);" href="#"><i class="fa ' + _sortIcon1 + '"></i></a><a ng-click="$parent.sort1(2);" href="#"><i data-ng-show="'+sortField1+' == ' + 1 +'" class="fa ' + _sortIcon2 + '"></i></a><span></div>',
+                    switchable: false,
+                    visible: true,
+                    formatter: _c1Formatter,
+                    cellStyle: function (value, row, index, field) {
+                        return {
+                            classes: '',
+                            css: {'min-width': '120px'}
+                        };
+                    }
+                }
+                , {
+                    field: 'c1Staff',
+                    // title: 'Người báo cáo/CBO',
+                    title: '<div class="header-with-sorter">Người báo cáo/CBO<span title="Sắp xếp theo Người báo cáo/CBO" style="margin-left: 10px"><a data-ng-show="'+!sortField2+' || '+sortField2+' == '+4+' " ng-click="$parent.sort2(3);" href="#"><i class="fa ' + _sortIcon1 + '"></i></a><a ng-click="$parent.sort2(4);" href="#"><i data-ng-show="'+sortField2+' == ' + 3 +'" class="fa ' + _sortIcon2 + '"></i></a><span></div>',
+                    switchable: false,
+                    visible: true,
+                    formatter: _nameFormatter,
+                    cellStyle: function (value, row, index, field) {
+                        return {
+                            classes: '',
+                            css: {'min-width': '173px'}
+                        };
+                    }
+                }
+                , {
+                    field: 'c2',
+                    title: 'Họ tên khách hàng',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _genderFormatter,
+                    cellStyle: _cellNowrap
+                }
+                , {
+                    field: 'c3',
+                    title: 'Giới tính',
+                    switchable: false,
+                    visible: true,
+                    formatter: _genderFormatter,
+                    cellStyle: _cellNowrap
+                }
+                , {
+                    field: 'c4',
+                    title: 'Năm sinh',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _dateFormatter,
+                    cellStyle: _cellNowrap
+                }
+                , {
+                    field: 'c5Ward',
+                    title: 'Địa chỉ nơi cư trú',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _dateFormatter,
+                    cellStyle: _cellNowrap
+                }
+                , {
+                    field: 'c5District',
+                    title: 'Quận/huyện',
+                    switchable: false,
+                    visible: true,
+                    formatter: _addressDistrictFormatter,
+                    cellStyle: _cellNowrap
+                }
+                , {
+                    field: 'c5Province',
+                    title: 'Tỉnh/thành phố',
+                    switchable: false,
+                    visible: true,
+                    formatter: _addressDistrictFormatter,
+                    cellStyle: _cellNowrap
+                }
+                , {
+                    field: 'c6',
+                    title: 'Nhóm nguy cơ của khách hàng',
+                    switchable: false,
+                    visible: true,
+                    formatter: _c6Formatter,
+                    cellStyle: _cellNowrap
+                }
+                , {
+                    field: 'c7Des',
+                    title: 'Cách tiếp cận',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _dateFormatter,
+                    cellStyle: _cellNowrap
+                }
+                , {
+                    field: 'c8Des',
+                    title: 'Tình trạng HIV',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _yesNoNoneFormatter,
+                    cellStyle: _cellNowrap
+                }
+                , {
+                    field: 'c8ARVDes',
+                    title: 'Tình trạng điều trị ARV',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _yesNoNoneFormatter,
+                    cellStyle: _cellNowrap
+                }
+                , {
+                    field: 'c9',
+                    title: 'Tư vấn TBXNBT/BC',
+                    switchable: false,
+                    visible: true,
+                    formatter: _yesNoNoneFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                     field: 'c9Date',
+                     title: 'Ngày tư vấn',
+                     switchable: false,
+                     visible: true,
+                     formatter: _dateFormatter,
+                     cellStyle: _cellNowrap
+                 }, {
+                    field: 'c10',
+                    title: 'Cung cấp tên BT/BC',
+                    switchable: false,
+                    visible: true,
+                    formatter: _yesNoNoneFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c11',
+                    title: 'Đồng ý xét nghiệm HIV',
+                    switchable: false,
+                    visible: true,
+                    formatter: _yesNoNoneFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c11Date',
+                    title: 'Ngày xét nghiệm HIV',
+                    switchable: false,
+                    visible: true,
+                    formatter: _dateFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c12Des',
+                    title: 'Loại hình xét nghiệm',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _dateFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c12Code',
+                    title: 'Mã xét nghiệm',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _dateFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c12NoteDes',
+                    title: 'Tự xét nghiệm cho',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _dateFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c13Des',
+                    // title: 'Kết quả XN HIV lần này',
+                    title: '<div class="header-with-sorter">Kết quả XN HIV lần này<span title="Sắp xếp theo Kết quả XN HIV lần này" style="margin-left: 10px"><a data-ng-show="'+!sortField3+' || '+sortField3+' == '+6+' " ng-click="$parent.sort3(5);" href="#"><i class="fa ' + _sortIcon1 + '"></i></a><a ng-click="$parent.sort3(6);" href="#"><i data-ng-show="'+sortField3+' == ' + 5 +'" class="fa ' + _sortIcon2 + '"></i></a><span></div>',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _c17Formatter,
+                    cellStyle: function (value, row, index, field) {
+                        return {
+                            classes: '',
+                            css: {'min-width': '195px'}
+                        };
+                    }
+                }, {
+                    field: 'c131',
+                    title: 'Chuyển XN khẳng định',
+                    switchable: false,
+                    visible: true,
+                    formatter: _yesNoNoneFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c131Code',
+                    title: 'Mã số XN khẳng định',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _c5Formatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c131ResultDes',
+                    title: 'Kết quả XN khẳng định',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _c5NoteFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c14',
+                    title: 'Điều trị PrEP',
+                    switchable: false,
+                    visible: true,
+                    formatter: _yesNoNoneFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c14Date',
+                    title: 'Ngày điều trị PrEP',
+                    switchable: false,
+                    visible: true,
+                    formatter: _dateFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c14Code',
+                    title: 'Mã khách hàng',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _dateFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c14Name',
+                    title: 'Tên cơ sở điều trị',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _yesNoNoneFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c15',
+                    title: 'Điều trị ARV',
+                    switchable: false,
+                    visible: true,
+                    formatter: _yesNoNoneFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c15Date',
+                    title: 'Ngày điều trị ARV',
+                    switchable: false,
+                    visible: true,
+                    formatter: _dateFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c15Code',
+                    title: 'Mã khách hàng',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _c11bFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c15Name',
+                    title: 'Tên cơ sở điều trị',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _yesNoNoneFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c16Des',
+                    title: 'Kết quả xác minh',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _dateFormatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c132Des',
+                    title: 'KQXN SL giang mai',
+                    switchable: false,
+                    visible: true,
+                    //formatter: _c132Formatter,
+                    cellStyle: _cellNowrap
+                }, {
+                    field: 'c17',
+                    title: 'Ghi chú',
+                    switchable: false,
+                    visible: true,
+                    // formatter: _c131Formatter,
+                    cellStyle: _cellNowrap
+                }
+
+            ];
+
+            // if (!shouldDisplayCheckbox) {
+            //     columns.shift(); // remove the state column
+            // }
+
+            return columns;
+        }
+    }
+
+})();

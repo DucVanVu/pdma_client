@@ -1,0 +1,32 @@
+<script type="text/ng-template" id="record_found_confirmation.html">
+    <div modal-movable auto-height="no" sticky-toolbar="yes" full-width="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Cảnh báo hồ sơ trùng</h4>
+        </div>
+        <div class="modal-body">
+            <div class="summary-panel">
+                <div class="dialog-message warning font-weight-600" ng-if="vm.dialog.newPatient.id"><span class="bold margin-right-5">CẢNH BÁO:</span>Tìm thấy một hồ sơ bệnh nhân khác trùng với hồ sơ bệnh nhân đang được cập nhật. Bạn có muốn tiếp tục lưu các thay đổi này không?</div>
+                <div class="dialog-message warning font-weight-600" ng-if="!vm.dialog.newPatient.id"><span class="bold margin-right-5">CẢNH BÁO:</span>Tìm thấy một hồ sơ bệnh nhân khác trùng với hồ sơ bệnh nhân đang được cập nhật. Bạn có muốn tiếp tục tạo hồ sơ mới không?</div>
+            </div>
+            <div class="summary-panel">
+                <ul class="listing listing-equal2">
+                    <li class="border-bottom"><span></span><span class="text-red">Hồ sơ đã tồn tại</span><span class="text-green">Hồ sơ đang sửa</span></li>
+                    <li><span>Họ tên bệnh nhân:</span><span>{{vm.dialog.existingPatient.theCase.person.fullname}}</span><span>{{vm.dialog.newPatient.theCase.person.fullname}}</span></li>
+                    <li><span>Giới tính:</span><span>{{vm.dialog.existingPatient.theCase.person.gender | genderString}}</span><span>{{vm.dialog.newPatient.theCase.person.gender | genderString}}</span></li>
+                    <li><span>Ngày tháng năm sinh:</span><span>{{vm.dialog.existingPatient.theCase.person.dob | date:'dd/MM/yyyy'}}</span><span>{{vm.dialog.newPatient.theCase.person.dob | date:'dd/MM/yyyy'}}</span></li>
+                    <li><span>Số CMTND/CCCD:</span><span>{{vm.dialog.existingPatient.theCase.person.nidNumber}}</span><span>{{vm.dialog.newPatient.theCase.person.nidNumber}}</span></li>
+                    <li><span>Số hộ chiếu:</span><span>{{vm.dialog.existingPatient.theCase.person.passportNumber}}</span><span>{{vm.dialog.newPatient.theCase.person.passportNumber}}</span></li>
+                    <li><span>Địa chỉ thường trú:</span><span>{{vm.dialog.existingPatient.theCase.resAddress}}</span><span>{{vm.dialog.newPatient.theCase.resAddress}}</span></li>
+                    <li><span>Phòng khám gần nhất:</span><span>{{vm.dialog.existingPatient.organization ? vm.dialog.existingPatient.organization.name : '&mdash;'}}</span><span>{{vm.dialog.newPatient.organization ? vm.dialog.newPatient.organization.name : '&mdash;'}}</span></li>
+                    <li><span>Trạng thái gần nhất:</span><span>{{vm.dialog.existingPatient.status | patientStatus}}</span><span>{{vm.dialog.newPatient.status | patientStatus}}</span></li>
+                    <li><span>Mã HIVInfo:</span><span>{{vm.dialog.existingPatient.theCase.hivInfoID}}</span><span>{{vm.dialog.newPatient.theCase.hivInfoID}}</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="vm.dialog.callback('no');" class="btn btn-default no-border" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>{{vm.dialog.no ? vm.dialog.no : (vm.dialog.newPatient.id ? 'Không lưu thay đổi' : 'Không tạo hồ sơ')}}</button>
+            <button type="button" ng-click="vm.dialog.callback('yes');" class="btn btn-primary jumping" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>{{vm.dialog.yes ? vm.dialog.yes : (vm.dialog.newPatient.id ? 'Tiếp tục lưu các thay đổi' : 'Tiếp tục tạo hồ sơ mới')}}</button>
+        </div>
+    </div>
+</script>

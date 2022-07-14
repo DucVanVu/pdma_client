@@ -1,0 +1,154 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="fa fa-puzzle-piece margin-right-5"></i> Phân nhóm nguy cơ</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#/opc/patients"><i class="fa fa-th-large"></i> Danh sách</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#/opc/view-patient/{{vm.patient.id}}">{{vm.patient.theCase.person.fullname}}</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#">Phân nhóm nguy cơ</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs sticky-panel" hl-sticky="" sticky-class="is-sticky custom-alt">
+                                <li class="uppercase">
+                                    <a href="#/opc-dashboard" uib-tooltip="Tổng quan"><i class="fa fa-area-chart"></i><span class="hidden-xs" ng-class="{'hidden-sm' : isSiteManager(currentUser) || (vm.selectedEntry && vm.selectedEntry.theCase.person)}"> Tổng quan</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/patients" uib-tooltip="Quản&nbsp;lý bệnh&nbsp;nhân"><i class="fa fa-wheelchair-alt"></i><span class="hidden-xs hidden-sm hidden-md"> Bệnh nhân</span></a>
+                                </li>
+                                <li class="uppercase" ng-if="isSiteManager(currentUser)">
+                                    <a href="#/opc/appointment-cal/edit" uib-tooltip="Khám&nbsp;bệnh&nbsp;-&nbsp;Cấp&nbsp;thuốc"><i class="icon-calendar"></i><span class="hidden-xs"> Lịch khám </span></a>
+                                    <!--<span class="tab-new-function"><i class="fa fa-flash"></i> mới</span>-->
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/report" uib-tooltip="Báo&nbsp;cáo"><i class="fa fa-bar-chart"></i><span class="hidden-xs"> Báo cáo</span></a>
+                                </li>
+                                <li class="active uppercase">
+                                    <a href="#"><i class="icon-pencil"></i> <span class="bold hidden-xs">Nhóm nguy cơ:</span> {{vm.patient.theCase.person.fullname}}</a>
+                                </li>
+                                <li class="uppercase" ng-if="vm.editingEntry">
+                                    <a uib-tooltip="Cập&nbsp;nhật&nbsp;hồ&nbsp;sơ" href="#/opc/edit-patient/{{vm.editingEntry.id ? vm.editingEntry.id : 0}}"><i class="icon-pencil"></i> {{vm.editingEntry.theCase.person && vm.editingEntry.theCase.person.fullname ? vm.editingEntry.theCase.person.fullname : 'Bệnh nhân mới'}}</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content summary-panel">
+                                <div class="tab-pane active margin-bottom-30">
+                                    <div class="info-box-alt"><span class="bold"><i class="im im-icon-Idea-2"></i> Chỉ dẫn:</span> Mục này giúp ghi nhận kết quả các lần phỏng vấn nhóm nguy cơ cho bệnh nhân {{vm.patient.theCase.person.fullname}}.</div>
+                                    <div class="opc-toolbar margin-top-10 margin-bottom-10">
+                                        <button href="#" data-ng-disabled="vm.orgsWritable.length <= 0 || !isSiteManager(currentUser)" ng-click="vm.openAddRiskInterview();" class="btn btn-default no-border" uib-tooltip="Thêm&nbsp;kết&nbsp;quả&nbsp;phỏng&nbsp;vấn"><i class="fa fa-plus"></i><span class="hidden-xs">Thêm kết quả phỏng vấn</span></button>
+                                        <!--<button href="#" data-ng-disabled="vm.orgsWritable.length <= 0 || !vm.patient.editable" ng-click="vm.openAddRiskInterview();" class="btn btn-default no-border" uib-tooltip="Thêm&nbsp;kết&nbsp;quả&nbsp;phỏng&nbsp;vấn"><i class="fa fa-plus"></i><span class="hidden-xs">Thêm kết quả phỏng vấn</span></button>-->
+                                        <div class="vertical-seperator float-right"></div>
+                                        <a href="#/opc/view-patient/{{vm.patient.id}}" uib-tooltip="Quay&nbsp;trở&nbsp;lại" class="btn btn-default no-border"><i class="fa fa-arrow-left"></i> Trở lại</a>
+                                    </div>
+                                    <div class="dragon custom-table-header-1" drag-on>
+                                        <table id="bsTableControl" bs-table-control="vm.bsTableControl"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+
+<script type="text/ng-template" id="edit_entry_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" data-ng-disabled="true" aria-hidden="true"></button>
+            <h4 class="modal-title" ng-if="vm.entry.isNew == true"><i class="icon-plus"></i> Thêm kết quả phỏng vấn</h4>
+            <h4 class="modal-title" ng-if="vm.entry.isNew == false"><i class="icon-pencil"></i> Sửa kết quả phỏng vấn</h4>
+        </div>
+        <div class="modal-body summary-panel">
+            <div class="row">
+                <div class="col-xs-6 form-controller-alt-2">
+                    <label class="bold">Ngày phỏng vấn</label>
+                    <input id="vm.entry.interviewDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker1.dateOpts"
+                           fp-on-setup="vm.datepicker1.datePostSetup(fpItem)"
+                           ng-model="vm.entry.interviewDate"
+                           data-enabletime="false" />
+                    <a ng-if="vm.entry.interviewDate" class="clear-picker input-has-label" ng-click="vm.datepicker1.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                </div>
+                <div class="col-xs-6 padding-top-30">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_risk_identified" ng-model="vm.entry.riskIdentified" class="md-check">
+                        <label for="chk_risk_identified">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Có kết luận nhóm nguy cơ.
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="vm.entry.riskIdentified" class="section-head dark-blue bolder"><i class="icon-grid color-7"></i> Chọn nhóm nguy cơ phù hợp</div>
+            <div ng-if="vm.entry.riskIdentified" class="row" style="padding-left: 20px; padding-right: 20px;">
+                <div class="col-xs-6" style="padding-top: 20px;" ng-repeat="risk in vm.risks">
+                    <div class="md-checkbox">
+                        <input type="checkbox" ng-disabled="(vm.patient.theCase.person.gender == 'FEMALE' && risk.code == 'risk_2')" id="chk_risk_{{risk.id}}" ng-model="vm.entry.tmpRisks[risk.id]" class="md-check">
+                        <label for="chk_risk_{{risk.id}}">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> {{risk.value}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="vm.entry.riskIdentified" class="row" style="padding-left: 20px; padding-right: 20px;">
+                <div class="col-xs-6" style="padding-top: 25px;">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_risk_other" ng-model="vm.entry.otherRiskGroup" class="md-check">
+                        <label for="chk_risk_other">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Nhóm nguy cơ khác
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-6" style="padding-top: 20px;">
+                    <input type="text" ng-if="vm.entry.otherRiskGroup" id="vm.entry.otherRiskGroupText" autofocus="autofocus" placeholder="Ghi rõ nhóm nguy cơ" ng-model="vm.entry.otherRiskGroupText" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Bỏ qua</button>
+            <button type="button" ng-click="vm.saveEntry()" class="btn btn-primary" data-dismiss="modal">Lưu lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="delete_entry_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Xoá bản ghi</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="icon-exclamation"></i></div>
+            <div><span>Bạn có chắc chắn muốn xoá bản ghi đã chọn không?</span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Không</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-danger no-border" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>Có</button>
+        </div>
+    </div>
+</script>
+
+<div ng-include="'_treatment/views/fragments/_noneditable_alert.html?v=' + settings.versionNumber"></div>

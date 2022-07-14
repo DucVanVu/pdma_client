@@ -1,0 +1,34 @@
+/**
+ * Created by bizic on 30/8/2016.
+ */
+(function () {
+    'use strict';
+
+    angular.module('PDMA.PREV_REPORT').service('PrevReportService', PrevReportService);
+
+    PrevReportService.$inject = [
+        '$http',
+        '$q',
+        'settings',
+        'Utilities'
+    ];
+
+    function PrevReportService($http, $q, settings, utils) {
+        let self = this;
+        let baseUrl = settings.api.baseUrl + settings.api.apiV1Url;
+        self.exportReportSNS=exportReportSNS;
+        function exportReportSNS(filterReport) {
+            let url = baseUrl + 'sns/exportReport';
+            return $http({
+                method: 'POST',
+                url: url,
+                params: null,
+                data: filterReport,
+                headers: {'Content-Type': 'application/json; charset=utf-8'},
+                cache: false,
+                responseType: 'arraybuffer'
+            });
+        }
+
+    }
+})();

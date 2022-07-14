@@ -1,0 +1,223 @@
+<script type="text/ng-template" id="advanced_search_modal.html">
+    <div modal-movable auto-height="no" min-height="300">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-magnifier"></i> Tìm kiếm nâng cao</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <label class="bold text-muted">Cơ sở điều trị</label>
+                    <ui-select id="vm.filterSelector.organization" ng-model="vm.filterSelector.organization" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="true" placeholder="Tất cả cơ sở...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="opc in vm.grantedOPCs | filter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="opc.name | highlight: $select.search"></div>
+                            <div class="small">&mdash; {{opc.province}}</div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <div class="row margin-top-20">
+                <div class="col-xs-6">
+                    <label class="bold text-muted" ng-class="{'mutter' : vm.filterSelector.mmd}">Tình trạng bệnh nhân</label>
+                    <ui-select data-ng-disabled="vm.filterSelector.mmd" ng-model="vm.filterSelector.patientStatus" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Tất cả bệnh nhân...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="s.id as s in vm.patientStatuses | filter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="s.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-xs-6">
+                    <!--<label class="bold text-muted">Giới tính</label>-->
+                    <!--<ui-select ng-model="vm.filterSelector.gender" sortable="true" close-on-select="true" style="width: 100%!important;">-->
+                        <!--<ui-select-match allow-clear="true" placeholder="Tất cả giới tính...">{{$select.selected.name}}</ui-select-match>-->
+                        <!--<ui-select-choices repeat="gender.id as gender in vm.genders | filter: {name: $select.search}">-->
+                            <!--<div class="bold" ng-bind-html="gender.name | highlight: $select.search"></div>-->
+                        <!--</ui-select-choices>-->
+                    <!--</ui-select>-->
+                    <label class="bold text-muted">Loại đăng ký</label>
+                    <ui-select ng-model="vm.filterSelector.enrollmentType" sortable="true" close-on-select="true" style="width: 100%!important;">
+                        <ui-select-match allow-clear="false" placeholder="Tất cả...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="type.id as type in vm.enrollmentTypes | filter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="type.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <!--<div class="row margin-top-15">-->
+                <!--<div class="col-xs-12 label-with-line">-->
+                    <!--<label class="bold text-muted">Tìm theo lịch hẹn khám của tháng</label>-->
+                    <!--<div></div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="row">-->
+                <!--<div class="col-xs-6">-->
+                    <!--<ui-select ng-model="vm.filterSelector.appointmentResult" sortable="true" close-on-select="true" style="width: 100%!important;">-->
+                        <!--<ui-select-match allow-clear="true" placeholder="Tất cả bệnh nhân...">{{$select.selected.name}}</ui-select-match>-->
+                        <!--<ui-select-choices repeat="s.id as s in vm.appointmentResultTypes | filter: {name: $select.search}" position="down">-->
+                            <!--<div class="bold" ng-bind-html="s.name | highlight: $select.search"></div>-->
+                        <!--</ui-select-choices>-->
+                    <!--</ui-select>-->
+                <!--</div>-->
+                <!--<div class="col-xs-6">-->
+                    <!--<span class="form-control read-only-bg" ng-if="!vm.filterSelector.appointmentResult">Chọn tháng...</span>-->
+                    <!--<span class="form-control read-only-bg" ng-if="vm.filterSelector.appointmentResult && vm.filterSelector.appointmentResult == 'NOT_ARRIVED'"><i class="fa fa-long-arrow-right"></i> Tính đến hôm nay</span>-->
+                    <!--<input id="vm.filterSelector.appointmentMonth" ng-if="vm.filterSelector.appointmentResult && vm.filterSelector.appointmentResult != 'NOT_ARRIVED'" class="form-control" placeholder="Chọn tháng..."-->
+                           <!--ng-flatpickr-->
+                           <!--fp-opts="vm.datepicker5.dateOpts"-->
+                           <!--fp-on-setup="vm.datepicker5.datePostSetup(fpItem)"-->
+                           <!--ng-model="vm.filterSelector.appointmentMonth"-->
+                           <!--data-enabletime="false" />-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="row margin-top-30">
+                <div class="col-xs-12">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_include_deleted" ng-model="vm.filterSelector.includeDeleted" class="md-check">
+                        <label for="chk_include_deleted" class="font-weight-500">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Hiển thị cả bệnh nhân đã bị xóa
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row margin-top-15">
+                <div class="col-xs-12">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_include_onart" ng-model="vm.filterSelector.includeOnART" class="md-check">
+                        <label for="chk_include_onart" class="font-weight-500">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Hiển thị các bệnh nhân đã điều trị ARV
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row margin-top-15">
+                <div class="col-xs-12">
+                    <div class="md-checkbox">
+                        <input type="checkbox" id="chk_include_preart" ng-model="vm.filterSelector.includePreART" class="md-check">
+                        <label for="chk_include_preart" class="font-weight-500">
+                            <span></span>
+                            <span class="check"></span>
+                            <span class="box"></span> Hiển thị các bệnh nhân chưa điều trị ARV
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!--<div class="row margin-top-15" ng-if="isSiteManager(currentUser)">-->
+                <!--<div class="col-xs-12 label-with-line">-->
+                    <!--<label class="bold text-danger"><i class="fa fa-braille margin-right-5"></i> Tìm theo tình trạng cấp thuốc nhiều tháng</label>-->
+                    <!--<div></div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="row" ng-if="isSiteManager(currentUser)">-->
+                <!--<div class="col-xs-12" ng-class="{'margin-bottom-20' : vm.filterSelector.mmd}">-->
+                    <!--<ui-select ng-model="vm.filterSelector.mmd" sortable="true" close-on-select="true" style="width: 100%!important;">-->
+                        <!--<ui-select-match allow-clear="true" placeholder="Chưa chọn tình trạng cấp thuốc nhiều tháng...">{{$select.selected.name}}</ui-select-match>-->
+                        <!--<ui-select-choices repeat="mmd.id as mmd in vm.mmdOptions | filter: {name: $select.search}" position="up">-->
+                            <!--<div class="bold" ng-bind-html="mmd.name | highlight: $select.search"></div>-->
+                        <!--</ui-select-choices>-->
+                    <!--</ui-select>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="row" ng-if="!vm.filterSelector.mmd">
+                <div collapsible init-closed="true" class="col-xs-12 margin-top-10">
+                    <a href="#">Thu gọn<i class="margin-left-5 fa fa-angle-double-up"></i></a>
+                    <div></div>
+                </div>
+                <div class="col-xs-12">
+                    <div class="row">
+                        <div class="col-xs-12 label-with-line">
+                            <label class="bold text-muted">Tìm theo nhóm điều trị ARV</label>
+                            <div></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 form-controller-alt-2 with-label">
+                            <label>Nhóm:</label>
+                            <input class="form-control" ng-model="vm.filterSelector.arvGroup">
+                        </div>
+                    </div>
+                    <div class="row margin-top-15">
+                        <div class="col-xs-12 label-with-line">
+                            <label class="bold text-muted">Tìm theo ngày xét nghiệm khẳng định HIV</label>
+                            <div></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 form-controller-alt-2 with-label">
+                            <label>Từ ngày:</label>
+                            <input class="form-control" placeholder="Chọn ngày..."
+                                   ng-flatpickr
+                                   fp-opts="vm.datepicker1.dateOpts"
+                                   fp-on-setup="vm.datepicker1.datePostSetup(fpItem)"
+                                   ng-model="vm.filterSelector.hivConfirmDateFrom"
+                                   data-enabletime="false" />
+                            <a ng-if="vm.filterSelector.hivConfirmDateFrom" class="clear-picker input-has-label" ng-click="vm.datepicker1.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                        </div>
+                        <div class="col-xs-6 form-controller-alt-2 with-label">
+                            <label>Đến ngày:</label>
+                            <input class="form-control" placeholder="Chọn ngày..."
+                                   ng-flatpickr
+                                   fp-opts="vm.datepicker2.dateOpts"
+                                   fp-on-setup="vm.datepicker2.datePostSetup(fpItem)"
+                                   ng-model="vm.filterSelector.hivConfirmDateTo"
+                                   data-enabletime="false" />
+                            <a ng-if="vm.filterSelector.hivConfirmDateTo" class="clear-picker input-has-label" ng-click="vm.datepicker2.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                        </div>
+                    </div>
+                    <div class="row margin-top-15">
+                        <div class="col-xs-12 label-with-line">
+                            <label class="bold text-muted">Tìm theo ngày bắt đầu điều trị ARV</label>
+                            <div></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 form-controller-alt-2 with-label">
+                            <label>Từ ngày:</label>
+                            <input class="form-control" placeholder="Chọn ngày..."
+                                   ng-flatpickr
+                                   fp-opts="vm.datepicker3.dateOpts"
+                                   fp-on-setup="vm.datepicker3.datePostSetup(fpItem)"
+                                   ng-model="vm.filterSelector.arvStartDateFrom"
+                                   data-enabletime="false" />
+                            <a ng-if="vm.filterSelector.arvStartDateFrom" class="clear-picker input-has-label" ng-click="vm.datepicker3.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                        </div>
+                        <div class="col-xs-6 form-controller-alt-2 with-label">
+                            <label>Đến ngày:</label>
+                            <input class="form-control" placeholder="Chọn ngày..."
+                                   ng-flatpickr
+                                   fp-opts="vm.datepicker4.dateOpts"
+                                   fp-on-setup="vm.datepicker4.datePostSetup(fpItem)"
+                                   ng-model="vm.filterSelector.arvStartDateTo"
+                                   data-enabletime="false" />
+                            <a ng-if="vm.filterSelector.arvStartDateTo" class="clear-picker input-has-label" ng-click="vm.datepicker4.clear()" href="#"><i class="icon-close"></i> <span>xoá</span></a>
+                        </div>
+                    </div>
+                    <div class="row margin-top-15">
+                        <div class="col-xs-12 label-with-line">
+                            <label class="bold text-muted">Tìm theo độ tuổi của bệnh nhân</label>
+                            <div></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 special-input with-label">
+                            <label>Từ tuổi:</label>
+                            <input class="form-control" placeholder="Nhập tuổi bắt đầu" ng-model="vm.filterSelector.ageFrom" input-mask="9{*}" />
+                        </div>
+                        <div class="col-xs-6 special-input with-label">
+                            <label>Đến tuổi:</label>
+                            <input class="form-control" placeholder="Nhập tuổi kết thúc" ng-model="vm.filterSelector.ageTo" input-mask="9{*}" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+            <button ng-click="vm.getPatients(true)" class="btn btn-primary" data-dismiss="modal">Tìm kiếm</button>
+        </div>
+    </div>
+</script>

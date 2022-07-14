@@ -1,0 +1,628 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="icon-calendar margin-right-5"></i> Cập nhật thông tin lần thăm khám</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#/opc/appointment-cal"><i class="fa fa-th-large"></i> Lịch khám</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#">Đặt lịch khám</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body" id="stickey-container">
+                <div class="display-block no-content1 margin-top-10" ng-if="isAdministrator(currentUser)">
+                    Bạn không có quyền xem nội dung này.
+                </div>
+                <div class="row" ng-if="!isAdministrator(currentUser)">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs">
+                                <li class="uppercase">
+                                    <a href="#/opc-dashboard" uib-tooltip="Tổng quan"><i class="fa fa-area-chart"></i><span class="hidden-xs" ng-class="{'hidden-sm' : isSiteManager(currentUser) || (vm.selectedEntry && vm.selectedEntry.theCase.person)}"> Tổng quan</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/patients" uib-tooltip="Quản&nbsp;lý bệnh&nbsp;nhân"><i class="fa fa-wheelchair-alt"></i><span class="hidden-xs hidden-sm hidden-md"> Bệnh nhân</span></a>
+                                </li>
+                                <li class="active uppercase" ng-if="isSiteManager(currentUser)">
+                                    <a href="#" uib-tooltip="Khám&nbsp;bệnh&nbsp;-&nbsp;Cấp&nbsp;thuốc"><i class="fa fa-stethoscope"></i><span class="hidden-xs"> Khám bệnh </span></a>
+                                    <!--<span class="tab-new-function"><i class="fa fa-flash"></i> mới</span>-->
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/opc/report" uib-tooltip="Báo&nbsp;cáo"><i class="fa fa-bar-chart"></i><span class="hidden-xs"> Báo cáo</span></a>
+                                </li>
+                                <li class="uppercase" ng-if="vm.selectedEntry && vm.selectedEntry.theCase.person && vm.selectedEntry.theCase.person.id">
+                                    <a uib-tooltip="Thông&nbsp;tin&nbsp;bệnh&nbsp;nhân" href="#/opc/view-patient/{{vm.selectedEntry.id}}"><i class="fa {{vm.selectedEntry.theCase.person.genderIcon}}"></i> {{vm.selectedEntry.theCase.person.fullname}} ({{vm.selectedEntry.theCase.person.age}} tuổi)</a>
+                                </li>
+                                <li class="uppercase" ng-if="vm.editingEntry">
+                                    <a uib-tooltip="Cập&nbsp;nhật&nbsp;hồ&nbsp;sơ" href="#/opc/edit-patient/{{vm.editingEntry.id ? vm.editingEntry.id : 0}}"><i class="icon-pencil"></i> {{vm.editingEntry.theCase.person && vm.editingEntry.theCase.person.fullname ? vm.editingEntry.theCase.person.fullname : 'Bệnh nhân mới'}}</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content summary-panel">
+                                <div class="tab-pane active margin-bottom-30">
+                                    <div class="opc-toolbar margin-top-10 margin-bottom-10 sticky-panel" hl-sticky="" container="sticky-container" sticky-class="is-sticky custom-alt-2 padding-right-20 padding-left-20">
+                                        <button href="#" data-ng-disabled="!vm.entry.dirty || vm.submitDisabled" ng-click="vm.saveEntry()" class="btn btn-primary jumping" uib-tooltip="Lưu thông tin lần khám" tooltip-placement="auto"><i class="fa fa-check"></i><span class="hidden-xs hidden-sm hidden-md"> Lưu lần khám</span></button>
+                                        <div class="vertical-seperator float-right"></div>
+                                        <button class="btn btn-danger no-border" uib-tooltip="Xoá lần hẹn khám đang chọn" tooltip-placement="auto" ng-click="vm.deleteEntry();" data-ng-disabled="vm.originEntry.id && vm.originEntry.arrived || !vm.entry.id"><i class="icon-trash margin-right-5"></i>Xóa lần hẹn khám</button>
+                                        <!--<div class="vertical-seperator float-right"></div>-->
+                                        <!--<button class="btn btn-primary no-border" uib-tooltip="Chuyển tiếp điều trị" tooltip-placement="auto" data-ng-disabled="vm.entry.dirty"><i class="icon-shuffle margin-right-5"></i>Chuyển tiếp điều trị</button>-->
+                                        <div class="vertical-seperator float-right"></div>
+                                        <a ng-href="#/opc/appointment-cal/{{vm.originScreen}}" ng-if="vm.originScreen != 'home' && vm.originScreen != 'view-patient'" uib-tooltip="Đóng&nbsp;lại"  class="btn btn-default no-border padding-top-10" tooltip-placement="auto"><i class="fa fa-close"></i><span class="hidden-xs hidden-sm hidden-md"> Đóng lại</span></a>
+                                        <a ng-href="#/opc/patients" ng-if="vm.originScreen == 'home'" uib-tooltip="Đóng&nbsp;lại"  class="btn btn-default no-border padding-top-10" tooltip-placement="auto"><i class="fa fa-close"></i><span class="hidden-xs hidden-sm hidden-md"> Đóng lại</span></a>
+                                        <a ng-href="#/opc/view-patient/{{vm.patient.id}}" ng-if="vm.originScreen == 'view-patient'" uib-tooltip="Đóng&nbsp;lại"  class="btn btn-default no-border padding-top-10" tooltip-placement="auto"><i class="fa fa-close"></i><span class="hidden-xs hidden-sm hidden-md"> Đóng lại</span></a>
+                                    </div>
+                                    <div class="tabbable-line">
+                                        <ul class="nav nav-tabs special-tab">
+                                            <li>
+                                                <a href="#/opc/appointment-cal/edit" uib-tooltip="Bệnh nhân được hẹn"><i class="fa fa-th-list"></i><span class="hidden-xs"> Lịch ngày</span><span class="badge badge-primary margin-left-5">{{vm.bsTableControl.options.appointmentCount}}</span></a>
+                                            </li>
+                                            <li>
+                                                <a href="#/opc/appointment-cal" uib-tooltip="Lịch&nbsp;hẹn&nbsp;theo&nbsp;tháng" tooltip-placement="auto"><i class="icon-calendar"></i><span class="hidden-xs"> Lịch tháng</span></a>
+                                            </li>
+                                            <li>
+                                                <a href="#/opc/appointment-cal/late" uib-tooltip="Bệnh nhân muộn khám"><i class="fa fa-clock-o"></i><span class="hidden-xs"> Muộn khám</span><span class="badge badge-danger margin-left-5">{{vm.bsTableControl.options.totalRows}}</span></a>
+                                            </li>
+                                            <li class="active">
+                                                <a href="#" uib-tooltip="Nhập kết quả khám"><i class="icon-pencil"></i><span class="hidden-xs"><span class="text-muted"> Kết quả khám: </span><span class="font-weight-600">{{vm.patient.theCase.person.fullname}}</span></span></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="tab-content summary-panel">
+                                        <div class="tab-pane active margin-bottom-30">
+                                            <div class="row">
+                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                                                    <div class="appointment-menu-container">
+                                                        <div class="section-head"><i class="fa fa-stethoscope color-7"></i> Các lần hẹn khám</div>
+                                                        <div id="appt-menu-container">
+                                                            <div class="action-bar-2">
+                                                                <div class="appt-filter-container" ng-if="vm.appFilter.isFiltered">
+                                                                    <ui-select id="vm.appFilter.year" ng-model="vm.appFilter.year" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                        <ui-select-match allow-clear="false" placeholder="Chọn năm...">{{$select.selected.name}}</ui-select-match>
+                                                                        <ui-select-choices repeat="yr.id as yr in vm.appFilter.years | propsFilter: {name: $select.search}">
+                                                                            <div class="bold" ng-bind-html="yr.name | highlight: $select.search"></div>
+                                                                        </ui-select-choices>
+                                                                    </ui-select>
+                                                                    <a href="#" ng-click="vm.appFilter.toggle();" uib-tooltip="Đóng&nbsp;tìm&nbsp;kiếm" tooltip-placement="auto"><i class="fa fa-close"></i></a>
+                                                                </div>
+                                                                <a ng-if="!vm.appFilter.isFiltered" href="#" ng-click="vm.appFilter.toggle();" class="btn btn-default no-border" uib-tooltip="Tìm&nbsp;lần&nbsp;khám" tooltip-placement="auto"><i class="icon-magnifier"></i></a>
+                                                                <div ng-if="!vm.appFilter.isFiltered" class="seperator"></div>
+                                                                <button ng-if="!vm.appFilter.isFiltered" data-ng-disabled="vm.entry.dirty" ng-click="vm.editingAppt.createNew()" uib-tooltip="Thêm&nbsp;lần&nbsp;hẹn&nbsp;khám" tooltip-placement="auto" class="margin-left-10 btn btn-primary no-border"><i class="fa fa-plus"></i><span class="hidden-md hidden-sm hidden-xs"> Thêm lần hẹn khám</span></button>
+                                                            </div>
+                                                            <ul>
+                                                                <li ng-repeat="entry in vm.entries" ng-click="vm.selectAppointment(entry.id)" ng-class="{'selected' : entry.id == vm.entry.id}">
+                                                                    <i class="icon-muted icon-pencil" ng-if="entry.id == vm.entry.id"></i>
+                                                                    <i class="icon-muted fa fa-caret-right" ng-if="entry.id != vm.entry.id && !entry.arrived && !entry.missed"></i>
+                                                                    <i class="text-green fa fa-check" ng-if="entry.id != vm.entry.id && entry.arrived"></i>
+                                                                    <i class="text-danger fa fa-close" ng-if="entry.id != vm.entry.id && entry.missed"></i>
+                                                                    <a href="#" ng-class="{'locked' : !entry.editable}">{{entry.appointmentDate | date:'EEEE, dd/MM/yyyy'}}</a>
+                                                                    <span class="text-green" ng-if="entry.arrived">&mdash; đã tới</span>
+                                                                    <span class="text-danger" ng-if="entry.missed">&mdash; bỏ khám</span>
+                                                                    <span class="text-muted mutter" ng-if="!entry.missed && !entry.arrived">&mdash; chưa tới</span>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9" appointment-screen-resizer resized-element="appt-menu-container">
+                                                    <div class="row">
+                                                        <div class="col-xs-12 margin-top-20" ng-if="vm.entry.id">
+                                                            <div class="section-head with-background-1 margin-top-0">
+                                                                <i class="fa fa-caret-down color-7"></i> Ngày hẹn thăm khám: <span class="font-weight-600 margin-left-10">{{vm.entry.appointmentDate | date:'EEEE, dd/MM/yyyy'}}</span>
+                                                                <button class="btn btn-sm btn-primary no-border margin-left-10" ng-click="vm.editingAppt.editEntry(vm.entry.id)" data-ng-disabled="vm.originEntry.arrivalDate || vm.entry.dirty"><i class="icon-pencil"></i> đổi ngày</button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12" ng-if="vm.patient.vlTestEligibility"> <!--  || vm.entry.lateDays >= 84 -->
+                                                            <div class="box-danger unboxed" ng-if="vm.patient.vlTestEligibility">
+                                                                <div>
+                                                                    Ở lần khám này, bệnh nhân đã đến lịch làm xét nghiệm tải lượng virus HIV {{vm.patient.vlTestEligibility}}!
+                                                                </div>
+                                                            </div>
+                                                            <!--div class="box-danger unboxed" ng-if="vm.entry.lateDays >= 84 && !vm.ltfuNotiDismissed">
+                                                                <i class="big-icon im im-icon-Light-Bulb2"></i>
+                                                                <div>
+                                                                    Bệnh nhân này đã muộn khám trên 3 tháng ({{vm.entry.lateDays}} ngày) kể từ lần hẹn tái khám cuối. Bạn có muốn cập nhật trạng thái điều trị của bệnh nhân này thành bỏ trị không?
+                                                                    <br />
+                                                                    <button class="btn btn-danger no-border"><i class="fa fa-check"></i> Có</button>
+                                                                    <button ng-click="vm.dismissLTFUNotification();" class="btn btn-primary no-border"><i class="fa fa-close"></i> Không</button>
+                                                                </div>
+                                                            </div-->
+                                                        </div>
+                                                        <!-- Arrived? -->
+                                                        <div class="col-xs-12" style="display: flex; flex-direction: row">
+                                                            <div class="md-checkbox" style="margin-top: 8px" ng-class="{'margin-top-30' : !vm.entry || !vm.entry.id}">
+                                                                <input type="checkbox" ng-disabled="!vm.entry.editable || vm.entry.vlTested || vm.entry.cd4Tested || vm.entry.hepScreened" id="chk_arrived" ng-model="vm.entry.arrived" ng-change="vm.onArrivalChange()" class="md-check">
+                                                                <label ng-class="{'text-muted' : !vm.entry.arrived, 'font-weight-600' : vm.entry.arrived}" for="chk_arrived">
+                                                                    <span></span>
+                                                                    <span class="check"></span>
+                                                                    <span class="box"></span> Bệnh nhân đã tới phòng khám?
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 margin-top-10" ng-if="vm.entry.arrived">
+                                                            <div class="exam-container align-left">
+                                                                <div class="step-container  color-style-5 white-bg"> <!--with-border-bottom -->
+                                                                    <!--<div><div class="arrow color-style-3"></div></div>-->
+                                                                    <!--<div></div>-->
+                                                                    <div>
+                                                                        <div class="date-picker-container font-weight-600">
+                                                                            Ngày bệnh nhân tới:
+                                                                            <input id="vm.entry.arrivalDate" class="as-link with-border-bottom" placeholder="Chọn ngày..."
+                                                                                   ng-flatpickr
+                                                                                   fp-opts="vm.datepicker1.dateOpts"
+                                                                                   fp-on-setup="vm.datepicker1.datePostSetup(fpItem)"
+                                                                                   ng-model="vm.entry.arrivalDate"
+                                                                                   data-enabletime="false" />
+                                                                        </div>
+                                                                        <span ng-if="vm.entry.arrivalDateNotation" class="margin-left-10 hidden-xs"><i class="fa fa-caret-right icon-muted"></i> {{vm.entry.arrivalDateNotation}}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- Overall examination -->
+                                                                <div class="step-container color-style-5 white-bg">
+                                                                    <!--<div><div class="arrow color-style-3"></div></div>-->
+                                                                    <!--<div></div>-->
+                                                                    <div>
+                                                                        <div class="row margin-top-5">
+                                                                            <div class="col-xs-12 margin-bottom-10">
+                                                                                <div class="underline-alt padding-bottom-5 bold">Đánh giá ổn định, GĐLS, Sàng lọc lao</div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="md-checkbox" style="margin-top: 8px">
+                                                                                    <input type="checkbox" ng-disabled="!vm.entry.editable" id="chk_good_adherence" ng-change="vm.onBooleanPropertyChanged('goodAdherence')" ng-model="vm.entry.goodAdherence" class="md-check highlight-focus" tabindex="0">
+                                                                                    <label ng-class="{'font-weight-600' : vm.entry.goodAdherence, 'text-danger' : vm.entry.goodAdherence && vm.entry.arrivalDateDiffs > 1}" for="chk_good_adherence" uib-tooltip="{{vm.entry.goodAdherence && vm.entry.arrivalDateDiffs > 1 ?  'Bệnh nhân ' + vm.entry.arrivalDateNotation.toLowerCase() : ''}}">
+                                                                                        <span></span>
+                                                                                        <span class="check"></span>
+                                                                                        <span class="box"></span> Bệnh nhân tuân thủ điều trị tốt?
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="md-checkbox" style="margin-top: 8px">
+                                                                                    <input type="checkbox" ng-disabled="!vm.entry.editable" id="chk_has_oi" ng-change="vm.onBooleanPropertyChanged('hasOI')" ng-model="vm.entry.hasOI" class="md-check">
+                                                                                    <label ng-class="{'font-weight-600' : vm.entry.hasOI}" for="chk_has_oi">
+                                                                                        <span></span>
+                                                                                        <span class="check"></span>
+                                                                                        <span class="box"></span> Bệnh nhân có nhiễm trùng cơ hội?
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6 margin-top-10">
+                                                                                <div class="md-checkbox" style="margin-top: 8px">
+                                                                                    <input type="checkbox" ng-disabled="!vm.entry.editable" id="chk_drug_ae" ng-change="vm.onBooleanPropertyChanged('hasDrugAE')" ng-model="vm.entry.hasDrugAE" class="md-check">
+                                                                                    <label ng-class="{'font-weight-600' : vm.entry.hasDrugAE}" for="chk_drug_ae">
+                                                                                        <span></span>
+                                                                                        <span class="check"></span>
+                                                                                        <span class="box"></span> Bệnh nhân có tác dụng phụ của thuốc?
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6 margin-top-10">
+                                                                                <div class="md-checkbox" style="margin-top: 8px">
+                                                                                    <input type="checkbox" ng-disabled="!vm.entry.editable || vm.patient.theCase.person.gender != 'FEMALE'" id="chk_pregnant" ng-change="vm.onBooleanPropertyChanged('pregnant') || vm.checkDateAndGender()" ng-model="vm.entry.pregnant" class="md-check" on-select = "vm.checkDateAndGender()">
+                                                                                    <label ng-class="{'font-weight-600' : vm.entry.pregnant}" for="chk_pregnant">
+                                                                                        <span></span>
+                                                                                        <span class="check"></span>
+                                                                                        <span class="box"></span> Bệnh nhân đang mang thai/cho con bú?
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <!--<div class="row">-->
+                                                                            <!--<div class="col-xs-12 margin-top-10"><div class="with-border-top darker"></div></div>-->
+                                                                        <!--</div>-->
+                                                                        <div class="row margin-bottom-5">
+                                                                            <div class="col-md-6 margin-top-5">
+                                                                                <div class="select-box-container">
+                                                                                    <span class="margin-right-10 font-weight-600"><a href="#" ng-click="vm.openClinicalStages();" uib-tooltip="Danh&nbsp;sách&nbsp;các&nbsp;lần&nbsp;đánh&nbsp;giá&nbsp;GĐLS"><i class="fa fa-external-link margin-right-10"></i>Giai đoạn lâm sàng</a>:</span>
+                                                                                    <ui-select id="vm.entry.clinicalStage" ng-model="vm.entry.clinicalStage" sortable="true" close-on-select="true">
+                                                                                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                                                        <ui-select-choices repeat="s.id as s in vm.whoStages | propsFilter: {name: $select.search}">
+                                                                                            <div class="bold" ng-bind-html="s.name | highlight: $select.search"></div>
+                                                                                        </ui-select-choices>
+                                                                                    </ui-select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6 margin-top-5">
+                                                                                <div class="select-box-container">
+                                                                                    <span class="margin-right-10 font-weight-600">Sàng lọc lao:</span>
+                                                                                    <ui-select id="vm.entry.tbScreenResult" ng-model="vm.entry.tbScreenResult" sortable="true" close-on-select="true">
+                                                                                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                                                        <ui-select-choices repeat="s.id as s in vm.tbScreenResults | propsFilter: {name: $select.search}">
+                                                                                            <div class="bold" ng-bind-html="s.name | highlight: $select.search"></div>
+                                                                                        </ui-select-choices>
+                                                                                    </ui-select>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- ARV drug dispensed? -->
+                                                                <div class="step-container  color-style-5 white-bg">
+                                                                    <!--<div><div class="arrow color-style-5"></div></div>-->
+                                                                    <!--<div></div>-->
+                                                                    <div>
+                                                                        <div class="row">
+                                                                            <div class="col-xs-12 margin-bottom-10">
+                                                                                <div class="underline-alt padding-bottom-5 bold">Cấp thuốc ARV</div>
+                                                                            </div>
+                                                                            <div class="col-xs-12">
+                                                                                <div class="box-danger unboxed" ng-if="vm.entry.nextAppointmentDateWarning">
+                                                                                     <span class="font-weight-600 margin-right-10"><i class="im im-icon-Flash" style="font-size: 25px"></i></span><span ng-bind-html="vm.entry.nextAppointmentDateWarning"></span>
+                                                                                </div>
+                                                                                <!--<div ng-if="vm.entry.isLatestAppointment || vm.entry.isLatestEditableAppointment">-->
+                                                                                <div class="box-danger unboxed" ng-if="!vm.entry.onMMD && vm.entry.softMmdEligible && vm.entry.hardMmdEligible">
+                                                                                    <span class="font-weight-600 margin-right-10"><i class="im im-icon-Flash" style="font-size: 25px"></i></span><span>Ở lần khám này, bệnh nhân <span class="underline-alt jumping">ổn định (theo 7 tiêu chuẩn)</span>, nhưng <span class="underline-alt jumping">chưa được cấp thuốc nhiều tháng</span>. Bạn có muốn cấp thuốc nhiều tháng cho bệnh nhân này không?</span>
+                                                                                    <div class="margin-left-10"><button data-ng-disabled="vm.entry.dirty" ng-click="vm.putPatientOnMMD();" class="btn btn-primary no-border"><i class="fa fa-check margin-right-5"></i>cấp thuốc nhiều tháng</button></div>
+                                                                                </div>
+                                                                                <div class="box-danger unboxed" ng-if="vm.entry.onMMD && vm.entry.softMmdEligible && vm.entry.hardMmdEligible">
+                                                                                    <span class="font-weight-600 margin-right-10"><i class="im im-icon-Flash" style="font-size: 25px"></i></span><span>Ở lần khám này, bệnh nhân <span class="underline-alt jumping">đang được cấp thuốc nhiều tháng</span>, và vẫn ổn định (theo 7 tiêu chuẩn). Bạn vẫn có thể dừng cấp thuốc nhiều tháng cho bệnh nhân nếu muốn.</span>
+                                                                                    <div class="margin-left-10"><button data-ng-disabled="vm.entry.dirty" ng-click="vm.retirePatientFromMMD();" class="btn btn-danger no-border"><i class="fa fa-check margin-right-5"></i>bỏ cấp thuốc nhiều tháng</button></div>
+                                                                                </div>
+                                                                                <div class="box-danger unboxed" ng-if="vm.entry.onMMD && (!vm.entry.softMmdEligible || !vm.entry.hardMmdEligible)">
+                                                                                    <span class="font-weight-600 margin-right-10"><i class="im im-icon-Flash" style="font-size: 25px"></i></span><span>Ở lần khám này, bệnh nhân <span class="underline-alt jumping">chưa ổn định</span> để cấp thuốc nhiều tháng ở lần này.</span>
+                                                                                </div>
+                                                                                <div class="box-danger unboxed" ng-if="vm.entry.onMMD && (vm.entry.softMmdEligible && vm.entry.hardMmdEligible) && vm.entry.drugDays < 84">
+                                                                                    <span class="font-weight-600 margin-right-10"><i class="im im-icon-Flash" style="font-size: 25px"></i></span><span>Ở lần khám này, bệnh nhân <span class="underline-alt jumping">ổn định (theo 7 tiêu chuẩn) và đang nhận thuốc nhiều tháng</span> nhưng số thuốc cấp ở lần này &lt; 84 liều. Bạn có thể cân nhắc lại số thuốc ARV cấp cho bệnh nhân.</span>
+                                                                                </div>
+                                                                                <div class="box-danger unboxed" ng-if="!vm.entry.onMMD  && (!vm.entry.softMmdEligible || !vm.entry.hardMmdEligible) && vm.entry.drugDays >= 84">
+                                                                                    <span class="font-weight-600 margin-right-10"><i class="im im-icon-Flash" style="font-size: 25px"></i></span><span>Ở lần khám này, bệnh nhân <span class="underline-alt jumping">chưa ổn định</span> nhưng số thuốc cấp ở lần này &ge; 84 liều. Bạn có thể cân nhắc lại số thuốc ARV cấp cho bệnh nhân.</span>
+                                                                                </div>
+                                                                                <div class="box-danger unboxed" ng-if="!vm.entry.onMMD && (vm.entry.softMmdEligible && vm.entry.hardMmdEligible) && vm.entry.drugDays >= 84">
+                                                                                    <span class="font-weight-600 margin-right-10"><i class="im im-icon-Flash" style="font-size: 25px"></i></span><span>Ở lần khám này, bệnh nhân <span class="underline-alt jumping">ổn định (theo 7 tiêu chuẩn), chưa được cấp thuốc nhiều tháng</span> nhưng số liều ARV bạn đang kê ở lần này &ge; 84.</span>
+                                                                                </div>
+                                                                                <!--</div>-->
+                                                                            </div>
+                                                                            <div class="col-xs-12 margin-top-10 font-weight-600">
+                                                                                <div class="row margin-bottom-5" ng-if="vm.patient.theCase.arvStartDate != null">
+                                                                                    <div class="col-md-6">
+                                                                                        <span class="margin-right-10">Phác đồ ARV:</span><span class="font-weight-600">{{vm.patient.theCase.currentArvRegimenName + ' (bậc ' + vm.patient.theCase.currentArvRegimenLine + ')'}} <!--button data-ng-disabled="vm.entry.dirty" ng-click="vm.showArvRegimenForm();" class="btn btn-sm btn-primary no-border"><i class="icon-shuffle"></i> đổi phác đồ</button--></span>
+                                                                                    </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <!--<div ng-if="vm.entry.isLatestAppointment || vm.entry.isLatestEditableAppointment">-->
+                                                                                            <span class="margin-right-10">Cấp thuốc nhiều tháng:</span>
+                                                                                            <a ng-if="!vm.entry.onMMD || !vm.entry.hardMmdEligible || !vm.entry.softMmdEligible" class="jumping" href="#" ng-click="vm.showMMDOverview();" uib-tooltip="Xem chi tiết" tooltip-placement="auto"><i class="fa fa-external-link margin-right-10"></i>Không được cấp</a>
+                                                                                            <a href="#" uib-tooltip="Xem chi tiết" tooltip-placement="auto" ng-click="vm.showMMDOverview();" ng-if="vm.entry.onMMD && vm.entry.hardMmdEligible && vm.entry.softMmdEligible" class="font-weight-600"><i class="fa fa-external-link margin-right-10"></i>Đang được cấp</a>
+                                                                                        <!--</div>-->
+                                                                                        <!--<div ng-if="!vm.entry.isLatestAppointment && !vm.entry.isLatestEditableAppointment">-->
+                                                                                            <!--<span class="margin-right-10">Cấp thuốc nhiều tháng:</span>-->
+                                                                                            <!--<a ng-if="!vm.entry.onMMD" class="jumping" href="#" ng-click="vm.showMMDOverview();" uib-tooltip="Xem chi tiết" tooltip-placement="auto"><i class="fa fa-external-link margin-right-10"></i>Không được cấp</a>-->
+                                                                                            <!--<a ng-if="vm.entry.onMMD" class="jumping" href="#" ng-click="vm.showMMDOverview();" uib-tooltip="Xem chi tiết" tooltip-placement="auto"><i class="fa fa-external-link margin-right-10"></i>Được cấp nhiều tháng</a>-->
+                                                                                        <!--</div>-->
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <span class="margin-left-10" ng-if="vm.patient.theCase.arvStartDate == null"><span class="font-weight-600">Bệnh nhân chưa điều trị ARV.</span> <!--button data-ng-disabled="vm.entry.dirty" class="btn btn-sm btn-primary no-border"><i class="icon-shuffle"></i> kê phác đồ ARV</button--></span>
+
+                                                                                <div class="row margin-bottom-5" ng-if="vm.patient.theCase.arvStartDate != null">
+                                                                                    <div class="col-md-6">
+                                                                                        <div class="select-box-container">
+                                                                                            <span class="margin-right-10">Số ngày thuốc ARV thực nhận:</span>
+                                                                                            <input id="vm.entry.drugDays" class="form-control as-link with-border-bottom" ng-change="vm.onDrugDaysChanged();" ng-model="vm.entry.drugDays" />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <div class="select-box-container">
+                                                                                            <span class="margin-right-10">Nguồn thuốc ARV:</span>
+                                                                                            <ui-select ng-disabled="vm.patient.theCase.arvStartDate == null" id="vm.entry.drugSource" ng-model="vm.entry.drugSource" sortable="true" close-on-select="true">
+                                                                                                <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                                                                <ui-select-choices repeat="s.id as s in vm.drugSources | propsFilter: {name: $select.search}">
+                                                                                                    <div class="bold" ng-bind-html="s.name | highlight: $select.search"></div>
+                                                                                                </ui-select-choices>
+                                                                                            </ui-select>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- Next appointment date -->
+                                                                <div class="step-container color-style-5 white-bg">
+                                                                    <!--<div><div class="arrow color-style-3"></div>4</div>-->
+                                                                    <!--<div></div>-->
+                                                                    <div>
+                                                                        <div class="row">
+                                                                            <div class="col-xs-12 margin-bottom-10">
+                                                                                <div class="underline-alt padding-bottom-5 bold">Tái khám</div>
+                                                                            </div>
+                                                                            <div class="col-xs-6 margin-top-10">
+                                                                                <div class="date-picker-container font-weight-600">
+                                                                                    Ngày hẹn tái khám:
+                                                                                    <input id="vm.entry.nextAppointmentDate" class="as-link with-border-bottom" placeholder="Chọn ngày..."
+                                                                                           ng-flatpickr
+                                                                                           fp-opts="vm.datepicker2.dateOpts"
+                                                                                           fp-on-setup="vm.datepicker2.datePostSetup(fpItem)"
+                                                                                           ng-model="vm.entry.nextAppointmentDate"
+                                                                                           data-enabletime="false" />
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xs-6 margin-top-10">
+                                                                                <div class="md-checkbox" style="margin-top: 8px">
+                                                                                    <input type="checkbox" ng-disabled="!vm.entry.editable || !vm.entry.isLatestAppointment || !vm.entry.nextAppointmentDate || vm.entry.nextAppointmentDateWarning" id="chk_autogen_next_appointment" ng-change="vm.onBooleanPropertyChanged('autoGenNextAppointment')" ng-model="vm.entry.autoGenNextAppointment" class="md-check">
+                                                                                    <label ng-class="{'text-muted' : !vm.entry.autoGenNextAppointment, 'font-weight-600' : vm.entry.autoGenNextAppointment}" for="chk_autogen_next_appointment">
+                                                                                        <span></span>
+                                                                                        <span class="check"></span>
+                                                                                        <span class="box"></span> Tự động <i class="font-weight-600 underline-alt" style="font-style: normal">tạo lịch tái khám</i>
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-xs-12 margin-top-20 margin-bottom-10">
+                                                                                <div class="underline-alt padding-bottom-5 bold">Ghi chú</div>
+                                                                            </div>
+                                                                            <div class="col-xs-12">
+                                                                                <textarea class="form-control textarea-noresize textarea-border-bottom-only" data-ng-model="vm.entry.note" textarea-autogrow="" rows="2"></textarea>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Clinical tests -->
+                                                        <div class="col-xs-12" ng-if="vm.originEntry.id && vm.originEntry.arrived">
+                                                            <div class="section-head with-background-1"><i class="fa fa-caret-down color-7"></i> Xét nghiệm cận lâm sàng liên quan</div>
+                                                        </div>
+
+                                                        <!-- HIV VL tested? -->
+                                                        <div class="col-xs-12 margin-top-10" ng-if="vm.originEntry.id && vm.originEntry.arrived">
+                                                            <div class="md-checkbox" style="margin-top: 8px">
+                                                                <input type="checkbox" ng-disabled="!vm.entry.editable || !vm.originEntry.arrived || vm.originEntry.vlTest.id || vm.entry.dirty" id="chk_vl_tested" ng-change="vm.onBooleanPropertyChanged('vlTested')" ng-model="vm.entry.vlTested" class="md-check">
+                                                                <label ng-class="{'text-muted' : !vm.entry.vlTested, 'font-weight-600' : vm.entry.vlTested}" for="chk_vl_tested">
+                                                                    <span></span>
+                                                                    <span class="check"></span>
+                                                                    <span class="box"></span> Bệnh nhân được xét nghiệm tải lượng virus HIV?
+                                                                </label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-12" ng-if="vm.entry.vlTested">
+                                                            <div class="with-border-top darker solid-border"></div>
+                                                            <div class="row">
+                                                                <div class="col-xs-12">
+                                                                    <div ng-if="!vm.entry.vlTest || !vm.entry.vlTest.id">
+                                                                        <button class="btn btn-primary jumping no-border margin-right-5" data-ng-disabled="!vm.entry.editable || vm.entry.dirty" ng-click="vm.showVLEditForm();"><i class="icon-pencil margin-right-5"></i>Nhập thông tin xét nghiệm TLVR HIV</button>
+                                                                        <a class="btn btn-default jumping no-border" target="_blank" ng-href="#/opc/patient/{{vm.patient.id}}/viral-load"><i class="fa fa-external-link"></i> Xem danh sách</a>
+                                                                    </div>
+
+                                                                    <div class="test-result-summary" ng-if="vm.entry.vlTest && vm.entry.vlTest.id">
+                                                                        <div class="font-weight-500">
+                                                                            <div>
+                                                                                <div>Lý do xét nghiệm:</div>
+                                                                                <div>{{vm.entry.vlTest.reasonForTestingLabel}}</div>
+                                                                            </div>
+                                                                            <div>
+                                                                                <div>Kinh phí:</div>
+                                                                                <div>{{vm.entry.vlTest.fundingSourceLabel}}</div>
+                                                                            </div>
+                                                                            <div ng-if="vm.entry.vlTest.resultDate">
+                                                                                <div>Kết quả:</div>
+                                                                                <div ng-if="vm.entry.vlTest.resultNumber == 0" class="text-green">Dưới ngưỡng phát hiện</div>
+                                                                                <div ng-if="vm.entry.vlTest.resultNumber > 0">{{vm.entry.vlTest.resultNumber | number:0}} <span class="font-weight-500">(bản sao/ml)</span></div>
+                                                                            </div>
+                                                                            <div ng-if="vm.entry.vlTest.resultDate">
+                                                                                <div>Ngày có kết quả:</div>
+                                                                                <div>{{vm.entry.vlTest.resultDate |date:'dd/MM/yyyy'}}</div>
+                                                                            </div>
+                                                                            <div ng-if="!vm.entry.vlTest.resultDate" class="text-center">
+                                                                                <div>Kết quả:</div>
+                                                                                <div class="text-danger">Chưa có kết quả xét nghiệm</div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div>
+                                                                            <button class="btn btn-primary no-border align-left" data-ng-disabled="!vm.entry.editable || vm.entry.dirty" ng-click="vm.showVLEditForm();"><i class="icon-pencil margin-right-5"></i>Cập nhật</button>
+                                                                            <button class="btn btn-danger no-border align-left" data-ng-disabled="!vm.entry.editable || vm.entry.dirty" ng-click="vm.deleteVLEntry(vm.entry.vlTest.id);"><i class="icon-trash margin-right-5"></i>Xóa</button>
+                                                                            <a class="btn btn-default no-border align-left" target="_blank" ng-href="#/opc/patient/{{vm.patient.id}}/viral-load"><i class="fa fa-external-link"></i> Xem danh sách</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- CD4 tested? -->
+                                                        <div class="col-xs-12 margin-top-10" ng-if="vm.originEntry.id && vm.originEntry.arrived">
+                                                            <div class="with-border-top darker" ng-if="!vm.entry.vlTested"></div>
+                                                            <div class="md-checkbox" style="margin-top: 8px">
+                                                                <input type="checkbox"  ng-disabled="!vm.entry.editable || !vm.originEntry.arrived || vm.originEntry.cd4Test.id || vm.entry.dirty" id="chk_cd4_tested" ng-change="vm.onBooleanPropertyChanged('cd4Tested')" ng-model="vm.entry.cd4Tested" class="md-check">
+                                                                <label ng-class="{'text-muted' : !vm.entry.cd4Tested, 'font-weight-600' : vm.entry.cd4Tested}" for="chk_cd4_tested">
+                                                                    <span></span>
+                                                                    <span class="check"></span>
+                                                                    <span class="box"></span> Bệnh nhân được xét nghiệm CD4?
+                                                                </label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-12 margin-bottom-20" ng-if="vm.entry.cd4Tested">
+                                                            <div class="with-border-top darker solid-border"></div>
+                                                            <div class="row">
+                                                                <div class="col-xs-12">
+                                                                    <div ng-if="!vm.entry.cd4Test || !vm.entry.cd4Test.id">
+                                                                        <button class="btn btn-primary jumping no-border margin-right-5" data-ng-disabled="!vm.entry.editable || vm.entry.dirty" ng-click="vm.showCD4EditForm();"><i class="icon-pencil margin-right-5"></i>Nhập thông tin xét nghiệm CD4</button>
+                                                                        <a class="btn btn-default jumping no-border" target="_blank" ng-href="#/opc/patient/{{vm.patient.id}}/cd4"><i class="fa fa-external-link"></i> Xem danh sách</a>
+                                                                    </div>
+
+                                                                    <div class="test-result-summary" ng-if="vm.entry.cd4Test && vm.entry.cd4Test.id">
+                                                                        <div class="font-weight-500">
+                                                                            <div>
+                                                                                <div>Lý do xét nghiệm:</div>
+                                                                                <div>{{vm.entry.cd4Test.reasonForTestingLabel}}</div>
+                                                                            </div>
+                                                                            <div>
+                                                                                <div>Kinh phí:</div>
+                                                                                <div>{{vm.entry.cd4Test.fundingSourceLabel}}</div>
+                                                                            </div>
+                                                                            <div ng-if="vm.entry.cd4Test.resultDate">
+                                                                                <div>Kết quả:</div>
+                                                                                <div>{{vm.entry.cd4Test.resultNumber | number:0}} <span class="font-weight-500">(tế bào/mm<sup>3</sup>)</span></div>
+                                                                            </div>
+                                                                            <div ng-if="vm.entry.cd4Test.resultDate">
+                                                                                <div>Ngày có kết quả:</div>
+                                                                                <div>{{vm.entry.cd4Test.resultDate |date:'dd/MM/yyyy'}}</div>
+                                                                            </div>
+                                                                            <div ng-if="!vm.entry.cd4Test.resultDate" class="text-center">
+                                                                                <div>Kết quả:</div>
+                                                                                <div class="text-danger">Chưa có kết quả xét nghiệm</div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div>
+                                                                            <button class="btn btn-primary no-border align-left" data-ng-disabled="!vm.entry.editable || vm.entry.dirty" ng-click="vm.showCD4EditForm();"><i class="icon-pencil margin-right-5"></i>Cập nhật</button>
+                                                                            <button class="btn btn-danger no-border align-left" data-ng-disabled="!vm.entry.editable || vm.entry.dirty" ng-click="vm.deleteCD4Entry(vm.entry.cd4Test.id);"><i class="icon-trash margin-right-5"></i>Xóa</button>
+                                                                            <a class="btn btn-default no-border align-left" target="_blank" ng-href="#/opc/patient/{{vm.patient.id}}/cd4"><i class="fa fa-external-link"></i> Xem danh sách</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Hep screen tested? -->
+                                                        <div class="col-xs-12 margin-top-10" ng-if="vm.originEntry.id && vm.originEntry.arrived">
+                                                            <div class="with-border-top darker" ng-if="!vm.entry.cd4Tested"></div>
+                                                            <div class="md-checkbox" style="margin-top: 8px">
+                                                                <input type="checkbox"  ng-disabled="!vm.entry.editable || !vm.originEntry.arrived || vm.originEntry.hep.id || vm.entry.dirty" id="chk_hep_tested" ng-change="vm.onBooleanPropertyChanged('hepScreened')" ng-model="vm.entry.hepScreened" class="md-check">
+                                                                <label ng-class="{'text-muted' : !vm.entry.hepScreened, 'font-weight-600' : vm.entry.hepScreened}" for="chk_hep_tested">
+                                                                    <span></span>
+                                                                    <span class="check"></span>
+                                                                    <span class="box"></span> Bệnh nhân được xét nghiệm sàng lọc viêm gan?
+                                                                </label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-12 margin-bottom-10" ng-if="vm.entry.hepScreened">
+                                                            <div class="with-border-top darker solid-border"></div>
+
+                                                            <div ng-if="!vm.entry.hep || !vm.entry.hep.id">
+                                                                <button class="btn btn-primary jumping no-border margin-right-5" data-ng-disabled="!vm.entry.editable || vm.entry.dirty" ng-click="vm.showHepEditForm();"><i class="icon-pencil margin-right-5"></i>Nhập thông tin viêm gan</button>
+                                                                <a class="btn btn-default jumping no-border" target="_blank" ng-href="#/opc/patient/{{vm.patient.id}}/hepatitis"><i class="fa fa-external-link"></i> Xem danh sách</a>
+                                                            </div>
+
+                                                            <div class="test-result-summary" ng-if="vm.entry.hep && vm.entry.hep.id">
+                                                                <div class="font-weight-500">
+                                                                    <div>
+                                                                        <div>Loại xét nghiệm:</div>
+                                                                        <div>{{vm.entry.hep.testTypeLabel}}</div>
+                                                                    </div>
+                                                                    <div>
+                                                                        <div>Kết quả:</div>
+                                                                        <div>{{vm.entry.hep.testPositive ? 'Dương tính' : 'Âm tính'}}</div>
+                                                                    </div>
+                                                                    <div ng-if="vm.entry.hep.testPositive && !vm.entry.hep.onTreatment">
+                                                                        <div>Tình trạng:</div>
+                                                                        <div class="text-danger">Chưa được điều trị</div>
+                                                                    </div>
+                                                                    <div ng-if="vm.entry.hep.onTreatment">
+                                                                        <div>Tình trạng:</div>
+                                                                        <div class="text-green">Đã điều trị &#8631;<div class="font-weight-500 margin-top-10">(Từ {{vm.entry.hep.txStartDate ? (vm.entry.hep.txStartDate |date:'dd/MM/yyyy') : '//'}} - {{vm.entry.hep.txEndDate ? (vm.entry.hep.txEndDate |date:'dd/MM/yyyy') : '//'}})</div></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div>
+                                                                    <button class="btn btn-primary no-border" data-ng-disabled="!vm.entry.editable || vm.entry.dirty" ng-click="vm.showHepEditForm();"><i class="icon-pencil margin-right-5"></i>Cập nhật</button>
+                                                                    <button class="btn btn-danger no-border" data-ng-disabled="!vm.entry.editable || vm.entry.dirty" ng-click="vm.deleteHepEntry(vm.entry.hep.id);"><i class="icon-trash margin-right-5"></i>Xóa</button>
+                                                                    <a class="btn btn-default no-border" target="_blank" ng-href="#/opc/patient/{{vm.patient.id}}/hepatitis"><i class="fa fa-external-link"></i> Xem danh sách</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- SHI card changed? -->
+                                                        <div class="col-xs-12" ng-if="vm.originEntry.id && vm.originEntry.arrived">
+                                                            <div class="section-head with-background-1"><i class="fa fa-caret-down color-7"></i> Thông tin thẻ bảo hiểm y tế</div>
+                                                        </div>
+                                                        <div class="col-xs-12 margin-top-10" ng-if="vm.originEntry.id && vm.originEntry.arrived"> <!--  ng-if="vm.entry.shiChanged" -->
+                                                            <div class="box-danger unboxed margin-top-5">
+                                                                <div><i class="fa fa-warning"></i> {{vm.entry.shiView.expiryWarning}}</div>
+                                                            </div>
+                                                            <div class="test-result-summary">
+                                                                <div ng-if="!vm.entry.shiView || !vm.entry.shiView.id" style="white-space: normal !important;">
+                                                                    Không có thông tin thẻ bảo hiểm y tế ở lần khám này.<br />Bạn có thể <span ng-if="!vm.entry.editable || vm.entry.dirty">cập nhật</span><a ng-if="vm.entry.editable && !vm.entry.dirty" class="font-weight-600 underline-alt no-decoration" ng-click="vm.showShiEditForm();">cập nhật</a> nếu có thông tin.
+                                                                </div>
+                                                                <div ng-if="vm.entry.shiView && vm.entry.shiView.id && !vm.entry.shiView.hasShiCard">
+                                                                    <div>
+                                                                        <div>Số thẻ BHYT:</div>
+                                                                        <div>Bệnh nhân không có thẻ.</div>
+                                                                    </div>
+                                                                    <div>
+                                                                        <div>Ngày ghi nhận:</div>
+                                                                        <div>{{vm.entry.shiView.interviewDate | date:'dd/MM/yyyy'}}</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div ng-if="vm.entry.shiView && vm.entry.shiView.id && vm.entry.shiView.hasShiCard">
+                                                                    <div>
+                                                                        <div>Số thẻ BHYT:</div>
+                                                                        <div>{{vm.entry.shiView.shiCardNumber}}</div>
+                                                                    </div>
+                                                                    <div>
+                                                                        <div>Ngày hết hạn:</div>
+                                                                        <div>{{vm.entry.shiView.shiExpiryDate | date:'dd/MM/yyyy'}}</div>
+                                                                    </div>
+                                                                    <div ng-if="vm.entry.shiView.primaryCareFacility || vm.entry.shiView.primaryCareFacilityName">
+                                                                        <div>Nơi đăng ký KCB:</div>
+                                                                        <div>{{(vm.entry.shiView.primaryCareFacility && vm.entry.shiView.primaryCareFacility.id) ? vm.entry.shiView.primaryCareFacility.name : vm.entry.shiView.primaryCareFacilityName ? vm.entry.shiView.primaryCareFacilityName : '&mdash;'}}</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div>
+                                                                    <button class="btn btn-primary no-border" data-ng-disabled="!vm.entry.editable || vm.entry.dirty" ng-click="vm.showShiEditForm();"><i class="icon-pencil margin-right-5"></i>Cập nhật</button>
+                                                                    <button class="btn btn-danger no-border" data-ng-disabled="!vm.entry.shi || !vm.entry.editable || vm.entry.dirty" ng-click="vm.deleteShiEntry(vm.entry.shi.id);"><i class="icon-trash margin-right-5"></i>Xóa</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!--TB prophylaxis/treatment-->
+                                                        <!--<div class="col-xs-12" ng-if="vm.originEntry.id && vm.originEntry.arrived">-->
+                                                            <!--<div class="section-head with-background-1"><i class="fa fa-caret-down color-7"></i> Thông tin đồng nhiễm Lao - HIV</div>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="col-xs-12 margin-top-10" ng-if="vm.originEntry.id && vm.originEntry.arrived">-->
+                                                            <!--<div class="row" data-ng-disabled="!vm.entry.editable || vm.entry.dirty">-->
+                                                                <!--<div class="col-xs-12">-->
+                                                                    <!--<div class="underline-alt bold margin-bottom-10">Quá trình sàng lọc, chuẩn đoán, điều trị lao-->
+                                                                        <!--<button href="#" data-ng-disabled="vm.orgsWritable.length <= 0 || !vm.patient.editable" ng-click="vm.openAddTBTreatment2();" class="btn btn-primary btn-sm no-border jumping" uib-tooltip="Thêm&nbsp;mới"><i class="fa fa-plus"></i><span class="hidden-xs">Thêm mới</span></button>-->
+                                                                    <!--</div>-->
+                                                                    <!--<div class="dragon" drag-on> &lt;!&ndash; horizontal-scroll&ndash;&gt;-->
+                                                                        <!--<table id="bsTableTBTreatment2Control" bs-table-control="vm.bsTableTBTreatment2Control"></table>-->
+                                                                    <!--</div>-->
+                                                                <!--</div>-->
+                                                            <!--</div>-->
+                                                            <!--<div class="row margin-top-20">-->
+                                                                <!--<div class="col-xs-12">-->
+                                                                    <!--<div class="underline-alt margin-bottom-10 bold">Quá trình điều trị dự phòng lao-->
+                                                                        <!--<button href="#"  ng-click="vm.openAddTBProphylaxis2();" class="btn btn-primary btn-sm no-border jumping" uib-tooltip="Thêm&nbsp;mới"><i class="fa fa-plus"></i><span class="hidden-xs">Thêm mới đợt điều trị</span></button>-->
+                                                                    <!--</div>-->
+                                                                    <!--<table id="bsTableTBProphylaxis2Control" bs-table-control="vm.bsTableTBProphylaxis2Control"></table>-->
+                                                                <!--</div>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<div ng-include="'_treatment/views/fragments/_information.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_confirmation.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_viralload_edit.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_cd4_edit.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_hep_edit.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_shi_edit.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_clinical_stages_alt.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_setup_appointment.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_tb_treatment2_edit.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_mmd_overview.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_noneditable_alert.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_delete.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_tb_prophylaxis2_edit.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_tb_prophylaxis2_dispense.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_tb_prophylaxis2_dispense_return.html?v=' + settings.versionNumber"></div>
+<div ng-include="'_treatment/views/fragments/_tb_prophylaxis2_dispense_stop.html?v=' + settings.versionNumber"></div>

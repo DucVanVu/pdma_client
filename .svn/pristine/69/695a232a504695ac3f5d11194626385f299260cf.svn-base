@@ -1,0 +1,305 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="icon-magic-wand margin-right-5"></i> Báo cáo phòng khám ngoại trú</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#">Trang chủ</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#/opc/patients">Phòng khám ngoại trú</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="display-block no-content1 margin-top-10" ng-if="isAdministrator(currentUser)">
+                    Bạn không có quyền xem nội dung này.
+                </div>
+                <div class="row" ng-if="!isAdministrator(currentUser)">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs ">
+                                <li class="uppercase">
+                                    <a href="#/opc-dashboard" uib-tooltip="Tổng quan"><i class="fa fa-area-chart"></i><span class="hidden-xs" ng-class="{'hidden-sm' : isSiteManager(currentUser) || (vm.selectedEntry && vm.selectedEntry.theCase.person)}"> Tổng quan</span></a>
+                                </li>
+                                <li class="uppercase" ng-if="isSiteManager(currentUser) || isProvincialManager(currentUser)">
+                                    <a href="#/opc/patients" uib-tooltip="{{opcNotification.patientListTooltip}}"><i class="fa fa-wheelchair-alt"></i><span ng-class="{'hidden-sm hidden-md hidden-xs margin-right-5' : isSiteManager(currentUser) || (vm.selectedEntry && vm.selectedEntry.theCase.person)}"> Bệnh nhân</span><span ng-if="opcNotification.pendingEnrollmentCount > 0" class="badge badge-danger">{{opcNotification.pendingEnrollmentCount}}</span></a>
+                                </li>
+                                <li class="uppercase" ng-if="isSiteManager(currentUser)">
+                                    <a href="#/opc/appointment-cal/edit" uib-tooltip="Khám&nbsp;bệnh&nbsp;-&nbsp;Cấp&nbsp;thuốc"><i class="icon-calendar"></i><span class="hidden-xs"> Lịch khám </span></a>
+                                    <!--<span class="tab-new-function"><i class="fa fa-flash"></i> mới</span>-->
+                                </li>
+                                <li class="active uppercase">
+                                    <a href="#" class="font-weight-600" uib-tooltip="Báo&nbsp;cáo"><i class="fa fa-bar-chart"></i><span ng-class="{'hidden-xs' : isSiteManager(currentUser)}"> Báo cáo</span></a>
+                                    <!--<span class="tab-new-function"><i class="fa fa-flash"></i> mới</span>-->
+                                </li>
+                                <li class="uppercase" ng-if="vm.selectedEntry && vm.selectedEntry.theCase.person && vm.selectedEntry.theCase.person.id">
+                                    <a uib-tooltip="Thông&nbsp;tin&nbsp;bệnh&nbsp;nhân" href="#/opc/view-patient/{{vm.selectedEntry.id}}"><i class="fa {{vm.selectedEntry.theCase.person.genderIcon}}"></i> {{vm.selectedEntry.theCase.person.fullname}} ({{vm.selectedEntry.theCase.person.age}} tuổi)</a>
+                                </li>
+                                <li class="uppercase" ng-if="vm.editingEntry">
+                                    <a uib-tooltip="Cập&nbsp;nhật&nbsp;hồ&nbsp;sơ" href="#/opc/edit-patient/{{vm.editingEntry.id ? vm.editingEntry.id : 0}}"><i class="icon-pencil"></i> {{vm.editingEntry.theCase.person && vm.editingEntry.theCase.person.fullname ? vm.editingEntry.theCase.person.fullname : 'Bệnh nhân mới'}}</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content summary-panel">
+                                <div class="tab-pane active">
+                                    <div class="row">
+                                        <div class="col-md-7 col-sm-12 col-xs-12">
+                                            <div class="row">
+                                                <div class="col-xs-12 margin-top-10 label-with-line">
+                                                    <label class="bold text-muted"><i class="fa fa-filter margin-right-10"></i>Chọn loại báo cáo</label>
+                                                    <div></div>
+                                                </div>
+                                                <div class="col-xs-12 margin-top-10">
+                                                    <div class="report-search-control">
+                                                        <i class="fa fa-search"></i>
+                                                        <input class="form-control" id="vm.filteredReportKeyword" autocomplete="off" ng-model="vm.filteredReportKeyword" ng-enter="vm.searchReport();" placeholder="Tìm loại báo cáo trong danhs sách..." />
+                                                        <span>nhấn ENTER để tìm...</span>
+                                                        <a href="#" ng-if="vm.filteredReportKeyword" ng-click="vm.clearKeyword()">xoá từ khoá</a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 margin-top-10">
+                                                    <div class="report-selecting-container">
+                                                        <ul class="option-selector">
+                                                            <li ng-repeat="t in vm.filteredReportTypes" ng-class="{'no-bullet' : t.sub, 'selected' : vm.selectedReportType.id == t.id, 'heading': t.heading}"><span ng-if="t.heading" ng-bind-html="t.name"></span><a ng-click="vm.selectReportType(t)" ng-if="!t.heading" href="#"><span ng-bind-html="t.name"></span></a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 margin-top-10 info-box has-icon" ng-if="vm.selectedReportType.testing">
+                                                    <div><i class="im im-icon-Flash"></i></div>
+                                                    <div><span><div class="font-weight-500 text-danger">
+                                                        Báo cáo này đang được thử nghiệm để kiểm tra độ chính xác. Khi nào bạn không còn nhìn thấy thông báo này có nghĩa là bạn có thể sử dụng được.
+                                                    </div>
+                                                    </span></div>
+                                                </div>
+                                                <div class="col-xs-12 margin-top-20 label-with-line" ng-if="vm.selectedReportType.rawDataOnly">
+                                                    <label class="bold text-muted"><i class="fa fa-check margin-right-10"></i>Chọn định dạng dữ liệu sẽ xuất ra</label>
+                                                    <div></div>
+                                                </div>
+                                                <div class="col-xs-12 margin-top-20" ng-if="vm.selectedReportType.rawDataOnly">
+                                                    <div class="md-checkbox">
+                                                        <input type="checkbox" id="chk_raw_data" ng-model="vm.report.rawDataOnly" class="md-check">
+                                                        <label class="font-weight-500" for="chk_raw_data">
+                                                            <span></span>
+                                                            <span class="check"></span>
+                                                            <span class="box"></span> Chỉ xuất dữ liệu thô (dạng danh sách) cho báo cáo này.
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 margin-top-20 label-with-line" ng-if="vm.selectedReportType.includeExtra || vm.selectedReportType.includeAppointmentInfo">
+                                                    <label class="bold text-muted"><i class="fa fa-check margin-right-10"></i>Chọn xuất dữ liệu bổ sung</label>
+                                                    <div></div>
+                                                </div>
+                                                <div class="col-xs-12 margin-top-20" ng-if="vm.selectedReportType.includeExtra || vm.selectedReportType.includeAppointmentInfo">
+                                                    <div class="md-checkbox" ng-if="vm.selectedReportType.includeExtra">
+                                                        <input type="checkbox" id="chk_include_extra" ng-model="vm.report.includeExtra" ng-click="vm.onSingleSelectionClick(1)" class="md-check">
+                                                        <label class="font-weight-500" for="chk_include_extra">
+                                                            <span></span>
+                                                            <span class="check"></span>
+                                                            <span class="box"></span> Dữ liệu bổ sung gồm: TLVR gần nhất, đánh giá nhóm nguy cơ, bảo hiểm y tế...
+                                                        </label>
+                                                    </div>
+
+                                                    <div class="md-checkbox" ng-if="vm.selectedReportType.includeAppointmentInfo" ng-class="{'margin-top-20' : vm.selectedReportType.includeExtra}">
+                                                        <input type="checkbox" id="chk_include_app_info" ng-model="vm.report.includeAppointmentInfo" ng-click="vm.onSingleSelectionClick(2)" class="md-check">
+                                                        <label class="font-weight-500" for="chk_include_app_info">
+                                                            <span></span>
+                                                            <span class="check"></span>
+                                                            <span class="box"></span> Dữ liệu lịch tái khám của bệnh nhân
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 margin-top-20 label-with-line" ng-if="(isSiteManager(currentUser) || isDistrictManager(currentUser) || isProvincialManager(currentUser)) && vm.selectedReportType.passwordProtected">
+                                                    <label class="bold text-muted"><i class="fa fa-shield margin-right-10"></i>Mật khẩu để mở tệp tin dữ liệu sẽ xuất ra</label>
+                                                    <div></div>
+                                                </div>
+                                                <div class="col-xs-12 margin-top-10 info-box has-icon" ng-if="(isSiteManager(currentUser) || isDistrictManager(currentUser) || isProvincialManager(currentUser)) && vm.selectedReportType.passwordProtected && !vm.report.password">
+                                                    <div><i class="im im-icon-Key-Lock"></i></div>
+                                                    <div><span><div class="font-weight-500 text-danger">
+                                                        Bạn cần sử dụng mật khẩu được cung cấp để mở tệp tin tải về. Mật khẩu sẽ xuất hiện sau khi bạn nhấn nút tải về, và sẽ biến mất 1 phút sau khi tệp tin báo cáo được tải về. Bạn vui lòng ghi lại mật khẩu.
+                                                    </div>
+                                                    </span></div>
+                                                </div>
+                                                <div class="col-xs-12 margin-top-10 info-box has-icon" ng-if="(isSiteManager(currentUser) || isDistrictManager(currentUser) || isProvincialManager(currentUser)) && vm.selectedReportType.passwordProtected && vm.report.password">
+                                                    <div><i class="im im-icon-Key-Lock"></i></div>
+                                                    <div><span><div class="font-weight-500">
+                                                        Bạn vui lòng lưu lại mật khẩu dưới đây để mở tệp tin sẽ tải xuống:
+                                                        <div class="clearfix"></div>
+                                                        <div class="password-box margin-top-10 margin-bottom-10">{{vm.report.password}}</div><a href="#" ng-click="vm.copyPassword2Clipboard()" class="btn margin-left-10" ng-class="{'btn-default no-border jumping' : !vm.report.passwordCopied, 'btn-primary' : vm.report.passwordCopied}"><i class="fa fa-copy margin-right-5"></i> {{vm.report.passwordCopied ? 'Đã chép mật khẩu' : 'Chép mật khẩu'}}</a>
+                                                        <div class="clearfix"></div>
+                                                        Mật khẩu sẽ biến mất sau <span class="bold text-danger">{{vm.report.countdown}}</span> giây.
+                                                    </div>
+                                                    </span></div>
+                                                </div>
+                                                <div class="col-xs-12 margin-top-20 label-with-line" ng-if="vm.selectedReportType.calculationClassified">
+                                                    <label class="bold text-muted"><i class="fa fa-check margin-right-10"></i>Chọn cách tính toán chỉ số báo cáo</label>
+                                                    <div></div>
+                                                </div>
+                                                <div class="col-xs-12 margin-top-10 info-box has-icon" ng-if="vm.selectedReportType.calculationClassified">
+                                                    <div><i class="im im-icon-Information"></i></div>
+                                                    <div><span><div class="font-weight-500">
+                                                        Cách tính chỉ số <span class="bold">bệnh nhân chuyển tiếp dịch vụ</span> được hướng dẫn trong Thông tư 03/2015/TT-BYT có một chút khác biệt so với hướng dẫn của chương trình PEPFAR. Điều này dẫn đến <span class="bold">số bệnh nhân đang điều trị ARV ở cuối kỳ báo cáo</span> có thể khác biệt theo mỗi cách tính. Vui lòng lựa chọn cách tính tương ứng.
+                                                    </div>
+                                                    </span></div>
+                                                </div>
+                                                <div class="col-xs-12 margin-top-20" ng-if="vm.selectedReportType.calculationClassified">
+                                                    <ui-select id="vm.report.algorithm" ng-model="vm.report.algorithm" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn cách tính...">{{$select.selected.name}}</ui-select-match>
+                                                        <ui-select-choices repeat="a.id as a in vm.algorithms | propsFilter: {name: $select.search}">
+                                                            <div class="bold" ng-bind-html="a.name | highlight: $select.search"></div>
+                                                        </ui-select-choices>
+                                                    </ui-select>
+                                                </div>
+                                                <div class="col-xs-12" ng-if="vm.selectedReportType && vm.selectedReportType.id != 'VL_SCHEDULE' && vm.selectedReportType.id != 'RISKGROUP_REPORT' && vm.selectedReportType.id != 'SHI_EXPIRED' && vm.selectedReportType.id != 'NO_SHI'">
+                                                    <div class="row" ng-if="vm.selectedReportType.id != 'VL_PEPFAR_REPORT' && vm.selectedReportType.id != 'VL_PEPFAR_REPORT_OLD' && vm.selectedReportType.id != 'MER_OPC' && vm.selectedReportType.id != 'MONTHLY_TB_TREATMENT' && vm.selectedReportType.id != 'ACTIVE_PATIENT_REPORT' && vm.selectedReportType.id != 'MMD_LINELIST_DATA'">
+                                                        <div class="col-xs-12 margin-top-20 label-with-line">
+                                                            <label class="bold text-muted"><i class="fa fa-filter margin-right-10"></i>Chọn giai đoạn báo cáo</label>
+                                                            <div></div>
+                                                        </div>
+                                                        <div class="col-xs-6 margin-top-10">
+                                                            <label class="bold">Ngày bắt đầu</label>
+                                                            <input id="vm.report.fromDate" class="form-control" placeholder="Chọn ngày..."
+                                                                   ng-flatpickr
+                                                                   fp-opts="vm.datepicker1.dateOpts"
+                                                                   fp-on-setup="vm.datepicker1.datePostSetup(fpItem)"
+                                                                   ng-model="vm.report.fromDate"
+                                                                   data-enabletime="false" />
+                                                        </div>
+                                                        <div class="col-xs-6 margin-top-10">
+                                                            <label class="bold">Ngày kết thúc</label>
+                                                            <input id="vm.report.toDate" class="form-control" placeholder="Chọn ngày..."
+                                                                   ng-flatpickr
+                                                                   fp-opts="vm.datepicker2.dateOpts"
+                                                                   fp-on-setup="vm.datepicker2.datePostSetup(fpItem)"
+                                                                   ng-model="vm.report.toDate"
+                                                                   data-enabletime="false" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" ng-if="vm.selectedReportType.id == 'ACTIVE_PATIENT_REPORT' || vm.selectedReportType.id == 'MMD_LINELIST_DATA'">
+                                                        <div class="col-xs-12 margin-top-20 label-with-line">
+                                                            <label class="bold text-muted">Chọn thời điểm chốt danh sách bệnh nhân</label>
+                                                            <div></div>
+                                                        </div>
+                                                        <div class="col-xs-6 margin-top-10">
+                                                            <label class="bold">Ngày chốt báo cáo</label>
+                                                            <input id="vm.report.atDate" class="form-control" placeholder="Chọn ngày..."
+                                                                   ng-flatpickr
+                                                                   fp-opts="vm.datepicker3.dateOpts"
+                                                                   fp-on-setup="vm.datepicker3.datePostSetup(fpItem)"
+                                                                   ng-model="vm.report.atDate"
+                                                                   data-enabletime="false" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" ng-if="vm.selectedReportType.id == 'VL_PEPFAR_REPORT' || vm.selectedReportType.id == 'VL_PEPFAR_REPORT_OLD' || vm.selectedReportType.id == 'MER_OPC'">
+                                                        <div class="col-xs-12 margin-top-20 label-with-line">
+                                                            <label class="bold text-muted"><i class="fa fa-filter margin-right-10"></i>Chọn giai đoạn báo cáo</label>
+                                                            <div></div>
+                                                        </div>
+                                                        <div class="col-xs-6 margin-top-10">
+                                                            <label class="bold">Quí báo cáo</label>
+                                                            <ui-select id="vm.report.selQuarter" ng-model="vm.report.selQuarter" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                                <ui-select-choices repeat="q.id as q in vm.quarters | propsFilter: {name: $select.search}">
+                                                                    <div class="bold" ng-bind-html="q.name | highlight: $select.search"></div>
+                                                                </ui-select-choices>
+                                                            </ui-select>
+                                                        </div>
+                                                        <div class="col-xs-6 margin-top-10">
+                                                            <label class="bold">Năm tài chính</label>
+                                                            <ui-select id="vm.report.selYear" ng-model="vm.report.selYear" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                                <ui-select-choices repeat="y.id as y in vm.years | propsFilter: {name: $select.search}">
+                                                                    <div class="bold" ng-bind-html="y.name | highlight: $select.search"></div>
+                                                                </ui-select-choices>
+                                                            </ui-select>
+                                                        </div>
+                                                    </div>
+													<div class="row" ng-if="vm.selectedReportType.id == 'MONTHLY_TB_TREATMENT'">
+                                                        <div class="col-xs-12 margin-top-20 label-with-line">
+                                                            <label class="bold text-muted">Chọn giai đoạn báo cáo</label>
+                                                            <div></div>
+                                                        </div>
+                                                        <div class="col-xs-6 margin-top-10">
+                                                            <label class="bold">Tháng báo cáo</label>
+                                                            <ui-select id="vm.report.selQuarter" ng-model="vm.report.selQuarter" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                                <ui-select-choices repeat="q.id as q in vm.months | propsFilter: {name: $select.search}">
+                                                                    <div class="bold" ng-bind-html="q.name | highlight: $select.search"></div>
+                                                                </ui-select-choices>
+                                                            </ui-select>
+                                                        </div>
+                                                        <div class="col-xs-6 margin-top-10">
+                                                            <label class="bold">Năm tài chính</label>
+                                                            <ui-select id="vm.report.selYear" ng-model="vm.report.selYear" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                                <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                                <ui-select-choices repeat="y.id as y in vm.years | propsFilter: {name: $select.search}">
+                                                                    <div class="bold" ng-bind-html="y.name | highlight: $select.search"></div>
+                                                                </ui-select-choices>
+                                                            </ui-select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 margin-top-20 label-with-line">
+                                                    <label class="bold text-muted"><i class="fa fa-filter margin-right-10"></i>Chọn cơ sở báo cáo</label>
+                                                    <div></div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-12 col-xs-12 margin-top-10">
+                                                    <label><i class="icon-muted fa fa-filter margin-right-5"></i> Chọn địa bàn báo cáo</label>
+                                                    <span class="form-control read-only-bg" ng-if="!isNationalManager(currentUser) && !isDonor(currentUser)">Dành cho tuyến TW/nhà tài trợ</span>
+                                                    <ui-select ng-if="isNationalManager(currentUser) || isDonor(currentUser)" id="vm.report.province" ng-model="vm.report.province" sortable="true" close-on-select="true" style="width: 100%!important;">
+                                                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                        <ui-select-choices repeat="province.id as province in vm.provinces | propsFilter: {name: $select.search}">
+                                                            <div class="bold" ng-bind-html="province.name | highlight: $select.search"></div>
+                                                        </ui-select-choices>
+                                                    </ui-select>
+                                                </div>
+                                                <div class="col-md-6 col-sm-12 col-xs-12 margin-top-10">
+                                                    <label class="bold">Chọn đơn vị báo cáo</label>
+                                                    <ui-select id="vm.report.organization" ng-model="vm.report.organization" sortable="true" ng-change="vm.onOrganizationChange()" close-on-select="true" style="width: 100%!important;">
+                                                        <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                                                        <ui-select-choices repeat="org.id as org in vm.organizations | propsFilter: {name: $select.search}">
+                                                            <div class="bold" ng-if="org.id != -1" ng-bind-html="org.name | highlight: $select.search"></div>
+                                                            <hr class="small-margin" ng-if="org.id == -1" />
+                                                            <div class="small" ng-if="org.id > 0 && org.address && org.address.province" ng-bind-html="'&mdash;' + org.address.province.name"></div>
+                                                        </ui-select-choices>
+                                                    </ui-select>
+                                                    <!--div isteven-multi-select
+                                                         input-model="vm.organizations"
+                                                         output-model="vm.selectedOrganizations"
+                                                         button-label="name"
+                                                         item-label="name maker"
+                                                         tick-property="ticked"
+                                                         max-height="180px"
+                                                         orientation="horizontal"
+                                                    -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-7 col-sm-12 col-xs-12 margin-top-20 margin-bottom-30 align-right">
+                                            <!--<button class="btn btn-default margin-right-20" ng-click="vm.reset();"><i class="fa fa-close margin-right-5"></i>Làm lại từ đầu</button>-->
+                                            <button class="btn btn-primary jumping" ng-click="vm.generateReport()" data-ng-disabled="!vm.selectedReportType.available"><i class="fa fa-download margin-right-5"></i> Tạo báo cáo & Tải về</button>
+                                        </div>
+                                    </div>
+
+                                    <!--<div class="row">-->
+                                        <!--<div class="col-xs-12 summary-panel">-->
+                                            <!--<div class="section-head bold"><i class="icon-list color-7"></i> Danh sách các báo cáo đã tạo lập</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+
+                                    <!--<table id="bsTableControl" bs-table-control="vm.bsTableControl"></table>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->

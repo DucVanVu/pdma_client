@@ -1,0 +1,152 @@
+<div class="page-sidebar navbar-collapse collapse">
+    <!-- BEGIN SIDEBAR MENU -->
+    <!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
+    <!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
+    <!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
+    <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+    <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
+    <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+    <ul class="page-sidebar-menu" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" ng-class="{'page-sidebar-menu-closed': settings.layout.pageSidebarClosed}">
+        <!-- DOC: To remove the search box from the sidebar you just need to completely remove the below "sidebar-search-wrapper" LI element -->
+        <div class="sidebar-header hidden-sm hidden-xs"></div>
+        <li class="start nav-item margin-top-10">
+            <a href="#/dashboard">
+                <i class="icon-screen-desktop"></i>
+                <span class="title">Trang chủ</span>
+            </a>
+        </li>
+        <!--<li class="nav-item">
+            <a href="#/pe">
+                <i class="fa fa-share-alt"></i>
+                <span class="title">Tiếp cận cộng đồng</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#/hts">
+                <i class="fa fa-flask"></i>
+                <span class="title">Tư vấn xét nghiệm HIV</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#/tx">
+                <i class="fa fa-heartbeat"></i>
+                <span class="title">Điều trị HIV</span>
+            </a>
+        </li>-->
+        <li class="heading" ng-if="!isAdministrator(currentUser)">
+            <h3 class="uppercase">Ứng dụng chính</h3>
+        </li>
+        <li class="nav-item" ng-if="!(isAdministrator(currentUser) || currentUser.pnsOnly || currentUser.opcAssistOnly)">
+            <a href="#/reporting/weekly-dashboard">
+                <i class="fa fa-line-chart"></i>
+                <span class="title">Báo cáo tuần</span>
+            </a>
+        </li>
+        <li class="nav-item" ng-if="!(isAdministrator(currentUser) || currentUser.pnsOnly) || (!isAdministrator(currentUser) && currentUser.opcAssistOnly)">
+            <a href="#/opc-dashboard">
+                <i class="fa fa-heartbeat"></i>
+                <span class="title">Phòng khám ngoại trú</span>
+            </a>
+        </li>
+        <li class="nav-item" ng-if="!(isAdministrator(currentUser) || currentUser.pnsOnly) || (!isAdministrator(currentUser) && currentUser.opcAssistOnly)">
+            <a href="#/prevention/dashboard">
+            <!--a href="https://pdma.epic.org.vn/p" target="_blank"-->
+                <i class="im im-icon-Shield"></i>
+                <span class="title">Chương trình dự phòng</span>
+            </a>
+        </li>
+        <li class="heading" ng-if="!(currentUser.pnsOnly || currentUser.opcAssistOnly)">
+            <h3 class="uppercase">Ứng dụng khác</h3>
+        </li>
+        <li class="nav-item" ng-if="!isAdministrator(currentUser) && !currentUser.opcAssistOnly">
+            <a href="#/pns-assess">
+                <i class="icon-magic-wand"></i>
+                <span class="title">Đánh giá TBXNBT/BC</span>
+            </a>
+        </li>
+        <li class="nav-item" ng-if="!isAdministrator(currentUser) && !currentUser.opcAssistOnly">
+            <a href="#/pns-ae">
+                <i class="fa fa-flash"></i>
+                <span class="title">Báo cáo tình huống</span>
+            </a>
+        </li>
+        <li class="nav-item" ng-if="!(currentUser.pnsOnly || currentUser.opcAssistOnly) && !isAdministrator(currentUser)">
+            <a href="#/announcements">
+                <i class="fa fa-bullhorn"></i>
+                <span class="title">Thông báo chung</span>
+                <!--<span class="badge badge-danger">2</span>-->
+            </a>
+        </li>
+        <li class="nav-item" ng-if="!(currentUser.pnsOnly || currentUser.opcAssistOnly) && !isAdministrator(currentUser)">
+            <a href="#/documents">
+                <i class="icon-paper-clip"></i>
+                <span class="title">Tài liệu tham khảo</span>
+            </a>
+        </li>
+        <li class="heading" ng-if="isAdministrator(currentUser)">
+            <h3 class="uppercase">QUẢN TRỊ</h3>
+        </li>
+        <li class="nav-item" ng-if="isAdministrator(currentUser)">
+            <a href="javascript:;" class="nav-link nav-toggle">
+                <i class="icon-grid"></i>
+                <span class="title">Từ điển dữ liệu</span>
+                <span class="arrow"></span>
+            </a>
+            <ul class="sub-menu">
+                <li>
+                    <a href="#/dictionary/admin-units" class="small">
+                        <i class="fa fa-caret-right"></i> Đơn vị hành chính
+                    </a>
+                </li>
+                <li>
+                    <a href="#/dictionary/organizations" class="small">
+                        <i class="fa fa-caret-right"></i> Cơ sở dịch vụ
+                    </a>
+                </li>
+                <li>
+                    <a href="#/dictionary/staff" class="small">
+                        <i class="fa fa-caret-right"></i> Cán bộ y tế
+                    </a>
+                </li>
+                <li>
+                    <a href="#/dictionary/regimens">
+                        <i class="fa fa-caret-right"></i> Phác đồ thuốc
+                    </a>
+                </li>
+                <li>
+                    <a href="#/dictionary/services">
+                        <i class="fa fa-caret-right"></i> Dịch vụ cho HIV
+                    </a>
+                </li>
+                <li>
+                    <a href="#/dictionary/hiv-confirm-labs">
+                        <i class="fa fa-caret-right"></i> Phòng XNKĐ HIV
+                    </a>
+                </li>
+                <li>
+                    <a href="#/dictionary/entries">
+                        <i class="fa fa-caret-right"></i> Dữ liệu danh sách khác
+                    </a>
+                </li>
+                <li>
+                    <a href="#/dictionary/doc-types">
+                        <i class="fa fa-caret-right"></i> Loại tài liệu đính kèm
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item" ng-if="isAdministrator(currentUser)">
+            <a href="#/user/listing">
+                <i class="icon-people"></i>
+                <span class="title">Người dùng hệ thống</span>
+            </a>
+        </li>
+        <li class="nav-item" ng-if="isAdministrator(currentUser)">
+            <a href="#/settings">
+                <i class="icon-settings"></i>
+                <span class="title">Thiết lập cấu hình</span>
+            </a>
+        </li>
+    </ul>
+    <!-- END SIDEBAR MENU -->
+</div>

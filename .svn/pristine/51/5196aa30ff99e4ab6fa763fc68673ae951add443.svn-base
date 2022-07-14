@@ -1,0 +1,425 @@
+(function () {
+
+    'use strict';
+
+    let PDMA = angular.module('PDMA');
+
+    /* Setup global constants */
+    PDMA.constant('constants', {
+        cookies_user: 'pdma.user',
+        cookies_pns_instr_visibility: '_pns_inst_visibility',
+        cookies_pns_current_page: '_pns_cur_page',
+        cookies_tx_selected_patient_id: '_selected_patient_id',
+        cookies_tx_status_visibility: '_status_vis',
+        oauth2_token: 'token',
+    });
+
+    /* Setup global settings */
+    PDMA.factory('settings', ['$rootScope', '$state', 'constants', function ($rootScope, $state, constants) {
+        // supported languages
+        let settings = {
+            layout: {
+                pageSidebarClosed: false, // sidebar menu state
+                pageContentWhite: true, // set page content layout
+                pageBodySolid: true, // solid body color state
+                pageAutoScrollOnLoad: 500 // auto scroll to top on page load,
+            },
+            versionNumber: '2_1_1-release_8',
+            clientVersion: '2.1.1-release (13/07/2021)',
+            locale: 'vi-VN',
+            assetsPath: 'assets',
+            api: {
+                baseUrl: PDMA.API_SERVER_URL,
+                apiV1Url: PDMA.API_V1,
+                clientId: PDMA.API_CLIENT_ID,
+                clientKey: PDMA.API_CLIENT_KEY,
+                oauth: {
+                    token: constants.oauth2_token
+                }
+            },
+            organization: {
+                otherOrgCode: 'organization_other_specified'
+            },
+            upload: {
+                maxFilesize: '10MB'
+            }
+        };
+
+        $rootScope.settings = settings;
+
+        return settings;
+    }]);
+
+    /**
+     * Scroll to element
+     */
+    PDMA.factory('scrollToElement', ['$timeout', '$window', function ($timeout, $window) {
+        return function (id, compensate) {
+            $timeout(function () {
+                let element = $window.document.getElementById(id);
+                let comp = compensate ? compensate : 50;
+                if (element) {
+                    $("html,body").animate({
+                        scrollTop: $(element).offset().top - comp
+                    }, "slow");
+                }
+            });
+        };
+    }]);
+
+    /**
+     * Set focus on element
+     */
+    PDMA.factory('focus', ['$timeout', '$window', function ($timeout, $window) {
+        return function (id) {
+            $timeout(function () {
+                let element = $window.document.getElementById(id);
+                if (element)
+                    element.focus();
+            });
+        };
+    }]);
+
+    /**
+     * Set focus on flat pickr element
+     */
+    PDMA.factory('focusFlatPick', ['$timeout', '$window', function ($timeout, $window) {
+        return function (id) {
+            $timeout(function () {
+                let element = $window.document.getElementById(id);
+                if (element) {
+                    $timeout(function () {
+                        $(element).next().focus();
+                    }, 500);
+                }
+            });
+        };
+    }]);
+
+    /**
+     * Open the ui-select
+     */
+    PDMA.factory('openSelectBox', ['$timeout', '$window', function ($timeout, $window) {
+        return function (id) {
+            $timeout(function () {
+                let element = $window.document.getElementById(id);
+                if (element) {
+                    $timeout(function () {
+                        $(element).find('div>span').click();
+                    }, 500);
+                }
+            });
+        };
+    }]);
+
+    /**
+     * Invoke bstable API
+     */
+    PDMA.factory('bsTableAPI', ['$window', function ($window) {
+        return function (id, api, parameter) {
+            let element = $window.document.getElementById(id);
+            if (element && element.hasAttribute('bs-table-control')) {
+                return $(element).bootstrapTable(api, parameter);
+            }
+        };
+    }]);
+
+    /**
+     * No server response interceptor
+     */
+    PDMA.factory('ServerExceptionHandlerInterceptor', [
+        '$q',
+        'toastr',
+        'blockUI',
+        '$cookies',
+        '$injector',
+        'constants',
+        '$location',
+        function ($q, toastr, blockUI, $cookies, $injector, constants, $location) {
+            return {
+                responseError: function (rejection) {
+                    if (rejection.status <= 0) {
+                        toastr.warning('Không thể kết nối đến máy chủ.', 'Thông báo');
+                        return;
+                    }
+
+                    if (rejection.status === 400) {
+                        toastr.error('Có lỗi xảy ra. Vui lòng thử lại sau ít phút.', 'Thông báo (400)');
+                    }
+
+                    if (rejection.status == 401) {
+                        // Force refresh token in application.run()
+                    }
+
+                    if (rejection.status == 403) {
+                        toastr.error('Bạn không có quyền truy cập vào chức năng này.', 'Thông báo (403)');
+                        blockUI.stop();
+                        $location.path('/dashboard');
+                    }
+
+                    if (rejection.status == 500) {
+                        toastr.error('Máy chủ đang không thể phục vụ. Vui lòng thử lại sau ít phút.', 'Thông báo (500)');
+                    }
+
+                    return $q.reject(rejection);
+                }
+            };
+        }
+    ]);
+
+    PDMA.filter('timeAgoAlt', ['$filter', function ($filter) {
+        return function (time) {
+            return $filter('timeAgo')(moment(time).toDate());
+        };
+    }]);
+
+    // Filters
+    PDMA.filter('propsFilter', function () {
+        return function (items, props) {
+            let out = [];
+
+            if (angular.isArray(items)) {
+                items.forEach(function (item) {
+                    let itemMatches = false;
+
+                    let keys = Object.keys(props);
+                    for (let i = 0; i < keys.length; i++) {
+                        let prop = keys[i];
+                        let text = props[prop].toLowerCase();
+                        if (item[prop].toString().toLowerCase().indexOf(text) !== -1) {
+                            itemMatches = true;
+                            break;
+                        }
+                    }
+
+                    if (itemMatches) {
+                        out.push(item);
+                    }
+                });
+            } else {
+                // Let the output be the input untouched
+                out = items;
+            }
+
+            return out;
+        }
+    });
+
+    PDMA.filter('drugsFilter', function () {
+        return function (items, props) {
+            let out = [];
+
+            if (angular.isArray(items)) {
+                items.forEach(function (item) {
+                    let itemMatches = false;
+
+                    let keys = Object.keys(props);
+                    for (let i = 0; i < keys.length; i++) {
+                        let prop = keys[i];
+                        let text = props[prop].toLowerCase();
+                        let splitedTexts = text.split(' ');
+                        let itemVal = item[prop].toString().toLowerCase();
+
+                        let found = true;
+                        for (let j = 0; j < splitedTexts.length; j++) {
+                            if (itemVal.indexOf(splitedTexts[j]) < 0) {
+                                found = false;
+                                break;
+                            }
+                        }
+
+                        itemMatches = found;
+                    }
+
+                    if (itemMatches) {
+                        out.push(item);
+                    }
+                });
+            } else {
+                // Let the output be the input untouched
+                out = items;
+            }
+
+            return out;
+        }
+    });
+
+    PDMA.filter('contentType', ['Utilities', function (utils) {
+        return function (cc) {
+            return utils.translateContentType(cc);
+        };
+    }]);
+
+    PDMA.filter('weekDay', [function () {
+        return function (input) {
+            if (input < 2 || input > 8) {
+                return '';
+            }
+
+            let arr = ['Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy', 'Chủ Nhật'];
+            return arr[input - 2];
+        };
+    }]);
+
+    PDMA.filter('monthString', ['$filter', function ($filter) {
+        return function (input) {
+            if (!input) {
+                return '&mdash;';
+            }
+
+            let obj = moment(input);
+            let months = ['Tháng Một', 'Tháng Hai', 'Tháng Ba', 'Tháng Tư', 'Tháng Năm', 'Tháng Sáu', 'Tháng Bẩy', 'Tháng Tám', 'Tháng Chín', 'Tháng Mười', 'Tháng Mười Một', 'Tháng Mười Hai'];
+
+            return months[obj.month()] + ', ' + obj.year();
+        };
+    }]);
+
+    PDMA.filter('weekString', ['$filter', function ($filter) {
+        return function (input) {
+            let m = moment(input, 'YYYY-MM-DD').add(1, 'day');
+            let obj = moment(input, 'YYYY-MM-DD').add(1, 'day');
+
+            let fromDate = m.startOf('isoWeek').toDate();
+            let toDate = m.endOf('isoWeek').toDate();
+
+            return 'T. ' + obj.week() + '/' + obj.year() + ' (' + $filter('date')(fromDate, 'dd/MM/yyyy') + ' - ' + $filter('date')(toDate, 'dd/MM/yyyy') + ')';
+        };
+    }]);
+
+    PDMA.filter('weekString2', ['$filter', function ($filter) {
+        return function (input) {
+            let m = moment(input, 'YYYY-MM-DD').add(-1, 'day');
+            let obj = moment(input, 'YYYY-MM-DD').add(-1, 'day');
+
+            let fromDate = m.startOf('isoWeek').toDate();
+            let toDate = m.endOf('isoWeek').toDate();
+
+            return 'SỐ LIỆU ĐẾN TUẦN ' + obj.week() + '/' + obj.year();
+        };
+    }]);
+
+    PDMA.filter('dateString', ['$filter', function ($filter) {
+        return function (input) {
+            let m = moment(input, 'YYYY-MM-DD');
+            let dayArr = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bẩy'];
+
+            return dayArr[m.day()] + ', ' + m.format('DD/MM/YYYY');
+        };
+    }]);
+
+    PDMA.filter('appointmentStatus', ['$filter', function ($filter) {
+        return function (input) {
+            if (!input || !input.id || !input.appointmentDate) {
+                return '';
+            }
+
+            let ret = '';
+            let arrivalDate = input.arrivalDate;
+            if (arrivalDate) {
+                let mArrivalDate = moment(arrivalDate);
+
+                if (mArrivalDate.isSame(input.appointmentDate, 'day')) {
+                    ret = 'đúng hẹn';
+                } else if (mArrivalDate.isAfter(input.appointmentDate, 'day')) {
+                    ret = 'trễ hẹn';
+                } else {
+                    ret = 'trước hẹn';
+                }
+            } else {
+                if (input.missed) {
+                    ret = 'bỏ khám';
+                } else {
+                    ret = 'chưa tới';
+                }
+            }
+
+            return ret;
+        };
+    }]);
+
+    PDMA.filter('fileSize', function () {
+        let units = [
+            'bytes',
+            'KB',
+            'MB',
+            'GB',
+            'TB',
+            'PB'
+        ];
+
+        return function (bytes, precision) {
+            if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) {
+                return '?';
+            }
+
+            let unit = 0;
+
+            while (bytes >= 1024) {
+                bytes /= 1024;
+                unit++;
+            }
+
+            return bytes.toFixed(+precision) + ' ' + units[unit];
+        };
+    });
+
+    PDMA.filter('patientStatus', [function () {
+        return function (input) {
+            switch (input) {
+                case 'ACTIVE':
+                    return 'Đang quản lý';
+                    break;
+                case 'TRANSFERRED_OUT':
+                    return 'Đã chuyển đi';
+                    break;
+                case 'LTFU':
+                    return 'Đã bỏ trị';
+                    break;
+                case 'DEAD':
+                    return 'Đã tử vong';
+                    break;
+                case 'PENDING_ENROLLMENT':
+                    return 'Chờ tiếp nhận';
+                    break;
+            }
+        };
+    }]);
+
+    PDMA.filter('enrollmentType', [function () {
+        return function (input) {
+            switch (input) {
+                case 'NEWLY_ENROLLED':
+                    return 'Đăng ký mới';
+                    break;
+                case 'RETURNED':
+                    return 'Điều trị lại';
+                    break;
+                case 'TRANSFERRED_IN':
+                    return 'Chuyển tới';
+                    break;
+            }
+        };
+    }]);
+
+    PDMA.filter('genderString', [function () {
+        return function (input) {
+            switch (input) {
+                case 'MALE':
+                    return 'Nam';
+                    break;
+                case 'FEMALE':
+                    return 'Nữ';
+                    break;
+                case 'TRANSGENDER':
+                    return 'Chuyển giới';
+                    break;
+                case 'OTHER':
+                    return 'Khác';
+                    break;
+                case 'NOT_DISCLOSED':
+                    return 'Không tiết lộ';
+                    break;
+            }
+        };
+    }]);
+})();

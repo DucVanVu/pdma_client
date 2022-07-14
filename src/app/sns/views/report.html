@@ -1,0 +1,187 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="fa fa-bullhorn"></i> SNS</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#/reporting/weekly/dashboard">Trang chủ</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#">SNS</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="tabbable-line">
+                            <ul class="nav nav-tabs ">
+                                <li class="uppercase">
+                                    <a href="#/prevention/sns_summary" uib-tooltip="Tổng quan"><i
+                                            class="fa fa-area-chart"></i><span class="hidden-xs"
+                                            ng-class="{'hidden-sm' : isSiteManager(currentUser) || (vm.selectedEntry && vm.selectedEntry.person)}">
+                                            Tổng quan</span></a>
+                                </li>
+                                <li class="uppercase">
+                                    <a href="#/prevention/sns" uib-tooltip="Danh sách"><i class="fa fa-wheelchair-alt"></i><span
+                                            class="hidden-xs hidden-sm hidden-md"> Khách hàng</span></a>
+                                </li>
+                                <li class="active uppercase">
+                                    <a href="#" uib-tooltip="Báo&nbsp;cáo"><i class="fa fa-bar-chart"></i><span
+                                            class="hidden-xs"> Báo cáo</span></a>
+                                </li>
+                            </ul>
+                            <div class="tab-content summary-panel">
+                                <div class="tab-pane active">
+                                    <div class="text-center" style="font-weight: bold; font-size: x-large;">
+                                        Báo cáo kết quả triển khai mô hình SNS
+                                    </div>
+                                    <div class="form-horizontal" style="margin-top:10px">
+                                        <div class="box-body">
+                                            <!-- <div class="form-group">
+                                                <label class="bold col-sm-2 control-label">Tỉnh/Thành phố:</label>
+                                                <div class="col-sm-4 ">
+                                                    <ui-select id="vm.AddressProvince" ng-model="vm.addressProvince"
+                                                        sortable="true" close-on-select="true"
+                                                        style="width: 100%!important;" onselect="">
+                                                        <ui-select-match allow-clear="false"
+                                                            placeholder="Xin mời chọn...">
+                                                            {{$select.selected.name}}</ui-select-match>
+                                                        <ui-select-choices
+                                                            repeat="c in vm.provinces | propsFilter: {name: $select.search}">
+                                                            <div class="bold"
+                                                                ng-bind-html="c.name | highlight: $select.search">
+                                                            </div>
+                                                        </ui-select-choices>
+                                                    </ui-select>
+                                                </div>
+                                            </div> -->
+                                            <div class="form-group">
+                                                <div class="col-sm-2" style="margin-left: 15px;">
+                                                    <ui-select multiple="true" id="vm.filterSNSReport.orgIds"
+                                                        ng-model="vm.filterSNSReport.orgIds" on-select="vm.changeOrg()"
+                                                        sortable="true" close-on-select="true"
+                                                        style="width: 100%!important;">
+                                                        <ui-select-match allow-clear="false"
+                                                            placeholder="Cơ sở báo cáo...">{{$item.name}}
+                                                        </ui-select-match>
+                                                        <ui-select-choices
+                                                            repeat="c.id as c in vm.orgsWritable | propsFilter: {name: $select.search}">
+                                                            <div class="bold "
+                                                                ng-bind-html="c.name | highlight: $select.search">
+                                                            </div>
+                                                        </ui-select-choices>
+                                                    </ui-select>
+                                                </div>
+                                                <div class="col-sm-2 col-xs-12 form-controller-alt-2 fixed-height-58px">
+                                                    <input id="vm.filterSNSReport.fromDate" class="form-control"
+                                                        placeholder="Báo cáo từ ngày...." ng-flatpickr
+                                                        fp-opts="vm.fromDateReport.dateOpts"
+                                                        fp-on-setup="vm.fromDateReport.datePostSetup(fpItem)"
+                                                        ng-model="vm.filterSNSReport.fromDate"
+                                                        data-enabletime="false" />
+                                                    <a ng-if="vm.filterSNSReport.fromDate" style="top: 4px;"
+                                                        class="clear-picker input-has-label"
+                                                        ng-click="vm.fromDateReport.clear()" href="#"><i
+                                                            class="icon-close"></i> <span>xoá</span></a>
+                                                </div>
+                                                <div class="col-sm-2 col-xs-12 form-controller-alt-2 fixed-height-58px">
+                                                    <input id="vm.filterSNSReport.toDate" class="form-control"
+                                                        placeholder="Đến ngày...." ng-flatpickr
+                                                        fp-opts="vm.toDateReport.dateOpts"
+                                                        fp-on-setup="vm.toDateReport.datePostSetup(fpItem)"
+                                                        ng-model="vm.filterSNSReport.toDate" data-enabletime="false" />
+                                                    <a ng-if="vm.filterSNSReport.toDate" style="top: 4px;"
+                                                        class="clear-picker input-has-label"
+                                                        ng-click="vm.toDateReport.clear()" href="#"><i
+                                                            class="icon-close"></i> <span>xoá</span></a>
+                                                </div>
+                                                <div style="margin-right: 30px;">
+                                                    <button  style="margin-left: 15px;" href="#" ng-click="vm.exportReport();" class="btn btn-default no-border pull-right col-sm-1" uib-tooltip="Xuất file excel báo cáo"><i class="im im-icon-Download"></i><span class="hidden-xs">Xuất excel</span></button>
+                                                    <button style="margin-left: 15px;" type="button" ng-click="vm.searchSNSReport()" name="" id=""
+                                                        class="btn btn-primary col-sm-1 pull-right ">Xem báo cáo</button>
+                                                    
+                                                </div>
+                                                
+                                            </div>
+                                            
+                                                
+                                            
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="overflow: auto; margin-top: 20px;">
+                                    <table class="table table-bordered">
+                                        <thead style="background-color: rgba(0,0,0,0.06);">
+                                            <tr>
+                                                <th class="text-center" style="width: 10px; vertical-align: middle; " rowspan="2">STT</th>
+                                                <th style="width: 200px; text-align: center; vertical-align: middle;" rowspan="2">Chỉ số</th>
+                                                <th style="width: 20px; text-align: center;vertical-align: middle;" rowspan="2">Tổng số</th>
+                                                <th style="min-width: 200px; text-align: center;vertical-align: middle;" colspan="5">Theo nhóm nguy cơ</th>
+                                                <th style="min-width: 200px; text-align: center;vertical-align: middle;" colspan="4">Theo nguồn khách hàng
+                                                </th>
+                                                <th style="min-width: 200px; text-align: center;vertical-align: middle;" colspan="2">Hình thức tiếp cận
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 56.8px; text-align: center;vertical-align: middle;">MSM</th>
+                                                <th style="width: 56.8px; text-align: center;vertical-align: middle;">BT/BCC của NCH</th>
+                                                <th style="width: 56.8px; text-align: center;vertical-align: middle;">Người TCMT</th>
+                                                <th style="width: 56.8px; text-align: center;vertical-align: middle;">Người bán dâm</th>
+                                                <th style="width: 56.8px; text-align: center;vertical-align: middle;">Khác</th>
+                                                <th style="width: 56.8px; text-align: center;vertical-align: middle;">SNS</th>
+                                                <th style="width: 56.8px; text-align: center;vertical-align: middle;">VTC/OPC</th>
+                                                <th style="width: 56.8px; text-align: center;vertical-align: middle;">CBOs</th>
+                                                <th style="width: 56.8px; text-align: center;vertical-align: middle;">Khác/Tự đến</th>
+                                                <th style="width: 56.8px; text-align: center;vertical-align: middle;">Trực tiếp</th>
+                                                <th style="width: 56.8px; text-align: center;vertical-align: middle;">Trực tuyến</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody ng-show="vm.reportSNS && vm.reportSNS.length == 0">
+                                            <tr>
+                                                <td class="text-center" colspan="14">Chưa có dữ liệu</td>
+                                            </tr>
+                                        </tbody>
+                                        <tbody ng-show="vm.reportSNS && vm.reportSNS.length > 0">
+                                            <tr ng-repeat="data in vm.reportSNS track by $index">
+                                                <td>{{$index + 1}}</td>
+                                                <td>{{data.name}}</td>
+                                                <td>{{data.total}}</td>
+                                                <td>{{data.riskGroupMSM}}</td>
+                                                <td>{{data.riskGroupNCH}}</td>
+
+                                                <td>{{data.riskGroupTCMT}}</td>
+                                                <td>{{data.riskGroupMD}}</td>
+                                                <td>{{data.riskGroupOTHER}}</td>
+                                                <td>{{data.customerSourceSNS}}</td>
+                                                <td>{{data.customerSourceVCTOPC}}</td>
+                                                <td>{{data.customerSourceCBOs}}</td>
+                                                <td>{{data.customerSourceOTHER}}</td>
+                                                <td>{{data.approachMethodDirect}}</td>
+                                                <td>{{data.approachMethodOnline}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<div ng-include="'_treatment/views/fragments/_delete.html?v=' + settings.versionNumber"></div>
+<!-- BEGIN MAIN JS-->
+
+
+<!-- BEGIN MAIN JS -->

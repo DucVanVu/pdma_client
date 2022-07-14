@@ -1,0 +1,5 @@
+<div class="page-footer-inner" style="padding-left: 20px">PDMA - Hệ thống báo cáo trực tuyến - Phiên bản <b>{{settings.clientVersion}}</b></div>
+<!--<div class="page-footer-inner">2018 &copy; CDC Vietnam. All rights reserved. </div>-->
+<div class="scroll-to-top" uib-tooltip="Lên&nbsp;đầu&nbsp;trang">
+    <i class="fa fa-caret-up"></i>
+</div>

@@ -1,0 +1,192 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-bar">
+    <h3 class="page-title pull-left"><i class="fa fa-flask"></i> Đánh giá tiêu chuẩn làm TBXNBT/BC</h3>
+    <ul class="page-breadcrumb pull-right hidden-xs">
+        <li>
+            <a href="#">Trang chủ</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <a href="#/pns-assess">Đánh giá TBXNBT/BC</a>
+        </li>
+    </ul>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="display-block no-content1 margin-top-10" ng-if="!isSiteManager(currentUser) && !isDistrictManager(currentUser) && !isProvincialManager(currentUser) && !isNationalManager(currentUser) && !isDonor(currentUser)">
+                    Bạn không có quyền xem nội dung này.
+                </div>
+                <div ng-if="isSiteManager(currentUser) || isDistrictManager(currentUser) || isProvincialManager(currentUser) || isNationalManager(currentUser) || isDonor(currentUser)">
+                    <div class="opc-toolbar margin-top-10 margin-bottom-10">
+                        <a href="#/pns-assess-edit/0" class="btn btn-default no-border" ng-if="isSiteManager(currentUser)"><i class="fa fa-plus margin-right-10"></i>Thêm đánh giá</a>
+                        <div class="vertical-seperator float-right" ng-if="isSiteManager(currentUser)"></div>
+                        <button data-ng-disabled="!vm.selectedEntry || vm.selectedEntry.submitted"  ng-if="isSiteManager(currentUser)" ng-click="vm.deleteAssessments();" class="btn btn-danger no-border"><i class="icon-trash margin-right-10"></i>Xóa đánh giá</button>
+                        <div class="vertical-seperator float-right" ng-if="isSiteManager(currentUser)"></div>
+                        <!--<button class="btn btn-default no-border" ng-click="vm.report()"><i class="icon-chart margin-right-10"></i>Lập báo cáo</button>-->
+                        <!--<div class="vertical-seperator float-right"></div>-->
+                        <button class="btn btn-default no-border" ng-click="vm.exportData()"><i class="fa fa-download margin-right-10"></i>Xuất dữ liệu</button>
+                        <div class="vertical-seperator float-right" ng-if="isDonor(currentUser) || isNationalManager(currentUser)"></div>
+                        <button class="btn btn-default no-border" ng-if="isDonor(currentUser) || isNationalManager(currentUser)" ng-click="vm.settings()"><i class="icon-equalizer margin-right-10"></i>Thiết lập</button>
+                        <div class="vertical-seperator float-right"></div>
+                        <a ng-click="vm.showIntro();" class="btn btn-default no-border" href="#"><i class="im im-icon-Light-Bulb2"></i><span class="hidden-xs"> Giới thiệu</span></a>
+                    </div>
+                    <table id="bsTableControl" bs-table-control="vm.bsTableControl"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<!-- BEGIN MAIN JS-->
+<script type="text/ng-template" id="preferences_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-equalizer"></i> Thiết lập tùy chọn</h4>
+        </div>
+        <div class="modal-body announcement-details summary-panel">
+            <span class="no-content has-icon margin-bottom-20">
+                <div><i class="im im-icon-Communication-Tower"></i></div>
+                <div><span><b>CHÚ Ý: </b>Chức năng này dành riêng cho cán bộ BQLDA TW và CDC Việt Nam. Vui lòng thống nhất các mốc thời gian giữa 2 văn phòng và lưu lại để hệ thống có thể tự động phân loại đánh giá.
+                </span></div>
+            </span>
+            <div class="row">
+                <div class="col-xs-7 align-right padding-top-10">
+                    <label class="align-right">Ngày kết thúc giai đoạn đánh giá đầu vào:</label>
+                </div>
+                <div class="col-xs-5">
+                    <input id="vm.prefs.baselineToDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker1.dateOpts"
+                           fp-on-setup="vm.datepicker1.datePostSetup(fpItem)"
+                           ng-model="vm.prefs.baselineToDate"
+                           data-enabletime="false" />
+                </div>
+            </div>
+            <div class="row margin-top-20">
+                <div class="col-xs-7 align-right padding-top-10">
+                    <label class="align-right">Ngày bắt đầu giai đoạn đánh giá sau can thiệp:</label>
+                </div>
+                <div class="col-xs-5">
+                    <input id="vm.prefs.postFromDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker2.dateOpts"
+                           fp-on-setup="vm.datepicker2.datePostSetup(fpItem)"
+                           ng-model="vm.prefs.postFromDate"
+                           data-enabletime="false" />
+                </div>
+            </div>
+            <div class="row margin-top-20">
+                <div class="col-xs-7 align-right padding-top-10" style="white-space: nowrap">
+                    <label class="align-right">Ngày kết thúc giai đoạn đánh giá sau can thiệp:</label>
+                </div>
+                <div class="col-xs-5">
+                    <input id="vm.prefs.postToDate" class="form-control" placeholder="Chọn ngày..."
+                           ng-flatpickr
+                           fp-opts="vm.datepicker3.dateOpts"
+                           fp-on-setup="vm.datepicker3.datePostSetup(fpItem)"
+                           ng-model="vm.prefs.postToDate"
+                           data-enabletime="false" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close"></i> Đóng lại</button>
+            <button type="button" ng-click="vm.savePreferences()" class="btn btn-primary no-border" data-dismiss="modal"><i class="fa fa-check"></i> Lưu lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="intro_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="fa fa-leaf"></i> Giới thiệu</h4>
+        </div>
+        <div class="modal-body announcement-details">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="an-content">
+                        Thông báo và xét nghiệm bạn tình/bạn chích chung, con đẻ của người có HIV (TBXNBT/BC) là một tiếp cận quan trọng trong việc đạt mục tiêu 90-90-95. Việc triển khai cần tuân thủ các nguyên tắc, yêu cầu và quy trình đặt ra trong hướng dẫn của Bộ Y tế cũng như khuyến nghị của PEPFAR bao gồm cả nguyên tắc 5C, an toàn và phù hợp chuẩn mực đạo đức. Đánh giá và không ngừng cải thiện là một phần không thể thiếu trong quá trình cung cấp và quản lý dịch vụ TBXNBT/BC. Đây là bộ công cụ đánh giá được CDC Hoa Kỳ tại Việt Nam hỗ trợ xây dựng dựa trên nội dung do CDC Atlanta Hoa Kỳ/REDCap phát triển.
+                        <p>Việc tiến hành đánh giá cơ sở cung cấp dịch vụ TBXNBT/BC là nhằm:</p>
+                        <ol>
+                            <li>Ghi nhận và xác định cụ thể cơ sở có đạt hoặc chưa đạt được tổng số 33 tiêu chuẩn tối thiểu đặt ra; </li>
+                            <li style="margin-top: 10px;">Đưa ra kế hoạch hành động cụ thể, xác định đơn vị chịu trách nhiệm và khung thời gian để duy trì tiêu chuẩn đã đạt được hoặc cần cải thiện, nhằm đạt được tất cả 33 tiêu chuẩn tối thiểu.</li>
+                        </ol>
+                        <p>Đánh giá này mang tính xây dựng và có thể thực hiện qua hai hình thức: hoặc chính cơ sở tự đánh giá hoặc tuyến trên trực tiếp đánh giá tại cơ sở cung cấp dịch vụ TBXNBT/BC.</p>
+                        <p>Bộ công cụ đánh giá cho phép tiến hành đánh giá một cơ sở nhiều lần. Với các cơ sở được xác định là đã đáp ứng toàn bộ 33 tiêu chuẩn tối thiểu có thể được đánh giá lại hàng năm để xác định lại hiện trạng và đề ra kế hoạch cải thiện tương ứng.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close"></i> Đóng lại</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="delete_assessments_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Xoá bản ghi</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="icon-exclamation"></i></div>
+            <div><span>Bạn có chắc chắn muốn xoá thông tin của lần đánh giá đã chọn không?
+            </span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Không</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-danger no-border" data-dismiss="modal"><i class="fa fa-check margin-right-10"></i>Có</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="data_export_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Xuất dữ liệu tổng hợp</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="im im-icon-File-Excel"></i></div>
+            <div><span>
+                <label class="bold">Vui lòng chọn loại đánh giá</label>
+                <ui-select id="vm.exportFilter.type" ng-model="vm.exportFilter.type" sortable="true" close-on-select="true" style="width: 90%!important;">
+                    <ui-select-match allow-clear="false" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+                    <ui-select-choices repeat="o.id as o in vm.assmtTypes | filter: {name: $select.search}">
+                        <div class="bold" ng-bind-html="o.name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default no-border" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Đóng lại</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-download margin-right-10"></i>Xuất dữ liệu</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="report_na_modal.html">
+    <div modal-movable auto-height="yes">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title">Thông báo</h4>
+        </div>
+        <div class="modal-body has-icon">
+            <div><i class="im im-icon-Compass"></i></div>
+            <div><span><b>Hiện tại chức năng báo cáo tổng hợp chưa sẵn sàng.</b><br /><br /> Bạn có thể xem báo cáo chi tiết của từng đánh giá khi mở một đánh giá và chuyển đến trang số 14.
+            </span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close margin-right-10"></i>Đóng lại</button>
+        </div>
+    </div>
+</script>
+
+<!-- BEGIN MAIN JS -->
